@@ -1,0 +1,18 @@
+*.zip
+*.swp
+*.exe
+*.cscope_file_list
+
+*.txt
+!Wiki.txt
+!ReadMe.txt
+
+CodeBlocks/bin/*
+CodeBlocks/obj/*
+FreePCB/*
+Gerber\ Examples/*
+Icon/*
+PCAD/*
+Screenshots/*
+Tests/*
+

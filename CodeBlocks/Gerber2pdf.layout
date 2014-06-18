@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="Tools\Deflate\JDeflate.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="35627" topLine="1402" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfType3Font.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9202" topLine="324" />
+		</Cursor>
+	</File>
+	<File name="Tools\Gerber\Gerber\GerberLayer.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2142" topLine="66" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfType3Font.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2067" topLine="42" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfObject.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1131" topLine="4" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfObject.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1098" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="Tools\Gerber\JGerber.cpp" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="32411" topLine="1573" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14964" topLine="351" />
+		</Cursor>
+	</File>
+	<File name="Tools\Gerber\JGerber.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1332" topLine="24" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\afm\afmParser.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5807" topLine="267" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfForm.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1254" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\afm\afmParser.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1065" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfContents.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1526" topLine="19" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfStream.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1268" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="Tools\PDF\pdf\pdfIndirect.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1192" topLine="12" />
+		</Cursor>
+	</File>
+</CodeBlocks_layout_file>
