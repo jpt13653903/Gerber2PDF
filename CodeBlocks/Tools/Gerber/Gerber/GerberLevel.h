@@ -19,8 +19,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>
 //==============================================================================
 
-#ifndef GERBERLAYER_H
-#define GERBERLAYER_H
+#ifndef GerberLevel_h
+#define GerberLevel_h
 //------------------------------------------------------------------------------
 
 #include <math.h>
@@ -31,7 +31,7 @@
 #include "GerberRender.h"
 //------------------------------------------------------------------------------
 
-class GerberLayer{
+class GerberLevel{
 private:
  GerberRender* RenderList; // Linked list of render commands
  GerberRender* LastRender; // Last render command used for easy additions
@@ -53,10 +53,10 @@ private:
  GerberAperture* CurrentAperture;
 
 public:
-  GerberLayer();
- ~GerberLayer();
+  GerberLevel();
+ ~GerberLevel();
 
- GerberLayer* Next;
+ GerberLevel* Next;
 
  // Image bounding box
  double Left;
@@ -70,7 +70,7 @@ public:
 
  void SetName(const char* Name);
 
- char* Name; // null for default layer
+ char* Name; // null for default level
  bool  Negative;
  bool  Relative;
  bool  Incremental;

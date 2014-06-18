@@ -18,13 +18,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>
 //==============================================================================
 
-#include "GerberLayer.h"
+#include "GerberLevel.h"
 //------------------------------------------------------------------------------
 
 #define pi 3.141592653589793238463
 //------------------------------------------------------------------------------
 
-GerberLayer::GerberLayer(){
+GerberLevel::GerberLevel(){
  Name       = 0;
  RenderList = 0;
  LastRender = 0;
@@ -51,11 +51,11 @@ GerberLayer::GerberLayer(){
 
  Exposure           = geOff;
  Interpolation      = giLinear;
- GerberLayer::Units = guInches;
+ GerberLevel::Units = guInches;
 }
 //------------------------------------------------------------------------------
 
-GerberLayer::~GerberLayer(){
+GerberLevel::~GerberLevel(){
  GerberRender* Temp;
 
  if(Next) delete Next;
@@ -70,7 +70,7 @@ GerberLayer::~GerberLayer(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::SetName(const char* Name){
+void GerberLevel::SetName(const char* Name){
  int j;
 
  if(this->Name) delete this->Name;
@@ -88,13 +88,13 @@ void GerberLayer::SetName(const char* Name){
 }
 //------------------------------------------------------------------------------
 
-double GerberLayer::Get_mm(double Number){
+double GerberLevel::Get_mm(double Number){
  if(Units == guInches) Number *= 25.4;
  return Number;
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::Add(GerberRender* Render){
+void GerberLevel::Add(GerberRender* Render){
  Render->Next = 0;
 
  if(RenderList){
@@ -107,7 +107,7 @@ void GerberLayer::Add(GerberRender* Render){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::Move(){
+void GerberLevel::Move(){
  GerberRender* Temp;
 
  if(Path){
@@ -135,7 +135,7 @@ void GerberLayer::Move(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::Line(){
+void GerberLevel::Line(){
  GerberRender* Temp;
 
  double l, b, r, t;
@@ -233,7 +233,7 @@ void GerberLayer::Line(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::Arc(){
+void GerberLevel::Arc(){
  double x1, y1; // Start, relative to center
  double x2, y2; // End, relative to center
  double x3, y3; // Center
@@ -310,7 +310,7 @@ void GerberLayer::Arc(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::Flash(){
+void GerberLevel::Flash(){
  GerberRender* Temp;
 
  double l, b, r, t;
@@ -338,7 +338,7 @@ void GerberLayer::Flash(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::ApertureSelect(GerberAperture* Aperture){
+void GerberLevel::ApertureSelect(GerberAperture* Aperture){
  GerberRender* Temp;
 
  Exposure = geOff;
@@ -353,7 +353,7 @@ void GerberLayer::ApertureSelect(GerberAperture* Aperture){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::OutlineBegin(){
+void GerberLevel::OutlineBegin(){
  GerberRender* Temp;
 
  Temp           = new GerberRender;
@@ -364,7 +364,7 @@ void GerberLayer::OutlineBegin(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::OutlineEnd(){
+void GerberLevel::OutlineEnd(){
  GerberRender* Temp;
 
  Exposure = geOff;
@@ -378,7 +378,7 @@ void GerberLayer::OutlineEnd(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLayer::Do(){
+void GerberLevel::Do(){
  switch(Exposure){
   case geOn:
    Line();
@@ -401,7 +401,7 @@ void GerberLayer::Do(){
 }
 //------------------------------------------------------------------------------
 
-GerberRender* GerberLayer::Render(){
+GerberRender* GerberLevel::Render(){
  return RenderList;
 }
 //------------------------------------------------------------------------------

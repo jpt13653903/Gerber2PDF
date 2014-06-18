@@ -167,14 +167,14 @@ void Pause(){
 int RenderLayer(
  pdfPage*     Page,
  pdfContents* Contents,
- GerberLayer* Layer
+ GerberLevel* Level
 ){
  GerberRender*   Render   = 0;
  GerberAperture* Aperture = 0;
 
  JString  String;
 
- if(Layer->Negative){
+ if(Level->Negative){
   if(Negative){
    Contents->StrokeColour(Black);
    Contents->FillColour  (Black);
@@ -192,7 +192,7 @@ int RenderLayer(
   }
  }
 
- Render = Layer->Render();
+ Render = Level->Render();
 
  while(Render){
   switch(Render->Command){
@@ -408,7 +408,7 @@ int main(int argc, char** argv){
 
  // Gerber Variables and Structures
  JGerber      Gerber;
- GerberLayer* Layer;
+ GerberLevel* Level;
 
  // PDF Variables and Structures
  pdfPages    Pages;    // Single level page tree
@@ -518,20 +518,20 @@ int main(int argc, char** argv){
 
   Page[BoardLayer].MediaBox.Set_mm(x-w2, y-h2, x+w2, y+h2);
 
-  Layer = Gerber.Layers;
-  while(Layer){
-   if(!Layer->Render()){
-    Layer = Layer->Next;
+  Level = Gerber.Levels;
+  while(Level){
+   if(!Level->Render()){
+    Level = Level->Next;
     continue;
    }
 
-   if(Layer->CountX > 1 ||
-      Layer->CountY > 1 ){
+   if(Level->CountX > 1 ||
+      Level->CountY > 1 ){
     LayerName.Set   ("L");
     LayerName.Append(++LayerCount);
-    if(Layer->Name){
+    if(Level->Name){
      LayerName.Append('_');
-     LayerName.Append(Layer->Name);
+     LayerName.Append(Level->Name);
     }
     TempLayerStack        = new LAYER_FORM;
     TempLayerStack->Layer = new pdfForm(LayerName.String);
@@ -539,26 +539,26 @@ int main(int argc, char** argv){
     LayerStack            = TempLayerStack;
 
     LayerStack->Layer->BBox.Set(
-     Layer->Left,
-     Layer->Bottom,
-     Layer->Right,
-     Layer->Top
+     Level->Left,
+     Level->Bottom,
+     Level->Right,
+     Level->Top
     );
 
-    Result = RenderLayer(Page+BoardLayer, LayerStack->Layer, Layer);
+    Result = RenderLayer(Page+BoardLayer, LayerStack->Layer, Level);
     if(Result) return Result;
 
     Contents[BoardLayer].Push();
 
     int x, y;
-    for(y = 0; y < Layer->CountY; y++){
-     for(x = 0; x < Layer->CountX; x++){
+    for(y = 0; y < Level->CountY; y++){
+     for(x = 0; x < Level->CountX; x++){
       Contents[BoardLayer].Form(LayerStack->Layer);
-      Contents[BoardLayer].Translate(Layer->StepX, 0.0);
+      Contents[BoardLayer].Translate(Level->StepX, 0.0);
      }
      Contents[BoardLayer].Translate(
-      Layer->StepX * -Layer->CountX,
-      Layer->StepY);
+      Level->StepX * -Level->CountX,
+      Level->StepY);
     }
 
     Contents[BoardLayer].Pop();
@@ -569,11 +569,11 @@ int main(int argc, char** argv){
     LayerStack->Layer->Deflate();
 
    }else{
-    Result = RenderLayer(Page+BoardLayer, Contents+BoardLayer, Layer);
+    Result = RenderLayer(Page+BoardLayer, Contents+BoardLayer, Level);
     if(Result) return Result;
    }
 
-   Layer = Layer->Next;
+   Level = Level->Next;
   }
 
   Contents[BoardLayer].Deflate();

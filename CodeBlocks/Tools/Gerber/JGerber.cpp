@@ -45,7 +45,7 @@ void JGerber::Initialise(){
  Name   = 0;
 
  Units        = guInches;
- StartOfLayer = false;
+ StartOfLevel = false;
  Incremental  = false;
  Negative     = false;
 
@@ -55,9 +55,9 @@ void JGerber::Initialise(){
  Format.YInteger           = 6;
  Format.YDecimal           = 6;
 
- Layers       = 0;
- LastLayer    = 0;
- CurrentLayer = 0;
+ Levels       = 0;
+ LastLevel    = 0;
+ CurrentLevel = 0;
 
  Left   =  1e3;
  Bottom =  1e3;
@@ -79,7 +79,7 @@ void JGerber::Initialise(){
 void JGerber::Cleanup(){
  int j;
 
- if(Layers) delete Layers;
+ if(Levels) delete Levels;
 
  for(j = 0; j < 1000; j++){
   if(Apertures[j]) delete Apertures[j];
@@ -323,7 +323,7 @@ double JGerber::Get_mm(double Number){
 bool JGerber::NCode(){
  unsigned i = Index;
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  printf("Line %d - Error: N Code not implemented\n", LineNumber);
 
@@ -335,34 +335,34 @@ bool JGerber::NCode(){
 bool JGerber::GCode(){
  int          Code;
  unsigned     i = Index;
- GerberLayer* Layer;
+ GerberLevel* Level;
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  if(!GetInteger(&Code)) return false;
 
- if(!CurrentLayer && Code != 4){
-  Layer = new GerberLayer;
-  Layer->Units = Units;
-  Add(Layer);
+ if(!CurrentLevel && Code != 4){
+  Level = new GerberLevel;
+  Level->Units = Units;
+  Add(Level);
  }
 
  switch(Code){
   case 0: // Move
-   CurrentLayer->Exposure      = geOff;
-   CurrentLayer->Interpolation = giLinear;
+   CurrentLevel->Exposure      = geOff;
+   CurrentLevel->Interpolation = giLinear;
    return true;
 
   case 1: // Linear interpolation 1X scale
-   CurrentLayer->Interpolation = giLinear;
+   CurrentLevel->Interpolation = giLinear;
    return true;
 
   case 2: // Clockwise circular
-   CurrentLayer->Interpolation = giClockwiseCircular;
+   CurrentLevel->Interpolation = giClockwiseCircular;
    return true;
 
   case 3: // Counterclockwise circular
-   CurrentLayer->Interpolation = giCounterclockwiseCircular;
+   CurrentLevel->Interpolation = giCounterclockwiseCircular;
    return true;
 
   case 4: // Ignore block
@@ -371,51 +371,51 @@ bool JGerber::GCode(){
    return (Index < Length);
 
   case 10: // Linear interpolation 10X scale
-   CurrentLayer->Interpolation = giLinear10X;
+   CurrentLevel->Interpolation = giLinear10X;
    return true;
 
   case 11: // Linear interpolation 0.1X scale
-   CurrentLayer->Interpolation = giLinear0_1X;
+   CurrentLevel->Interpolation = giLinear0_1X;
    return true;
 
   case 12: // Linear interpolation 0.01X scale
-   CurrentLayer->Interpolation = giLinear0_01X;
+   CurrentLevel->Interpolation = giLinear0_01X;
    return true;
 
   case 36: // Turn on Outline Area Fill
-   CurrentLayer->OutlineBegin();
+   CurrentLevel->OutlineBegin();
    return true;
 
   case 37: // Turn off Outline Area Fill
-   CurrentLayer->OutlineEnd();
+   CurrentLevel->OutlineEnd();
    return true;
 
   case 54: // Tool prepare
-   CurrentLayer->Exposure = geOff;
+   CurrentLevel->Exposure = geOff;
    return true;
 
   case 55: // Flash prepare
-   CurrentLayer->Exposure = geOff;
+   CurrentLevel->Exposure = geOff;
    return true;
 
   case 70: // Specify inches
-   CurrentLayer->Units = guInches;
+   CurrentLevel->Units = guInches;
    return true;
 
   case 71: // Specify millimeters
-   CurrentLayer->Units = guMillimeters;
+   CurrentLevel->Units = guMillimeters;
    return true;
 
   case 74: // Disable 360 deg circular interpolation
-   CurrentLayer->Multiquadrant = false;
+   CurrentLevel->Multiquadrant = false;
    return true;
 
   case 75: // Enable 360 deg circular interpolation
-   CurrentLayer->Multiquadrant = true;
+   CurrentLevel->Multiquadrant = true;
    return true;
 
   case 90: // Specify absolute format
-   CurrentLayer->Incremental = false;
+   CurrentLevel->Incremental = false;
    return true;
 
   case 91: // Specify incremental format
@@ -438,30 +438,30 @@ bool JGerber::GCode(){
 bool JGerber::DCode(){
  int             Code;
  unsigned        i = Index;
- GerberLayer*    Layer;
+ GerberLevel*    Level;
  GerberAperture* Aperture;
 
- if(!CurrentLayer){
-  Layer = new GerberLayer;
-  Layer->Units = Units;
-  Add(Layer);
+ if(!CurrentLevel){
+  Level = new GerberLevel;
+  Level->Units = Units;
+  Add(Level);
  }
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  if(!GetInteger(&Code)) return false;
 
  switch(Code){
   case 1: // Draw line, exposure on
-   CurrentLayer->Exposure = geOn;
+   CurrentLevel->Exposure = geOn;
    return true;
 
   case 2: // Exposure off
-   CurrentLayer->Exposure = geOff;
+   CurrentLevel->Exposure = geOff;
    return true;
 
   case 3: // Flash aperture
-   CurrentLayer->Exposure = geFlash;
+   CurrentLevel->Exposure = geFlash;
    return true;
 
   default: // Select aperture
@@ -478,7 +478,7 @@ bool JGerber::DCode(){
     printf("Line %d - Error: Aperture not defined: D%d\n", LineNumber, Code);
     return false;
    }
-   CurrentLayer->ApertureSelect(Aperture);
+   CurrentLevel->ApertureSelect(Aperture);
    return true;
  }
 
@@ -490,7 +490,7 @@ bool JGerber::DCode(){
 bool JGerber::MCode(bool* EndOfFile){
  int Code;
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  if(!GetInteger(&Code)) return false;
 
@@ -498,9 +498,9 @@ bool JGerber::MCode(bool* EndOfFile){
   case 0: // Program stop
   case 1: // Optional stop
   case 2: // End of program
-   if(CurrentLayer){
-    CurrentLayer->Exposure = geOff;
-    CurrentLayer->Do();
+   if(CurrentLevel){
+    CurrentLevel->Exposure = geOff;
+    CurrentLevel->Do();
    }
    *EndOfFile = true;
    return true;
@@ -860,7 +860,7 @@ bool JGerber::ApertureDefinition(){
  int    Code;
  char   ApertureType[0x100];
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  WhiteSpace();
 
@@ -901,7 +901,7 @@ bool JGerber::ApertureMacro(){
  char         Name[0x100];
  GerberMacro* Macro;
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  if(!GetString(Name)) return false;
  for(j = 0; Name[j]; j++);
@@ -940,7 +940,7 @@ bool JGerber::ApertureMacro(){
 bool JGerber::AxisSelect(){
  printf("Line %d - Warning: AxisSelect ignored\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  WhiteSpace();
 
@@ -954,7 +954,7 @@ bool JGerber::AxisSelect(){
 //------------------------------------------------------------------------------
 
 bool JGerber::FormatStatement(){
- StartOfLayer = false;
+ StartOfLevel = false;
 
  WhiteSpace();
 
@@ -1020,7 +1020,7 @@ bool JGerber::FormatStatement(){
 bool JGerber::IncludeFile(){
  printf("Line %d - Error: IncludeFile not implimented\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  while(Index < Length){
   if(Buffer[Index] == '%') return true;
@@ -1034,7 +1034,7 @@ bool JGerber::IncludeFile(){
 bool JGerber::IC(){
  printf("Line %d - Warning: IC Paremeter ignored\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  while(Index < Length){
   if(Buffer[Index] == '%') return true;
@@ -1048,7 +1048,7 @@ bool JGerber::IC(){
 bool JGerber::ImageJustify(){
  printf("Line %d - Warning: ImageJustify ignored\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  while(Index < Length){
   if(Buffer[Index] == '%') return true;
@@ -1063,7 +1063,7 @@ bool JGerber::ImageName(){
  int  j;
  char name[0x100];
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  if(!GetString(name)) return false;
 
@@ -1089,7 +1089,7 @@ bool JGerber::ImageName(){
 bool JGerber::ImageOffset(){
  printf("Line %d - Error: ImageOffset not implimented\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  while(Index < Length){
   if(Buffer[Index] == '%') return true;
@@ -1102,7 +1102,7 @@ bool JGerber::ImageOffset(){
 
 bool JGerber::ImagePolarity(){
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  WhiteSpace();
 
@@ -1136,7 +1136,7 @@ bool JGerber::ImagePolarity(){
 bool JGerber::ImageRotation(){
  printf("Line %d - Error: ImageRotation not implimented\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  while(Index < Length){
   if(Buffer[Index] == '%') return true;
@@ -1147,20 +1147,20 @@ bool JGerber::ImageRotation(){
 }
 //------------------------------------------------------------------------------
 
-void JGerber::Add(GerberLayer* Layer){
- if(CurrentLayer){
-  CurrentLayer->Exposure = geOff;
-  CurrentLayer->Do();
+void JGerber::Add(GerberLevel* Level){
+ if(CurrentLevel){
+  CurrentLevel->Exposure = geOff;
+  CurrentLevel->Do();
  }
 
- if(Layers){
-  LastLayer->Next = Layer;
+ if(Levels){
+  LastLevel->Next = Level;
  }else{
-  Layers = Layer;
+  Levels = Level;
  }
 
- LastLayer    = Layer;
- CurrentLayer = Layer;
+ LastLevel    = Level;
+ CurrentLevel = Level;
 }
 //------------------------------------------------------------------------------
 
@@ -1170,9 +1170,9 @@ bool JGerber::Knockout(){
 }
 //------------------------------------------------------------------------------
 
-bool JGerber::LayerName(){
+bool JGerber::LevelName(){
  char         Name[0x100];
- GerberLayer* Layer;
+ GerberLevel* Level;
 
  if(!GetString(Name))     return false;
 
@@ -1182,60 +1182,60 @@ bool JGerber::LayerName(){
  if(Buffer[Index] != '*') return false;
  Index++;
 
- if(!StartOfLayer){
-  Layer = new GerberLayer;
-  if(CurrentLayer){
-   Layer->Negative = CurrentLayer->Negative;
-   Layer->CountX   = CurrentLayer->CountX;
-   Layer->CountY   = CurrentLayer->CountY;
-   Layer->StepX    = CurrentLayer->StepX;
-   Layer->StepY    = CurrentLayer->StepY;
+ if(!StartOfLevel){
+  Level = new GerberLevel;
+  if(CurrentLevel){
+   Level->Negative = CurrentLevel->Negative;
+   Level->CountX   = CurrentLevel->CountX;
+   Level->CountY   = CurrentLevel->CountY;
+   Level->StepX    = CurrentLevel->StepX;
+   Level->StepY    = CurrentLevel->StepY;
   }
-  Layer->Units = Units;
-  Layer->SetName(Name);
-  Add(Layer);
+  Level->Units = Units;
+  Level->SetName(Name);
+  Add(Level);
 
  }else{
-  CurrentLayer->SetName(Name);
+  CurrentLevel->SetName(Name);
  }
- StartOfLayer = true;
+ StartOfLevel = true;
 
  return true;
 }
 //------------------------------------------------------------------------------
 
-bool JGerber::LayerPolarity(){
- GerberLayer* Layer;
+bool JGerber::LevelPolarity(){
+ GerberLevel* Level;
 
- if(!StartOfLayer){
-  Layer = new GerberLayer;
-  if(CurrentLayer){
-   Layer->SetName (CurrentLayer->Name);
-   Layer->CountX = CurrentLayer->CountX;
-   Layer->CountY = CurrentLayer->CountY;
-   Layer->StepX  = CurrentLayer->StepX;
-   Layer->StepY  = CurrentLayer->StepY;
+ if(!StartOfLevel){
+  Level = new GerberLevel;
+  if(CurrentLevel){
+   Level->SetName (CurrentLevel->Name);
+   Level->CountX = CurrentLevel->CountX;
+   Level->CountY = CurrentLevel->CountY;
+   Level->StepX  = CurrentLevel->StepX;
+   Level->StepY  = CurrentLevel->StepY;
   }
-  Layer->Units = Units;
-  Add(Layer);
+  Level->Units = Units;
+  Add(Level);
  }
- StartOfLayer = true;
+ StartOfLevel = true;
 
  WhiteSpace();
 
  if(Index >= Length) return false;
  switch(Buffer[Index]){
   case 'C':
-   CurrentLayer->Negative = true;
+   CurrentLevel->Negative = true;
    break;
 
   case 'D':
-   CurrentLayer->Negative = false;
+   CurrentLevel->Negative = false;
    break;
 
   default:
    printf(
-    "Line %d - Error: Unknown layer polarity: %c\n",
+    "Line %d - Error: Unknown level polarity: %c\n",
     LineNumber,
     Buffer[Index]
    );
@@ -1256,7 +1256,7 @@ bool JGerber::LayerPolarity(){
 bool JGerber::MirrorImage(){
  printf("Line %d - Error: MirrorImage not implimented\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  while(Index < Length){
   if(Buffer[Index] == '%') return true;
@@ -1268,7 +1268,7 @@ bool JGerber::MirrorImage(){
 //------------------------------------------------------------------------------
 
 bool JGerber::Mode(){
- StartOfLayer = false;
+ StartOfLevel = false;
 
  WhiteSpace();
 
@@ -1303,7 +1303,7 @@ bool JGerber::Mode(){
 bool JGerber::Offset(){
  double d;
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  WhiteSpace();
 
@@ -1346,7 +1346,7 @@ bool JGerber::Offset(){
 bool JGerber::PlotFilm(){
  printf("Line %d - Error: PlotFilm not implimented\n", LineNumber);
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  while(Index < Length){
   if(Buffer[Index] == '%') return true;
@@ -1360,7 +1360,7 @@ bool JGerber::PlotFilm(){
 bool JGerber::ScaleFactor(){
  double d;
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  WhiteSpace();
 
@@ -1403,18 +1403,18 @@ bool JGerber::ScaleFactor(){
 bool JGerber::StepAndRepeat(){
  int          x, y;
  double       i, j;
- GerberLayer* Layer;
+ GerberLevel* Level;
 
- if(!StartOfLayer){
-  Layer = new GerberLayer;
-  if(CurrentLayer){
-   Layer->SetName   (CurrentLayer->Name);
-   Layer->Negative = CurrentLayer->Negative;
+ if(!StartOfLevel){
+  Level = new GerberLevel;
+  if(CurrentLevel){
+   Level->SetName   (CurrentLevel->Name);
+   Level->Negative = CurrentLevel->Negative;
   }
-  Layer->Units = Units;
-  Add(Layer);
+  Level->Units = Units;
+  Add(Level);
  }
- StartOfLayer = true;
+ StartOfLevel = true;
 
  x = y = 1;
  i = j = 0.0;
@@ -1445,10 +1445,10 @@ bool JGerber::StepAndRepeat(){
 
    case '*':
     Index++;
-    CurrentLayer->CountX = x;
-    CurrentLayer->CountY = y;
-    CurrentLayer->StepX  = Get_mm(i);
-    CurrentLayer->StepY  = Get_mm(j);
+    CurrentLevel->CountX = x;
+    CurrentLevel->CountY = y;
+    CurrentLevel->StepX  = Get_mm(i);
+    CurrentLevel->StepY  = Get_mm(j);
     return true;
 
    default:
@@ -1544,11 +1544,11 @@ bool JGerber::Paramater(char Delimiter){
 
   }else if(Buffer[Index] == 'L' && Buffer[Index+1] == 'N'){
    Index += 2;
-   if(!LayerName()) return false;
+   if(!LevelName()) return false;
 
   }else if(Buffer[Index] == 'L' && Buffer[Index+1] == 'P'){
    Index += 2;
-   if(!LayerPolarity()) return false;
+   if(!LevelPolarity()) return false;
 
   }else if(Buffer[Index] == 'M' && Buffer[Index+1] == 'I'){
    Index += 2;
@@ -1610,7 +1610,7 @@ bool JGerber::Paramater(char Delimiter){
 //------------------------------------------------------------------------------
 
 void JGerber::SetBBox(){
- GerberLayer* Temp = Layers;
+ GerberLevel* Temp = Levels;
 
  double l, b, r, t, w, h;
 
@@ -1678,50 +1678,50 @@ bool JGerber::GetGerber(){
    case 'X':
     Index++;
     if(!GetCoordinate(&d, Format.XInteger, Format.XDecimal)) return false;
-    if(!CurrentLayer){
-     printf("Line %d - Error: No layer defined\n", LineNumber);
+    if(!CurrentLevel){
+     printf("Line %d - Error: No level defined\n", LineNumber);
      return false;
     }
-    CurrentLayer->X = d;
+    CurrentLevel->X = d;
     break;
 
    case 'Y':
     Index++;
     if(!GetCoordinate(&d, Format.YInteger, Format.YDecimal)) return false;
-    if(!CurrentLayer){
-     printf("Line %d - Error: No layer defined\n", LineNumber);
+    if(!CurrentLevel){
+     printf("Line %d - Error: No level defined\n", LineNumber);
      return false;
     }
-    CurrentLayer->Y = d;
+    CurrentLevel->Y = d;
     break;
 
    case 'I':
     Index++;
     if(!GetCoordinate(&d, Format.XInteger, Format.XDecimal)) return false;
-    if(!CurrentLayer){
-     printf("Line %d - Error: No layer defined\n", LineNumber);
+    if(!CurrentLevel){
+     printf("Line %d - Error: No level defined\n", LineNumber);
      return false;
     }
-    CurrentLayer->I = d;
+    CurrentLevel->I = d;
     break;
 
    case 'J':
     Index++;
     if(!GetCoordinate(&d, Format.YInteger, Format.YDecimal)) return false;
-    if(!CurrentLayer){
-     printf("Line %d - Error: No layer defined\n", LineNumber);
+    if(!CurrentLevel){
+     printf("Line %d - Error: No level defined\n", LineNumber);
      return false;
     }
-    CurrentLayer->J = d;
+    CurrentLevel->J = d;
     break;
 
    case '*':
     Index++;
-    if(!CurrentLayer){
-     printf("Line %d - Error: No layer defined\n", LineNumber);
+    if(!CurrentLevel){
+     printf("Line %d - Error: No level defined\n", LineNumber);
      return false;
     }
-    CurrentLayer->Do();
+    CurrentLevel->Do();
     break;
 
    case ' ' :
@@ -1754,7 +1754,7 @@ void JGerber::Clear(){
 bool JGerber::LoadGerber(const char* FileName){
  bool b;
 
- StartOfLayer = false;
+ StartOfLevel = false;
 
  File.SetFilename(FileName);
  if(File.Open(JFile::Read)){

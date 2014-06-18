@@ -28,7 +28,7 @@
 #include "JFile.h"
 
 #include "Gerber/GerberAperture.h"
-#include "Gerber/GerberLayer.h"
+#include "Gerber/GerberLevel.h"
 //------------------------------------------------------------------------------
 
 class JGerber{
@@ -40,11 +40,11 @@ private:
  unsigned Index;
  unsigned LineNumber;
 
- GerberLayer* CurrentLayer;
- GerberLayer* LastLayer;
- int          LayersSize; // Buffer size
+ GerberLevel* CurrentLevel;
+ GerberLevel* LastLevel;
+ int          LevelsSize; // Buffer size
 
- void Add(GerberLayer* Layer);
+ void Add(GerberLevel* Level);
 
  // Tokens
  void   WhiteSpace   ();
@@ -96,7 +96,7 @@ private:
  void         Add      (GerberMacro* Macro);
  GerberMacro* FindMacro(const char*  Name);
 
- bool StartOfLayer;
+ bool StartOfLevel;
 
  // Directive Parameters
  bool AxisSelect     ();
@@ -129,10 +129,10 @@ private:
  bool ApertureDefinition();
  bool ApertureMacro     ();
 
- // Layer-Specific Parameters
+ // Level-Specific Parameters
  bool Knockout     ();
- bool LayerName    ();
- bool LayerPolarity();
+ bool LevelName    ();
+ bool LevelPolarity();
  bool StepAndRepeat();
 
  // Miscellaneous Parameters
@@ -158,7 +158,7 @@ public:
  bool  Negative; // Image Polarity
  char* Name;     // Image Name
 
- GerberLayer* Layers; // Linked list; Read this to get the layers, do not modify
+ GerberLevel* Levels; // Linked list; Read this to get the levels, do not modify
 
  // Image bounding box
  double Left;
