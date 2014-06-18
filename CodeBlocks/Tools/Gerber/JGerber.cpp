@@ -342,7 +342,7 @@ bool JGerber::GCode(){
  if(!GetInteger(&Code)) return false;
 
  if(!CurrentLevel && Code != 4){
-  Level = new GerberLevel;
+  Level = new GerberLevel(CurrentLevel);
   Level->Units = Units;
   Add(Level);
  }
@@ -442,7 +442,7 @@ bool JGerber::DCode(){
  GerberAperture* Aperture;
 
  if(!CurrentLevel){
-  Level = new GerberLevel;
+  Level = new GerberLevel(CurrentLevel);
   Level->Units = Units;
   Add(Level);
  }
@@ -1183,14 +1183,7 @@ bool JGerber::LevelName(){
  Index++;
 
  if(!StartOfLevel){
-  Level = new GerberLevel;
-  if(CurrentLevel){
-   Level->Negative = CurrentLevel->Negative;
-   Level->CountX   = CurrentLevel->CountX;
-   Level->CountY   = CurrentLevel->CountY;
-   Level->StepX    = CurrentLevel->StepX;
-   Level->StepY    = CurrentLevel->StepY;
-  }
+  Level = new GerberLevel(CurrentLevel);
   Level->Units = Units;
   Level->SetName(Name);
   Add(Level);
@@ -1208,14 +1201,7 @@ bool JGerber::LevelPolarity(){
  GerberLevel* Level;
 
  if(!StartOfLevel){
-  Level = new GerberLevel;
-  if(CurrentLevel){
-   Level->SetName (CurrentLevel->Name);
-   Level->CountX = CurrentLevel->CountX;
-   Level->CountY = CurrentLevel->CountY;
-   Level->StepX  = CurrentLevel->StepX;
-   Level->StepY  = CurrentLevel->StepY;
-  }
+  Level = new GerberLevel(CurrentLevel);
   Level->Units = Units;
   Add(Level);
  }
@@ -1406,11 +1392,7 @@ bool JGerber::StepAndRepeat(){
  GerberLevel* Level;
 
  if(!StartOfLevel){
-  Level = new GerberLevel;
-  if(CurrentLevel){
-   Level->SetName   (CurrentLevel->Name);
-   Level->Negative = CurrentLevel->Negative;
-  }
+  Level = new GerberLevel(CurrentLevel);
   Level->Units = Units;
   Add(Level);
  }

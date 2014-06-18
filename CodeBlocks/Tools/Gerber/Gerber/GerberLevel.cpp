@@ -24,7 +24,7 @@
 #define pi 3.141592653589793238463
 //------------------------------------------------------------------------------
 
-GerberLevel::GerberLevel(){
+GerberLevel::GerberLevel(GerberLevel* PreviousLevel){
  Name       = 0;
  RenderList = 0;
  LastRender = 0;
@@ -49,9 +49,30 @@ GerberLevel::GerberLevel(){
 
  fX = fY = pX = pY = X = Y = I = J = 0.0;
 
- Exposure           = geOff;
- Interpolation      = giLinear;
- GerberLevel::Units = guInches;
+ Units         = guInches;
+ Exposure      = geOff;
+ Interpolation = giLinear;
+
+ if(PreviousLevel){
+  SetName(PreviousLevel->Name);
+
+  Units           = PreviousLevel->Units;
+  Exposure        = PreviousLevel->Exposure;
+  CurrentAperture = PreviousLevel->CurrentAperture;
+
+  Multiquadrant = PreviousLevel->Multiquadrant;
+  Interpolation = PreviousLevel->Interpolation;
+  pX            = PreviousLevel->pX;
+  pY            = PreviousLevel->pY;
+
+  CountX = PreviousLevel->CountX;
+  CountY = PreviousLevel->CountY;
+  StepX  = PreviousLevel->StepX;
+  StepY  = PreviousLevel->StepY;
+
+  Negative = PreviousLevel->Negative;
+  Path     = PreviousLevel->Path;
+ }
 }
 //------------------------------------------------------------------------------
 
@@ -263,13 +284,13 @@ void GerberLevel::Arc(){
  a2 = atan2(y2, x2)*180.0/pi;
 
  a = a2 - a1; // [-360; 360]
- if(a < 0.0) a += 360.0; // [0; 360]
 
- if(Interpolation == giClockwiseCircular){
-  if(a > 0.0) a -= 360.0; // (-360; 0]
+ if(Interpolation == giClockwiseCircular){ // CW
+  while(a >= 0.0) a -= 360.0; // [-360; 0)
   if(!Multiquadrant && a < -90) a += 360; // [-90; 270)
- }else{
-  if(!Multiquadrant && a >  90) a -= 360; // (-270; 90]
+ }else{ // CCW
+  while(a <= 0.0) a += 360.0; // (0; 360]
+  if(!Multiquadrant && a > 90) a -= 360; // (-270; 90]
  }
 
  if(Multiquadrant){
@@ -307,6 +328,9 @@ void GerberLevel::Arc(){
  if(Bottom > b) Bottom = b;
  if(Right  < r) Right  = r;
  if(Top    < t) Top    = t;
+
+ // Clear I and J for next arc
+ I = J = 0.0;
 }
 //------------------------------------------------------------------------------
 

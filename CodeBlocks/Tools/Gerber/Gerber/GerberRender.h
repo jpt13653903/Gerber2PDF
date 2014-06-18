@@ -42,7 +42,6 @@ public:
 
  GerberAperture* Aperture; // Used for gcApertureSelect
  GerberRender*   Next; // Points to the next render command
-
 };
 //------------------------------------------------------------------------------
 

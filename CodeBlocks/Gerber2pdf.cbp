@@ -37,8 +37,8 @@
 		<Unit filename="Tools/Gerber/Gerber/GerberAperture.cpp" />
 		<Unit filename="Tools/Gerber/Gerber/GerberAperture.h" />
 		<Unit filename="Tools/Gerber/Gerber/GerberEnums.h" />
-		<Unit filename="Tools/Gerber/Gerber/GerberLayer.cpp" />
-		<Unit filename="Tools/Gerber/Gerber/GerberLayer.h" />
+		<Unit filename="Tools/Gerber/Gerber/GerberLevel.cpp" />
+		<Unit filename="Tools/Gerber/Gerber/GerberLevel.h" />
 		<Unit filename="Tools/Gerber/Gerber/GerberMacro.cpp" />
 		<Unit filename="Tools/Gerber/Gerber/GerberMacro.h" />
 		<Unit filename="Tools/Gerber/Gerber/GerberRender.cpp" />
