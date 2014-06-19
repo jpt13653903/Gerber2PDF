@@ -1697,11 +1697,7 @@ bool JGerber::GetGerber(){
 
    case '*':
     Index++;
-    if(!CurrentLevel){
-     printf("Line %d - Error: No level defined\n", LineNumber);
-     return false;
-    }
-    CurrentLevel->Do();
+    if(CurrentLevel) CurrentLevel->Do();
     break;
 
    case ' ' :
