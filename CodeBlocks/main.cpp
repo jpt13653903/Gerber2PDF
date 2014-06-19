@@ -18,20 +18,22 @@ APERTURE* TempApertureStack;
 
 pdfForm* Apertures[1000];
 pdfForm* CurrentAperture = 0;
-bool     SolidCircle     = false;
-bool     SolidRectangle  = false;
-bool     OutlinePath     = false;
-double   LineWidth       = 0.0;
-double   RectW           = 0.0;
-double   RectH           = 0.0;
-double   RectX           = 0.0;
-double   RectY           = 0.0;
+
+bool   SolidCircle    = false;
+bool   SolidRectangle = false;
+bool   OutlinePath    = false;
+double LineWidth      = 0.0;
+double RectW          = 0.0;
+double RectH          = 0.0;
+double RectX          = 0.0;
+double RectY          = 0.0;
 //------------------------------------------------------------------------------
 
-void DrawAperture(pdfContents* Contents, GerberRender* Render){
- Contents->Push     ();
- Contents->LineCap  (pdfContents::csRound);
- Contents->LineJoin (pdfContents::jsRound);
+/// \param Polarity true => black on white; false => white on black
+void DrawAperture(pdfContents* Contents, GerberRender* Render, bool Polarity){
+ Contents->Push    ();
+ Contents->LineCap (pdfContents::csRound);
+ Contents->LineJoin(pdfContents::jsRound);
 
  while(Render){
   switch(Render->Command){
@@ -64,6 +66,14 @@ void DrawAperture(pdfContents* Contents, GerberRender* Render){
     break;
 
    case gcFill:
+    if(Polarity) Contents->FillColour(Black);
+    else         Contents->FillColour(White);
+    Contents->Fill();
+    break;
+
+   case gcErase:
+    if(Polarity) Contents->FillColour(White);
+    else         Contents->FillColour(Black);
     Contents->Fill();
     break;
 
@@ -172,7 +182,11 @@ int RenderLayer(
  GerberRender*   Render   = 0;
  GerberAperture* Aperture = 0;
 
- JString  String;
+ JString String;
+
+ Render = Level->Render();
+
+ if(!Render) return 0;
 
  if(Level->Negative){
   if(Negative){
@@ -191,8 +205,6 @@ int RenderLayer(
    Contents->FillColour  (Black);
   }
  }
-
- Render = Level->Render();
 
  while(Render){
   switch(Render->Command){
@@ -322,9 +334,14 @@ int RenderLayer(
        Aperture->Right,
        Aperture->Top
       );
-      DrawAperture(CurrentAperture, Aperture->Render());
+      CurrentAperture->Update();
+      DrawAperture(
+       CurrentAperture,
+       Aperture->Render(),
+       (!Level->Negative && !Negative) || (Level->Negative && Negative)
+      );
       Page->Resources.AddForm      (CurrentAperture);
-      pdf.  AddIndirect            (CurrentAperture);
+      pdf.AddIndirect              (CurrentAperture);
       Apertures[Aperture->Code]   = CurrentAperture;
       TempApertureStack           = new APERTURE;
       TempApertureStack->Aperture = CurrentAperture;

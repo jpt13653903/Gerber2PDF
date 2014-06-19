@@ -1449,8 +1449,6 @@ bool JGerber::StepAndRepeat(){
 //------------------------------------------------------------------------------
 
 bool JGerber::Attribute(){
- printf("Line %d - Warning: Attribute ignored\n", LineNumber);
-
  while(Index < Length){
   if(Buffer[Index] == '*'){
    Index++;

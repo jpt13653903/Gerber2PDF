@@ -30,8 +30,8 @@ pdfOpague::pdfOpague(const char* Name){
  pdfOpague::Name.Set(Name);
 
  Dictionary.Clear();
- Dictionary.AddEntry("CA"  , &CurrentStrokeAlpha);
- Dictionary.AddEntry("ca"  , &CurrentFillAlpha);
+ Dictionary.AddEntry("CA", &CurrentStrokeAlpha);
+ Dictionary.AddEntry("ca", &CurrentFillAlpha);
 }
 //------------------------------------------------------------------------------
 

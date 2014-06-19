@@ -234,28 +234,17 @@ bool GerberMacro::RenderCircle(PRIMITIVE_ITEM* Primitive){
   Exposure = !Exposure;
  }
 
- if(Exposure){
-  Render = new GerberRender;
-  Render->Command = gcCircle; // Circles are rendered CCW
-  Render->X       = Get_mm(Modifier[2]);
-  Render->Y       = Get_mm(Modifier[3]);
-  Render->W       = Get_mm(Modifier[1]);
-  Add(Render);
+ Render = new GerberRender;
+ Render->Command = gcCircle; // Circles are rendered CCW
+ Render->X       = Get_mm(Modifier[2]);
+ Render->Y       = Get_mm(Modifier[3]);
+ Render->W       = Get_mm(Modifier[1]);
+ Add(Render);
 
- }else{
-  Render = new GerberRender;
-  Render->Command = gcBeginLine;
-  Render->X       = Get_mm(Modifier[2]+Modifier[1]/2.0);
-  Render->Y       = Get_mm(Modifier[3]);
-  Add(Render);
-
-  Render = new GerberRender;
-  Render->Command = gcArc;
-  Render->X       = Get_mm(Modifier[2]);
-  Render->Y       = Get_mm(Modifier[3]);
-  Render->A       = -360.0;
-  Add(Render);
- }
+ Render = new GerberRender;
+ if(Exposure) Render->Command = gcFill;
+ else         Render->Command = gcErase;
+ Add(Render);
 
  return true;
 }
@@ -317,11 +306,7 @@ bool GerberMacro::RenderLineVector(PRIMITIVE_ITEM* Primitive){
 
  // Calculate the unit-vector perpendicular to the line
  a  = atan2(y2-y1, x2-x1);
- if(Exposure){ // Reverse the vector to reverse the wind
-  a += pi/2.0;
- }else{
-  a -= pi/2.0;
- }
+ a += pi/2.0;
  x3 = cos(a);
  y3 = sin(a);
 
@@ -369,6 +354,11 @@ bool GerberMacro::RenderLineVector(PRIMITIVE_ITEM* Primitive){
  Render->Command = gcClose;
  Add(Render);
 
+ Render = new GerberRender;
+ if(Exposure) Render->Command = gcFill;
+ else         Render->Command = gcErase;
+ Add(Render);
+
  return true;
 }
 //------------------------------------------------------------------------------
@@ -396,7 +386,7 @@ bool GerberMacro::RenderLineCenter(PRIMITIVE_ITEM* Primitive){
   Exposure = !Exposure;
  }
 
- double a             ; // Rotation
+ double a     ; // Rotation
  double w , h ; // Width and Height
  double x0, y0; // Center
  double x1, y1; // Corner 1
@@ -424,11 +414,12 @@ bool GerberMacro::RenderLineCenter(PRIMITIVE_ITEM* Primitive){
  x4 = x0 - w;
  y4 = y0 + h;
 
- if(Exposure){
-  RenderLine(x1, y1, x2, y2, x3, y3, x4, y4, 0, 0, a);
- }else{
-  RenderLine(x4, y4, x3, y3, x2, y2, x1, y1, 0, 0, a);
- }
+ RenderLine(x1, y1, x2, y2, x3, y3, x4, y4, 0, 0, a);
+
+ GerberRender* Render = new GerberRender;
+ if(Exposure) Render->Command = gcFill;
+ else         Render->Command = gcErase;
+ Add(Render);
 
  return true;
 }
@@ -479,11 +470,12 @@ bool GerberMacro::RenderLineLowerLeft(PRIMITIVE_ITEM* Primitive){
  x4 = x1;
  y4 = y1 + h;
 
- if(Exposure){
-  RenderLine(x1, y1, x2, y2, x3, y3, x4, y4, 0, 0, a);
- }else{
-  RenderLine(x4, y4, x3, y3, x2, y2, x1, y1, 0, 0, a);
- }
+ RenderLine(x1, y1, x2, y2, x3, y3, x4, y4, 0, 0, a);
+
+ GerberRender* Render = new GerberRender;
+ if(Exposure) Render->Command = gcFill;
+ else         Render->Command = gcErase;
+ Add(Render);
 
  return true;
 }
@@ -547,7 +539,7 @@ bool GerberMacro::RenderOutline(PRIMITIVE_ITEM* Primitive){
   CCW = false;
  }
 
- if(Exposure == CCW){
+ if(CCW){
   Render = new GerberRender;
   Render->Command = gcBeginLine;
   Render->X       = Get_mm(x[0]);
@@ -580,6 +572,11 @@ bool GerberMacro::RenderOutline(PRIMITIVE_ITEM* Primitive){
 
  Render = new GerberRender;
  Render->Command = gcClose;
+ Add(Render);
+
+ Render = new GerberRender;
+ if(Exposure) Render->Command = gcFill;
+ else         Render->Command = gcErase;
  Add(Render);
 
  delete[] x;
@@ -628,9 +625,6 @@ bool GerberMacro::RenderPolygon(PRIMITIVE_ITEM* Primitive){
  double* y = new double[N];
 
  da = 2.0*pi / N;
- if(!Exposure){
-  da *= -1.0;
- }
 
  r = sqrt (Y*Y + X*X);
  a = atan2(Y   , X  ) + A;
@@ -660,6 +654,11 @@ bool GerberMacro::RenderPolygon(PRIMITIVE_ITEM* Primitive){
 
  Render = new GerberRender;
  Render->Command = gcClose;
+ Add(Render);
+
+ Render = new GerberRender;
+ if(Exposure) Render->Command = gcFill;
+ else         Render->Command = gcErase;
  Add(Render);
 
  delete[] x;
@@ -772,6 +771,10 @@ bool GerberMacro::RenderMoire(PRIMITIVE_ITEM* Primitive){
   Rotation+pi/2.0
  );
 
+ Render = new GerberRender;
+ Render->Command = gcFill;
+ Add(Render);
+
  return true;
 }
 //------------------------------------------------------------------------------
@@ -876,6 +879,10 @@ bool GerberMacro::RenderThermal(PRIMITIVE_ITEM* Primitive){
   y2 =   t;
  }
 
+ Render = new GerberRender;
+ Render->Command = gcFill;
+ Add(Render);
+
  return true;
 }
 //------------------------------------------------------------------------------
@@ -912,8 +919,6 @@ bool GerberMacro::RenderAssignment(PRIMITIVE_ITEM* Primitive){
 GerberRender* GerberMacro::Render(double* Modifiers, int ModifierCount){
  RenderList = 0;
  RenderLast = 0;
-
- GerberRender* RenderFill;
 
  if(NewModifiers) delete[] GerberMacro::Modifiers;
  NewModifiers = false;
@@ -967,12 +972,6 @@ GerberRender* GerberMacro::Render(double* Modifiers, int ModifierCount){
     break;
   }
   Primitive = Primitive->Next;
- }
-
- if(RenderList){ // Nothing drawn => Nothing to fill
-  RenderFill = new GerberRender;
-  RenderFill->Command = gcFill;
-  Add(RenderFill);
  }
 
  return RenderList;
@@ -1650,7 +1649,6 @@ bool GerberMacro::LoadMacro(const char* Buffer, unsigned Length, bool Inches){
  GerberMacro::Length = Length;
  GerberMacro::Inches = Inches;
  GerberMacro::Index  = 0;
-
 
  if(!Primitive())         return false;
  WhiteSpace();

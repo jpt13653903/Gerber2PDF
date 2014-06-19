@@ -62,6 +62,7 @@ enum GERBER_COMMAND{
  // Render Path
  gcStroke,
  gcFill,
+ gcErase, // Used for "exposure off" aperture primitives
 
  // Other
  gcBeginOutline, // The aperture does not matter
