@@ -101,6 +101,7 @@ public:
  void Fill       ();
  void FillEvenOdd();
  void FillStroke ();
+ void Clip       (); // Add to clipping path
 
  // Use these to draw text
  void BeginText  ();

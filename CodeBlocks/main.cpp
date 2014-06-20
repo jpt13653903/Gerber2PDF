@@ -16,7 +16,7 @@ struct APERTURE{
 APERTURE* ApertureStack = 0;
 APERTURE* TempApertureStack;
 
-pdfForm* Apertures[1000][2]; // [0] for negative, [1] for positive
+pdfForm* Apertures[1000];
 pdfForm* CurrentAperture = 0;
 
 bool   SolidCircle    = false;
@@ -29,59 +29,100 @@ double RectX          = 0.0;
 double RectY          = 0.0;
 //------------------------------------------------------------------------------
 
-/// \param Polarity true => black on white; false => white on black
-void DrawAperture(pdfContents* Contents, GerberRender* Render, bool Polarity){
+void DrawAperture(
+ pdfContents*  Contents,
+ GerberRender* Render,
+ double Left,
+ double Bottom,
+ double Right,
+ double Top
+){
+ struct OBJECT{
+  GerberRender* Start;
+  OBJECT      * Next;
+ };
+ OBJECT* Objects = 0;
+ OBJECT* Object;
+
+ while(Render){
+  Object = new OBJECT;
+  Object->Start = Render;
+  Object->Next  = Objects;
+  Objects       = Object;
+  while(Render){
+   if(
+    Render->Command == gcStroke ||
+    Render->Command == gcFill   ||
+    Render->Command == gcErase
+   ){
+    GerberRender* Temp = Render;
+    Render = Render->Next;
+    Temp->Next = 0;
+    break;
+   }
+   Render = Render->Next;
+  }
+ }
+
  Contents->Push    ();
  Contents->LineCap (pdfContents::csRound);
  Contents->LineJoin(pdfContents::jsRound);
 
- while(Render){
-  switch(Render->Command){
-   case gcRectangle:
-    Contents->Rectangle(Render->X, Render->Y, Render->W, Render->H);
-    break;
+ while(Objects){
+  Object  = Objects;
+  Objects = Objects->Next;
 
-   case gcCircle:
-    Contents->Circle(Render->X, Render->Y, Render->W/2.0);
-    break;
+  Render = Object->Start;
+  while(Render){
+   switch(Render->Command){
+    case gcRectangle:
+     Contents->Rectangle(Render->X, Render->Y, Render->W, Render->H);
+     break;
 
-   case gcBeginLine:
-    Contents->BeginLine(Render->X, Render->Y);
-    break;
+    case gcCircle:
+     Contents->Circle(Render->X, Render->Y, Render->W/2.0);
+     break;
 
-   case gcLine:
-    Contents->Line(Render->X, Render->Y);
-    break;
+    case gcBeginLine:
+     Contents->BeginLine(Render->X, Render->Y);
+     break;
 
-   case gcArc:
-    Contents->Arc(Render->X, Render->Y, Render->A);
-    break;
+    case gcLine:
+     Contents->Line(Render->X, Render->Y);
+     break;
 
-   case gcClose:
-    Contents->Close();
-    break;
+    case gcArc:
+     Contents->Arc(Render->X, Render->Y, Render->A);
+     break;
 
-   case gcStroke:
-    Contents->Stroke();
-    break;
+    case gcClose:
+     Contents->Close();
+     break;
 
-   case gcFill:
-    if(Polarity) Contents->FillColour(Black);
-    else         Contents->FillColour(White);
-    Contents->Fill();
-    break;
+    case gcStroke:
+     Contents->Stroke();
+     break;
 
-   case gcErase:
-    if(Polarity) Contents->FillColour(White);
-    else         Contents->FillColour(Black);
-    Contents->Fill();
-    break;
+    case gcFill:
+     Contents->Fill();
+     break;
 
-   default:
-    printf("Error: Unrecognised Aperture Render Command %d\n", Render->Command);
-    break;
+    case gcErase:
+     Contents->BeginLine(Left , Bottom);
+     Contents->Line     (Left , Top);
+     Contents->Line     (Right, Top);
+     Contents->Line     (Right, Bottom);
+     Contents->Close();
+     Contents->Clip();
+     break;
+
+    default:
+     printf("Error: Unrecognised Aperture Render Command %d\n", Render->Command);
+     break;
+   }
+   Render = Render->Next;
   }
-  Render = Render->Next;
+  delete Object;
  }
 
  Contents->Pop();
@@ -188,24 +229,19 @@ int RenderLayer(
 
  if(!Render) return 0;
 
- int Polarity;
  if(Level->Negative){
   if(Negative){
-   Polarity = 1;
    Contents->StrokeColour(Black);
    Contents->FillColour  (Black);
   }else{
-   Polarity = 0;
    Contents->StrokeColour(White);
    Contents->FillColour  (White);
   }
  }else{
   if(Negative){
-   Polarity = 0;
    Contents->StrokeColour(White);
    Contents->FillColour  (White);
   }else{
-   Polarity = 1;
    Contents->StrokeColour(Black);
    Contents->FillColour  (Black);
   }
@@ -327,13 +363,11 @@ int RenderLayer(
      RectW          = Aperture->Right - Aperture->Left;
      RectH          = Aperture->Top   - Aperture->Bottom;
 
-     if(Apertures[Aperture->Code][Polarity]){
-      CurrentAperture = Apertures[Aperture->Code][Polarity];
+     if(Apertures[Aperture->Code]){
+      CurrentAperture = Apertures[Aperture->Code];
      }else{
       String.Set   ('D');
       String.Append(Aperture->Code);
-      if(Polarity) String.Append("P");
-      else         String.Append("N");
       CurrentAperture = new pdfForm(String.String);
       CurrentAperture->BBox.Set(
        Aperture->Left,
@@ -342,14 +376,21 @@ int RenderLayer(
        Aperture->Top
       );
       CurrentAperture->Update();
-      DrawAperture(CurrentAperture, Aperture->Render(), Polarity);
-      Page->Resources.AddForm              (CurrentAperture);
-      pdf.AddIndirect                      (CurrentAperture);
-      Apertures[Aperture->Code][Polarity] = CurrentAperture;
-      TempApertureStack                   = new APERTURE;
-      TempApertureStack->Aperture         = CurrentAperture;
-      TempApertureStack->Next             = ApertureStack;
-      ApertureStack                       = TempApertureStack;
+      DrawAperture(
+       CurrentAperture,
+       Aperture->Render(),
+       Aperture->Left,
+       Aperture->Bottom,
+       Aperture->Right,
+       Aperture->Top
+      );
+      Page->Resources.AddForm      (CurrentAperture);
+      pdf.AddIndirect              (CurrentAperture);
+      Apertures[Aperture->Code]   = CurrentAperture;
+      TempApertureStack           = new APERTURE;
+      TempApertureStack->Aperture = CurrentAperture;
+      TempApertureStack->Next     = ApertureStack;
+      ApertureStack               = TempApertureStack;
      }
     }else{
      printf("Error: Null Aperture\n");
@@ -473,10 +514,7 @@ int main(int argc, char** argv){
  // For each gerber file...
  for(BoardLayer = 0; BoardLayer < argc-1-OptionsCount; BoardLayer++){
   // Clear the variables
-  for(j = 0; j < 1000; j++){
-   Apertures[j][0] = 0;
-   Apertures[j][1] = 0;
-  }
+  for(j = 0; j < 1000; j++) Apertures[j] = 0;
 
   // Read the gerber
   FileName.Set(argv[BoardLayer+1+OptionsCount]);
@@ -522,10 +560,10 @@ int main(int argc, char** argv){
   Contents[BoardLayer].LineJoin(pdfContents::jsRound);
   Contents[BoardLayer].Use_mm();
 
-  x  =     (Gerber.Right + Gerber.Left  )/2.0;
-  y  =     (Gerber.Top   + Gerber.Bottom)/2.0;
-  w  = 1.1*(Gerber.Right - Gerber.Left  );
-  h  = 1.1*(Gerber.Top   - Gerber.Bottom);
+  x  =      (Gerber.Right + Gerber.Left  )/2.0;
+  y  =      (Gerber.Top   + Gerber.Bottom)/2.0;
+  w  = 1.05*(Gerber.Right - Gerber.Left  );
+  h  = 1.05*(Gerber.Top   - Gerber.Bottom);
   w2 = w/2.0;
   h2 = h/2.0;
   if(Gerber.Negative){
