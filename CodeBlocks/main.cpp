@@ -16,7 +16,7 @@ struct APERTURE{
 APERTURE* ApertureStack = 0;
 APERTURE* TempApertureStack;
 
-pdfForm* Apertures[1000];
+pdfForm* Apertures[1000][2]; // [0] for negative, [1] for positive
 pdfForm* CurrentAperture = 0;
 
 bool   SolidCircle    = false;
@@ -188,19 +188,24 @@ int RenderLayer(
 
  if(!Render) return 0;
 
+ int Polarity;
  if(Level->Negative){
   if(Negative){
+   Polarity = 1;
    Contents->StrokeColour(Black);
    Contents->FillColour  (Black);
   }else{
+   Polarity = 0;
    Contents->StrokeColour(White);
    Contents->FillColour  (White);
   }
  }else{
   if(Negative){
+   Polarity = 0;
    Contents->StrokeColour(White);
    Contents->FillColour  (White);
   }else{
+   Polarity = 1;
    Contents->StrokeColour(Black);
    Contents->FillColour  (Black);
   }
@@ -322,11 +327,13 @@ int RenderLayer(
      RectW          = Aperture->Right - Aperture->Left;
      RectH          = Aperture->Top   - Aperture->Bottom;
 
-     if(Apertures[Aperture->Code]){
-      CurrentAperture = Apertures[Aperture->Code];
+     if(Apertures[Aperture->Code][Polarity]){
+      CurrentAperture = Apertures[Aperture->Code][Polarity];
      }else{
       String.Set   ('D');
       String.Append(Aperture->Code);
+      if(Polarity) String.Append("P");
+      else         String.Append("N");
       CurrentAperture = new pdfForm(String.String);
       CurrentAperture->BBox.Set(
        Aperture->Left,
@@ -335,18 +342,14 @@ int RenderLayer(
        Aperture->Top
       );
       CurrentAperture->Update();
-      DrawAperture(
-       CurrentAperture,
-       Aperture->Render(),
-       (!Level->Negative && !Negative) || (Level->Negative && Negative)
-      );
-      Page->Resources.AddForm      (CurrentAperture);
-      pdf.AddIndirect              (CurrentAperture);
-      Apertures[Aperture->Code]   = CurrentAperture;
-      TempApertureStack           = new APERTURE;
-      TempApertureStack->Aperture = CurrentAperture;
-      TempApertureStack->Next     = ApertureStack;
-      ApertureStack               = TempApertureStack;
+      DrawAperture(CurrentAperture, Aperture->Render(), Polarity);
+      Page->Resources.AddForm              (CurrentAperture);
+      pdf.AddIndirect                      (CurrentAperture);
+      Apertures[Aperture->Code][Polarity] = CurrentAperture;
+      TempApertureStack                   = new APERTURE;
+      TempApertureStack->Aperture         = CurrentAperture;
+      TempApertureStack->Next             = ApertureStack;
+      ApertureStack                       = TempApertureStack;
      }
     }else{
      printf("Error: Null Aperture\n");
@@ -471,7 +474,8 @@ int main(int argc, char** argv){
  for(BoardLayer = 0; BoardLayer < argc-1-OptionsCount; BoardLayer++){
   // Clear the variables
   for(j = 0; j < 1000; j++){
-   Apertures[j] = 0;
+   Apertures[j][0] = 0;
+   Apertures[j][1] = 0;
   }
 
   // Read the gerber
