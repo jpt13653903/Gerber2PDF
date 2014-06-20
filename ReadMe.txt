@@ -14,6 +14,14 @@ A batch-file or script is recommended, but a simple "Open with..."
 link will also work, resulting in a single Gerber to be converted 
 with the same file-name as the Gerber.
 
+Changes:
+--------
+
+2014-06-20
+- Fixed bug regarding aperture macros and primitives with "exposure off".
+- Added an option to change the layer colour.
+- Added an option to combine layers onto a single page.
+
 Source:
 -------
 
