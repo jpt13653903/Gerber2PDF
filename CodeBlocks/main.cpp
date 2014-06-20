@@ -14,8 +14,9 @@ COLOUR Dark (0.0, 0.0, 0.0);
 COLOUR Clear(1.0, 1.0, 1.0);
 //------------------------------------------------------------------------------
 
-JPDF pdf;
-bool Negative = false;
+JPDF   pdf;
+double Mirror   = 1.0;
+bool   Negative = false;
 
 struct APERTURE{
  pdfForm*  Aperture;
@@ -85,23 +86,27 @@ void DrawAperture(
   while(Render){
    switch(Render->Command){
     case gcRectangle:
-     Contents->Rectangle(Render->X, Render->Y, Render->W, Render->H);
+     if(Mirror > 0.0){
+      Contents->Rectangle(Render->X, Render->Y, Render->W, Render->H);
+     }else{
+      Contents->Rectangle(-Render->X-Render->W, Render->Y, Render->W,Render->H);
+     }
      break;
 
     case gcCircle:
-     Contents->Circle(Render->X, Render->Y, Render->W/2.0);
+     Contents->Circle(Render->X*Mirror, Render->Y, Render->W/2.0);
      break;
 
     case gcBeginLine:
-     Contents->BeginLine(Render->X, Render->Y);
+     Contents->BeginLine(Render->X*Mirror, Render->Y);
      break;
 
     case gcLine:
-     Contents->Line(Render->X, Render->Y);
+     Contents->Line(Render->X*Mirror, Render->Y);
      break;
 
     case gcArc:
-     Contents->Arc(Render->X, Render->Y, Render->A);
+     Contents->Arc(Render->X*Mirror, Render->Y, Render->A*Mirror);
      break;
 
     case gcClose:
@@ -259,28 +264,37 @@ int RenderLayer(
  while(Render){
   switch(Render->Command){
    case gcRectangle:
-    Contents->Rectangle(
-     Render->X,
-     Render->Y,
-     Render->W,
-     Render->H
-    );
+    if(Mirror > 0.0){
+     Contents->Rectangle(
+      Render->X*Mirror,
+      Render->Y,
+      Render->W,
+      Render->H
+     );
+    }else{
+     Contents->Rectangle(
+      -Render->X - Render->W,
+      Render->Y,
+      Render->W,
+      Render->H
+     );
+    }
     break;
 
    case gcCircle:
-    Contents->Circle(Render->X, Render->Y, Render->W/2.0);
+    Contents->Circle(Render->X*Mirror, Render->Y, Render->W/2.0);
     break;
 
    case gcBeginLine:
     if(OutlinePath){
-     Contents->BeginLine(Render->X, Render->Y);
+     Contents->BeginLine(Render->X*Mirror, Render->Y);
 
     }else if(SolidCircle){
      Contents->LineWidth(LineWidth);
-     Contents->BeginLine(Render->X, Render->Y);
+     Contents->BeginLine(Render->X*Mirror, Render->Y);
 
     }else if(SolidRectangle){
-     RectX = Render->X;
+     RectX = Render->X*Mirror;
      RectY = Render->Y;
 
     }else{
@@ -295,16 +309,16 @@ int RenderLayer(
 
    case gcLine:
     if(OutlinePath || SolidCircle){
-     Contents->Line(Render->X, Render->Y);
+     Contents->Line(Render->X*Mirror, Render->Y);
 
     }else if(SolidRectangle){
      DrawRectLine(
       Contents,
-      RectX    , RectY,
-      Render->X, Render->Y,
-      RectW    , RectH
+      RectX           , RectY,
+      Render->X*Mirror, Render->Y,
+      RectW           , RectH
      );
-     RectX = Render->X;
+     RectX = Render->X*Mirror;
      RectY = Render->Y;
 
     }else{
@@ -319,7 +333,7 @@ int RenderLayer(
 
    case gcArc:
     if(OutlinePath || SolidCircle){
-     Contents->Arc(Render->X, Render->Y, Render->A);
+     Contents->Arc(Render->X*Mirror, Render->Y, Render->A*Mirror);
     }else{
      printf(
       "Error: Only solid circular apertures can be used for arcs\n"
@@ -332,7 +346,7 @@ int RenderLayer(
    case gcFlash:
     if(CurrentAperture){
      Contents->Push();
-     Contents->Translate(Render->X, Render->Y);
+     Contents->Translate(Render->X*Mirror, Render->Y);
      Contents->Form(CurrentAperture);
      Contents->Pop();
     }else{
@@ -487,7 +501,7 @@ int main(int argc, char** argv){
    "along with this program.  If not, see <http://www.gnu.org/licenses/>\n"
    "\n"
    "Usage: Gerber2pdf [-output=output_file_name] file_1 [-combine] file_2 ...\n"
-   "       [-colour=R,G,B] file_N\n"
+   "       [-colour=R,G,B] [-mirror] [-nomirror] file_N\n"
    "\n"
    "Example: Gerber2pdf -output=My_Project\n"
    "         top_silk.grb bottom_silk.grb\n"
@@ -495,13 +509,13 @@ int main(int argc, char** argv){
    "         inner_copper_2.grb bottom_copper.grb\n"
    "         bottom_solder_mask.grb top_solder_mask.grb\n"
    "         board_outline.grb\n"
-   "         -combine\n"
-   "         -colour=255,0,0 top_copper.grb\n"
-   "         -colour=0,128,0 top_solder_mask.grb\n"
-   "         -colour=0,0,255 board_outline.grb\n"
-   "         -combine\n"
+   "         -combine -mirror\n"
    "         -colour=255,0,0 bottom_copper.grb\n"
    "         -colour=0,128,0 bottom_solder_mask.grb\n"
+   "         -colour=0,0,255 board_outline.grb\n"
+   "         -combine -nomirror\n"
+   "         -colour=255,0,0 top_copper.grb\n"
+   "         -colour=0,128,0 top_solder_mask.grb\n"
    "         -colour=0,0,255 board_outline.grb\n"
   );
   Pause();
@@ -578,6 +592,12 @@ int main(int argc, char** argv){
     Combine     = true;
     ThePage     = Page+arg;
     ThePageUsed = false;
+
+   }else if(StringStart(argv[arg]+1, "mirror")){
+    Mirror = -1.0;
+
+   }else if(StringStart(argv[arg]+1, "nomirror")){
+    Mirror = 1.0;
    }
    continue; // handle the next argument
   }
@@ -623,6 +643,7 @@ int main(int argc, char** argv){
   Outlines    .AddChild   (Outline+arg);
 
   if(!ThePageUsed){
+   if(TheContents) TheContents->Deflate();
    TheContents = Contents+arg;
    ThePage->Contents   (TheContents);
    pdf     .AddIndirect(ThePage    );
@@ -642,7 +663,7 @@ int main(int argc, char** argv){
    ThePageTop    = -1e100;
   }
 
-  x  =      (Gerber.Right + Gerber.Left  )/2.0;
+  x  =      (Gerber.Right + Gerber.Left  )/2.0*Mirror;
   y  =      (Gerber.Top   + Gerber.Bottom)/2.0;
   w  = 1.05*(Gerber.Right - Gerber.Left  );
   h  = 1.05*(Gerber.Top   - Gerber.Bottom);
@@ -704,10 +725,10 @@ int main(int argc, char** argv){
     for(y = 0; y < Level->CountY; y++){
      for(x = 0; x < Level->CountX; x++){
       TheContents->Form(LayerStack->Layer);
-      TheContents->Translate(Level->StepX, 0.0);
+      TheContents->Translate(Level->StepX*Mirror, 0.0);
      }
      TheContents->Translate(
-      Level->StepX * -Level->CountX,
+      Level->StepX*Mirror * -Level->CountX,
       Level->StepY);
     }
 
@@ -725,9 +746,9 @@ int main(int argc, char** argv){
 
    Level = Level->Next;
   }
-//  TheContents->Deflate();
-  ThePage    ->Update();
+  ThePage->Update();
  }
+ if(TheContents) TheContents->Deflate();
 
  if(PageCount){
   pdf.AddIndirect(&Pages);

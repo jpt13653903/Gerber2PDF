@@ -21,6 +21,7 @@ Changes:
 - Fixed bug regarding aperture macros and primitives with "exposure off".
 - Added an option to change the layer colour.
 - Added an option to combine layers onto a single page.
+- Added an option to mirror the output
 
 Source:
 -------
