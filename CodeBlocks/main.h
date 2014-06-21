@@ -58,5 +58,29 @@ struct LEVEL_FORM{
 };
 //------------------------------------------------------------------------------
 
+struct LAYER{
+ char*    Filename;
+ pdfForm* Form;
+ LAYER*   Next;
+
+ bool    Negative;
+ double  Left, Bottom, Right, Top;
+ JString Title;
+
+ LAYER(){
+  Filename  = 0;
+  Form      = 0;
+  Next      = 0;
+ }
+
+ ~LAYER(){
+  if(Filename) delete[] Filename;
+  if(Form    ) delete   Form;
+  if(Next    ) delete   Next;
+ }
+};
+LAYER* Layers = 0; // Stack of layer XObjects
+//------------------------------------------------------------------------------
+
 #endif
 //------------------------------------------------------------------------------

@@ -21,9 +21,9 @@
 #include "main.h"
 //------------------------------------------------------------------------------
 
-JPDF   pdf;
-double Mirror   = 1.0;
-bool   Negative = false;
+JPDF pdf;
+bool Mirror   = false;
+bool Negative = false;
 
 COLOUR Dark (0.0, 0.0, 0.0);
 COLOUR Clear(1.0, 1.0, 1.0);
@@ -93,27 +93,23 @@ void DrawAperture(
   while(Render != Object->End){
    switch(Render->Command){
     case gcRectangle:
-     if(Mirror > 0.0){
-      Contents->Rectangle(Render->X, Render->Y, Render->W, Render->H);
-     }else{
-      Contents->Rectangle(-Render->X-Render->W, Render->Y, Render->W,Render->H);
-     }
+     Contents->Rectangle(Render->X, Render->Y, Render->W, Render->H);
      break;
 
     case gcCircle:
-     Contents->Circle(Render->X*Mirror, Render->Y, Render->W/2.0);
+     Contents->Circle(Render->X, Render->Y, Render->W/2.0);
      break;
 
     case gcBeginLine:
-     Contents->BeginLine(Render->X*Mirror, Render->Y);
+     Contents->BeginLine(Render->X, Render->Y);
      break;
 
     case gcLine:
-     Contents->Line(Render->X*Mirror, Render->Y);
+     Contents->Line(Render->X, Render->Y);
      break;
 
     case gcArc:
-     Contents->Arc(Render->X*Mirror, Render->Y, Render->A*Mirror);
+     Contents->Arc(Render->X, Render->Y, Render->A);
      break;
 
     case gcClose:
@@ -237,7 +233,7 @@ void Pause(){
 //------------------------------------------------------------------------------
 
 int RenderLayer(
- pdfPage*     Page,
+ pdfForm*     Form,
  pdfContents* Contents,
  GerberLevel* Level
 ){
@@ -250,58 +246,38 @@ int RenderLayer(
 
  if(!Render) return 0;
 
- if(Level->Negative){
-  if(Negative){
-   Contents->StrokeColour(Dark.R, Dark.G, Dark.B);
-   Contents->FillColour  (Dark.R, Dark.G, Dark.B);
-  }else{
-   Contents->StrokeColour(Clear.R, Clear.G, Clear.B);
-   Contents->FillColour  (Clear.R, Clear.G, Clear.B);
-  }
- }else{
-  if(Negative){
-   Contents->StrokeColour(Clear.R, Clear.G, Clear.B);
-   Contents->FillColour  (Clear.R, Clear.G, Clear.B);
-  }else{
-   Contents->StrokeColour(Dark.R, Dark.G, Dark.B);
-   Contents->FillColour  (Dark.R, Dark.G, Dark.B);
-  }
+ Contents->Push();
+
+ if(Level->Negative != Negative){
+  Contents->StrokeColour(Clear.R, Clear.G, Clear.B);
+  Contents->FillColour  (Clear.R, Clear.G, Clear.B);
  }
 
  while(Render){
   switch(Render->Command){
    case gcRectangle:
-    if(Mirror > 0.0){
-     Contents->Rectangle(
-      Render->X*Mirror,
-      Render->Y,
-      Render->W,
-      Render->H
-     );
-    }else{
-     Contents->Rectangle(
-      -Render->X - Render->W,
-      Render->Y,
-      Render->W,
-      Render->H
-     );
-    }
+    Contents->Rectangle(
+     Render->X,
+     Render->Y,
+     Render->W,
+     Render->H
+    );
     break;
 
    case gcCircle:
-    Contents->Circle(Render->X*Mirror, Render->Y, Render->W/2.0);
+    Contents->Circle(Render->X, Render->Y, Render->W/2.0);
     break;
 
    case gcBeginLine:
     if(OutlinePath){
-     Contents->BeginLine(Render->X*Mirror, Render->Y);
+     Contents->BeginLine(Render->X, Render->Y);
 
     }else if(SolidCircle){
      Contents->LineWidth(LineWidth);
-     Contents->BeginLine(Render->X*Mirror, Render->Y);
+     Contents->BeginLine(Render->X, Render->Y);
 
     }else if(SolidRectangle){
-     RectX = Render->X*Mirror;
+     RectX = Render->X;
      RectY = Render->Y;
 
     }else{
@@ -310,22 +286,23 @@ int RenderLayer(
       "apertures can be used for paths\n"
      );
      Pause();
+     Contents->Pop();
      return 1;
     }
     break;
 
    case gcLine:
     if(OutlinePath || SolidCircle){
-     Contents->Line(Render->X*Mirror, Render->Y);
+     Contents->Line(Render->X, Render->Y);
 
     }else if(SolidRectangle){
      DrawRectLine(
       Contents,
       RectX           , RectY,
-      Render->X*Mirror, Render->Y,
+      Render->X, Render->Y,
       RectW           , RectH
      );
-     RectX = Render->X*Mirror;
+     RectX = Render->X;
      RectY = Render->Y;
 
     }else{
@@ -334,18 +311,20 @@ int RenderLayer(
       "apertures can be used for paths\n"
      );
      Pause();
+     Contents->Pop();
      return 2;
     }
     break;
 
    case gcArc:
     if(OutlinePath || SolidCircle){
-     Contents->Arc(Render->X*Mirror, Render->Y, Render->A*Mirror);
+     Contents->Arc(Render->X, Render->Y, Render->A);
     }else{
      printf(
       "Error: Only solid circular apertures can be used for arcs\n"
      );
      Pause();
+     Contents->Pop();
      return 3;
     }
     break;
@@ -353,12 +332,13 @@ int RenderLayer(
    case gcFlash:
     if(CurrentAperture){
      Contents->Push();
-     Contents->Translate(Render->X*Mirror, Render->Y);
+     Contents->Translate(Render->X, Render->Y);
      Contents->Form(CurrentAperture);
      Contents->Pop();
     }else{
      printf("Error: No Aperture selected\n");
      Pause();
+     Contents->Pop();
      return 4;
     }
     break;
@@ -397,8 +377,6 @@ int RenderLayer(
       CurrentAperture = Apertures[Aperture->Code];
      }else{
       String.Set   ('D');
-      String.Append(Aperture->Code);
-      String.Append(':');
       String.Append(++ApertureCount);
       CurrentAperture = new pdfForm(String.String);
       CurrentAperture->BBox.Set(
@@ -416,7 +394,7 @@ int RenderLayer(
        Aperture->Right,
        Aperture->Top
       );
-      Page->Resources.AddForm      (CurrentAperture);
+      Form->Resources.AddForm      (CurrentAperture);
       pdf.AddIndirect              (CurrentAperture);
       Apertures[Aperture->Code]   = CurrentAperture;
       TempApertureStack           = new APERTURE;
@@ -427,6 +405,7 @@ int RenderLayer(
     }else{
      printf("Error: Null Aperture\n");
      Pause();
+     Contents->Pop();
      return 5;
     }
     break;
@@ -437,6 +416,7 @@ int RenderLayer(
   Render = Render->Next;
  }
 
+ Contents->Pop();
  return 0;
 }
 //------------------------------------------------------------------------------
@@ -466,6 +446,52 @@ bool StringStart(const char* String, const char* Start){
   if(String[j] != Start[j]) return false;
  }
  return !Start[j];
+}
+//------------------------------------------------------------------------------
+
+bool StringsEqual(const char* s1, const char* s2){
+ if(!s1 && !s2) return true;
+ if(!s1 || !s2) return false;
+
+ int j;
+ for(j = 0; s1[j] && s2[j]; j++){
+  if(s1[j] != s2[j]) return false;
+ }
+ if(s1[j] != s2[j]) return false;
+ return true;
+}
+//------------------------------------------------------------------------------
+
+LAYER* NewLayer(const char* Filename){
+ static int GerberCount = 0;
+
+ LAYER* Layer = new LAYER;
+
+ int j;
+ for(j = 0; Filename[j]; j++);
+ Layer->Filename = new char[j+1];
+ for(j = 0; Filename[j]; j++) Layer->Filename[j] = Filename[j];
+ Layer->Filename[j] = 0;
+
+ JString FormName;
+ FormName.Set('G');
+ FormName.Append(++GerberCount);
+ Layer->Form = new pdfForm(FormName.String);
+
+ Layer->Next = Layers;
+ Layers      = Layer;
+
+ return Layer;
+}
+//------------------------------------------------------------------------------
+
+LAYER* FindLayer(const char* Filename){
+ LAYER* Layer = Layers;
+ while(Layer){
+  if(StringsEqual(Layer->Filename, Filename)) return Layer;
+  Layer = Layer->Next;
+ }
+ return 0;
 }
 //------------------------------------------------------------------------------
 
@@ -537,6 +563,8 @@ int main(int argc, char** argv){
  pdfPages    Pages;    // Single level page tree
  pdfOutlines Outlines; // Single level outline tree
 
+ LAYER* Layer;
+
  LEVEL_FORM* LevelStack = 0;
  LEVEL_FORM* TempLevelStack;
  int         LevelCount = 0;
@@ -546,8 +574,6 @@ int main(int argc, char** argv){
  pdfContents*     Contents;        // Contents for each page
  pdfContents*     TheContents = 0; // Contents of ThePage
  pdfOutlineItems* Outline;         // Outline item for each page
-
- JString Title;
 
  char Path[0x100];
  GetCurrentDirectory(0x100, Path);
@@ -587,10 +613,10 @@ int main(int argc, char** argv){
     ThePageUsed = false;
 
    }else if(StringStart(argv[arg]+1, "mirror")){
-    Mirror = -1.0;
+    Mirror = true;
 
    }else if(StringStart(argv[arg]+1, "nomirror")){
-    Mirror = 1.0;
+    Mirror = false;
    }
    continue; // handle the next argument
   }
@@ -600,29 +626,50 @@ int main(int argc, char** argv){
 
   // Read the gerber
   FileName.Set(argv[arg]);
-  Title.Set(FileName.String);
   if(FileName.GetLength() < 2) continue;
   if(FileName.String[1] != '\\' && FileName.String[1] != ':'){
    FileName.Prefix(Path);
   }
 
-  printf("\nInfo: Converting %s\n", FileName.String);
+  bool Reusing = false;
+  Layer = FindLayer(FileName.String);
+  if(Layer){
+   printf("\nInfo: Using previous conversion of %s\n", FileName.String);
+   Reusing = true;
 
-  Gerber.Clear();
-  if(!Gerber.LoadGerber(FileName.String)){
-   printf("Info: There were errors while reading the gerber\n");
-   continue;
-  }
-
-  if(Gerber.Name){
-   Title.Set(Gerber.Name);
   }else{
-   for(
-    j  =      Title.GetLength()-1;
-    j >= 0 && Title.String[j] != '\\';
-    j--
+   Layer = NewLayer(FileName.String);
+   Layer->Title.Set(argv[arg]);
+
+   printf("\nInfo: Converting %s\n", FileName.String);
+
+   Gerber.Clear();
+   if(!Gerber.LoadGerber(FileName.String)){
+    printf("Info: There were errors while reading the gerber\n");
+    continue;
+   }
+   if(Gerber.Name){
+    Layer->Title.Set(Gerber.Name);
+   }else{
+    for(
+     j  =      Layer->Title.GetLength()-1;
+     j >= 0 && Layer->Title.String[j] != '\\';
+     j--
+    );
+    Layer->Title.Set(Layer->Title.String+j+1);
+   }
+   Layer->Left     = Gerber.Left;
+   Layer->Bottom   = Gerber.Bottom;
+   Layer->Right    = Gerber.Right;
+   Layer->Top      = Gerber.Top;
+   Layer->Negative = Gerber.Negative;
+
+   Layer->Form->BBox.Set(
+    Layer->Left,
+    Layer->Bottom,
+    Layer->Right,
+    Layer->Top
    );
-   Title.Set(Title.String+j+1);
   }
 
   // Write the PDF
@@ -630,7 +677,7 @@ int main(int argc, char** argv){
    ThePage     = Page+arg;
    ThePageUsed = false;
   }
-  Outline[arg].Title.Set  (Title.String);
+  Outline[arg].Title.Set  (Layer->Title.String);
   Outline[arg].DestFit    (ThePage);
   pdf         .AddIndirect(Outline+arg);
   Outlines    .AddChild   (Outline+arg);
@@ -656,24 +703,21 @@ int main(int argc, char** argv){
    ThePageTop    = -1e100;
   }
 
-  x  =      (Gerber.Right + Gerber.Left  )/2.0*Mirror;
-  y  =      (Gerber.Top   + Gerber.Bottom)/2.0;
-  w  = 1.05*(Gerber.Right - Gerber.Left  );
-  h  = 1.05*(Gerber.Top   - Gerber.Bottom);
+  x  =      (Layer->Right + Layer->Left  )/2.0;
+  y  =      (Layer->Top   + Layer->Bottom)/2.0;
+  w  = 1.05*(Layer->Right - Layer->Left  );
+  h  = 1.05*(Layer->Top   - Layer->Bottom);
   w2 = w/2.0;
   h2 = h/2.0;
-  if(Gerber.Negative){
-   TheContents->FillColour(Dark.R, Dark.G, Dark.B);
-   TheContents->Rectangle(x-w2, y-h2, w, h);
-   TheContents->Fill();
-   Negative = true;
-  }else{
-   Negative = false;
-  }
 
-  if(ThePageLeft   > x-w2) ThePageLeft   = x-w2;
+  if(Mirror){
+   if(ThePageLeft  > -x-w2) ThePageLeft  = -x-w2;
+   if(ThePageRight < -x+w2) ThePageRight = -x+w2;
+  }else{
+   if(ThePageLeft  > x-w2) ThePageLeft  = x-w2;
+   if(ThePageRight < x+w2) ThePageRight = x+w2;
+  }
   if(ThePageBottom > y-h2) ThePageBottom = y-h2;
-  if(ThePageRight  < x+w2) ThePageRight  = x+w2;
   if(ThePageTop    < y+h2) ThePageTop    = y+h2;
   ThePage->MediaBox.Set_mm(
    ThePageLeft,
@@ -682,64 +726,84 @@ int main(int argc, char** argv){
    ThePageTop
   );
 
-  Level = Gerber.Levels;
-  while(Level){
-   if(!Level->Render()){
-    Level = Level->Next;
-    continue;
-   }
-
-   if(Level->CountX > 1 ||
-      Level->CountY > 1 ){
-    LevelName.Set   ("L");
-    LevelName.Append(++LevelCount);
-    if(Level->Name){
-     LevelName.Append('_');
-     LevelName.Append(Level->Name);
-    }
-    TempLevelStack        = new LEVEL_FORM;
-    TempLevelStack->Level = new pdfForm(LevelName.String);
-    TempLevelStack->Next  = LevelStack;
-    LevelStack            = TempLevelStack;
-
-    LevelStack->Level->BBox.Set(
-     Level->Left,
-     Level->Bottom,
-     Level->Right,
-     Level->Top
-    );
-
-    Result = RenderLayer(ThePage, LevelStack->Level, Level);
-    if(Result) return Result;
-
-    TheContents->Push();
-
-    int x, y;
-    for(y = 0; y < Level->CountY; y++){
-     for(x = 0; x < Level->CountX; x++){
-      TheContents->Form(LevelStack->Level);
-      TheContents->Translate(Level->StepX*Mirror, 0.0);
-     }
-     TheContents->Translate(
-      Level->StepX*Mirror * -Level->CountX,
-      Level->StepY);
-    }
-
-    TheContents->Pop();
-
-    ThePage->Resources.AddForm(LevelStack->Level);
-    pdf     .AddIndirect      (LevelStack->Level);
-
-    LevelStack->Level->Deflate();
-
+  if(!Reusing){
+   if(Layer->Negative){
+    TheContents->Rectangle(x-w2, y-h2, w, h);
+    TheContents->Fill();
+    Negative = true;
    }else{
-    Result = RenderLayer(ThePage, TheContents, Level);
-    if(Result) return Result;
+    Negative = false;
    }
 
-   Level = Level->Next;
+   Level = Gerber.Levels;
+   while(Level){
+    if(!Level->Render()){
+     Level = Level->Next;
+     continue;
+    }
+
+    if(Level->CountX > 1 ||
+       Level->CountY > 1 ){
+     LevelName.Set   ('L');
+     LevelName.Append(++LevelCount);
+     TempLevelStack        = new LEVEL_FORM;
+     TempLevelStack->Level = new pdfForm(LevelName.String);
+     TempLevelStack->Next  = LevelStack;
+     LevelStack            = TempLevelStack;
+
+     LevelStack->Level->BBox.Set(
+      Level->Left,
+      Level->Bottom,
+      Level->Right,
+      Level->Top
+     );
+
+     Result = RenderLayer(Layer->Form, LevelStack->Level, Level);
+     if(Result) return Result;
+
+     Layer->Form->Push();
+
+     int x, y;
+     for(y = 0; y < Level->CountY; y++){
+      for(x = 0; x < Level->CountX; x++){
+       Layer->Form->Form(LevelStack->Level);
+       Layer->Form->Translate(Level->StepX, 0.0);
+      }
+      Layer->Form->Translate(
+       Level->StepX * -Level->CountX,
+       Level->StepY);
+     }
+
+     Layer->Form->Pop();
+
+     Layer->Form->Resources.AddForm(LevelStack->Level);
+     pdf         .AddIndirect      (LevelStack->Level);
+
+     LevelStack->Level->Deflate();
+
+    }else{
+     Result = RenderLayer(Layer->Form, Layer->Form, Level);
+     if(Result) return Result;
+    }
+
+    Level = Level->Next;
+   }
+   Layer->Form->Update();
+   Layer->Form->Deflate();
+   pdf.AddIndirect(Layer->Form);
   }
-  ThePage->Update();
+  ThePage    ->Resources.AddForm(Layer->Form);
+  ThePage    ->Update();
+  TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
+  TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
+  if(Mirror){
+   TheContents->Push();
+   TheContents->Scale(-1, 1);
+   TheContents->Form(Layer->Form);
+   TheContents->Pop();
+  }else{
+   TheContents->Form(Layer->Form);
+  }
  }
  if(TheContents) TheContents->Deflate();
 
@@ -780,6 +844,7 @@ int main(int argc, char** argv){
   delete TempApertureStack;
  }
 
+ if(Layers    ) delete Layers;
  if(LevelStack) delete LevelStack;
 
  Pause();
