@@ -640,9 +640,6 @@ int main(int argc, char** argv){
    continue; // handle the next argument
   }
 
-  // Clear the variables
-  for(j = 0; j < 1000; j++) Apertures[j] = 0;
-
   // Read the gerber
   FileName.Set(argv[arg]);
   if(FileName.GetLength() < 2) continue;
@@ -748,6 +745,8 @@ int main(int argc, char** argv){
   );
 
   if(!Reusing){
+   for(j = 0; j < 1000; j++) Apertures[j] = 0;
+
    if(Layer->Negative){
     TheContents->Rectangle(x-w2, y-h2, w, h);
     TheContents->Fill();
@@ -780,7 +779,8 @@ int main(int argc, char** argv){
      );
 
      LevelStack->Level->Resources.AddOpaque(Opaque);
-     Result = RenderLayer(Layer->Form, LevelStack->Level, Level);
+     for(j = 0; j < 1000; j++) Apertures[j] = 0;
+     Result = RenderLayer(LevelStack->Level, LevelStack->Level, Level);
      if(Result) return Result;
 
      Layer->Form->Push();
@@ -802,6 +802,7 @@ int main(int argc, char** argv){
      pdf         .AddIndirect      (LevelStack->Level);
 
      LevelStack->Level->Deflate();
+     LevelStack->Level->Update();
 
     }else{
      Layer->Form->Resources.AddOpaque(Opaque);
@@ -820,25 +821,21 @@ int main(int argc, char** argv){
   TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
   TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
 
-  if(Dark.A == 1.0){
-   TheContents->Opaque(Opaque);
-  }else{
-   OPAQUE_STACK* TempOpaque = new OPAQUE_STACK(Dark.A);
-   TempOpaque->Next = OpaqueStack;
-   OpaqueStack      = TempOpaque;
-   pdf.AddIndirect(TempOpaque->Opaque);
-   ThePage->Resources.AddOpaque(TempOpaque->Opaque);
-   TheContents->Opaque(TempOpaque->Opaque);
-  }
+  TheContents->Push();
+   if(Dark.A == 1.0){
+    TheContents->Opaque(Opaque);
+   }else{
+    OPAQUE_STACK* TempOpaque = new OPAQUE_STACK(Dark.A);
+    TempOpaque->Next = OpaqueStack;
+    OpaqueStack      = TempOpaque;
+    pdf.AddIndirect(TempOpaque->Opaque);
+    ThePage->Resources.AddOpaque(TempOpaque->Opaque);
+    TheContents->Opaque(TempOpaque->Opaque);
+   }
 
-  if(Mirror){
-   TheContents->Push();
-   TheContents->Scale(-1, 1);
+   if(Mirror) TheContents->Scale(-1, 1);
    TheContents->Form(Layer->Form);
-   TheContents->Pop();
-  }else{
-   TheContents->Form(Layer->Form);
-  }
+  TheContents->Pop();
  }
  if(TheContents) TheContents->Deflate();
 
