@@ -1,27 +1,33 @@
-#include "JPDF.h"
-#include "JGerber.h"
-//------------------------------------------------------------------------------
+//==============================================================================
+// Copyright (C) John-Philip Taylor
+// jpt13653903@gmail.com
+//
+// This file is part of Gerber2PDF
+//
+// This file is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>
+//==============================================================================
 
-struct COLOUR{
- double R, G, B;
- COLOUR(double R, double G, double B){
-  this->R = R;
-  this->G = G;
-  this->B = B;
- }
-};
-COLOUR Dark (0.0, 0.0, 0.0);
-COLOUR Clear(1.0, 1.0, 1.0);
+#include "main.h"
 //------------------------------------------------------------------------------
 
 JPDF   pdf;
 double Mirror   = 1.0;
 bool   Negative = false;
 
-struct APERTURE{
- pdfForm*  Aperture;
- APERTURE* Next;
-};
+COLOUR Dark (0.0, 0.0, 0.0);
+COLOUR Clear(1.0, 1.0, 1.0);
+
 APERTURE* ApertureStack = 0;
 APERTURE* TempApertureStack;
 
@@ -476,7 +482,7 @@ int main(int argc, char** argv){
  double  ThePageTop    = -1e100;
  JString OutputFileName;
  JString FileName;
- JString LayerName;
+ JString LevelName;
 
  int arg;
 
@@ -531,23 +537,9 @@ int main(int argc, char** argv){
  pdfPages    Pages;    // Single level page tree
  pdfOutlines Outlines; // Single level outline tree
 
- struct LAYER_FORM{
-  pdfForm*    Layer;
-  LAYER_FORM* Next;
-
-  LAYER_FORM(){
-   Layer = 0;
-   Next  = 0;
-  }
-
-  ~LAYER_FORM(){
-   if(Layer) delete Layer;
-   if(Next ) delete Next;
-  }
- };
- LAYER_FORM* LayerStack = 0;
- LAYER_FORM* TempLayerStack;
- int         LayerCount = 0;
+ LEVEL_FORM* LevelStack = 0;
+ LEVEL_FORM* TempLevelStack;
+ int         LevelCount = 0;
 
  pdfPage*         Page;            // Page for each gerber file
  pdfPage*         ThePage = 0;     // Page on which to combine outputs
@@ -699,25 +691,25 @@ int main(int argc, char** argv){
 
    if(Level->CountX > 1 ||
       Level->CountY > 1 ){
-    LayerName.Set   ("L");
-    LayerName.Append(++LayerCount);
+    LevelName.Set   ("L");
+    LevelName.Append(++LevelCount);
     if(Level->Name){
-     LayerName.Append('_');
-     LayerName.Append(Level->Name);
+     LevelName.Append('_');
+     LevelName.Append(Level->Name);
     }
-    TempLayerStack        = new LAYER_FORM;
-    TempLayerStack->Layer = new pdfForm(LayerName.String);
-    TempLayerStack->Next  = LayerStack;
-    LayerStack            = TempLayerStack;
+    TempLevelStack        = new LEVEL_FORM;
+    TempLevelStack->Level = new pdfForm(LevelName.String);
+    TempLevelStack->Next  = LevelStack;
+    LevelStack            = TempLevelStack;
 
-    LayerStack->Layer->BBox.Set(
+    LevelStack->Level->BBox.Set(
      Level->Left,
      Level->Bottom,
      Level->Right,
      Level->Top
     );
 
-    Result = RenderLayer(ThePage, LayerStack->Layer, Level);
+    Result = RenderLayer(ThePage, LevelStack->Level, Level);
     if(Result) return Result;
 
     TheContents->Push();
@@ -725,7 +717,7 @@ int main(int argc, char** argv){
     int x, y;
     for(y = 0; y < Level->CountY; y++){
      for(x = 0; x < Level->CountX; x++){
-      TheContents->Form(LayerStack->Layer);
+      TheContents->Form(LevelStack->Level);
       TheContents->Translate(Level->StepX*Mirror, 0.0);
      }
      TheContents->Translate(
@@ -735,10 +727,10 @@ int main(int argc, char** argv){
 
     TheContents->Pop();
 
-    ThePage->Resources.AddForm(LayerStack->Layer);
-    pdf     .AddIndirect      (LayerStack->Layer);
+    ThePage->Resources.AddForm(LevelStack->Level);
+    pdf     .AddIndirect      (LevelStack->Level);
 
-    LayerStack->Layer->Deflate();
+    LevelStack->Level->Deflate();
 
    }else{
     Result = RenderLayer(ThePage, TheContents, Level);
@@ -788,7 +780,7 @@ int main(int argc, char** argv){
   delete TempApertureStack;
  }
 
- if(LayerStack) delete LayerStack;
+ if(LevelStack) delete LevelStack;
 
  Pause();
 

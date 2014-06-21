@@ -118,6 +118,7 @@
 		<Unit filename="Tools/String/JString.cpp" />
 		<Unit filename="Tools/String/JString.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="main.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
