@@ -10,8 +10,8 @@ This will display the copyright and usage information.
 Usage:
 ------
 
-A batch-file or script is recommended, but a simple "Open with..."
-link will also work, resulting in a single Gerber to be converted 
+A batch-file or script is recommended, but a simple "Open with..." link 
+will also work, resulting in a single Gerber to be converted to a PDF 
 with the same file-name as the Gerber.
 
 Changes:
@@ -24,6 +24,7 @@ Changes:
 - Added warnings for deprecated features (optionally disabled by the
   "-nowarnings" option).
 - Added an icon to Gerber2pdf.exe.
+- Fixed step-and-repeat bug
 
 2014-06-20
 - Fixed bug regarding aperture macros and primitives with "exposure off".
