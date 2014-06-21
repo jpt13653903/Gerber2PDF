@@ -27,13 +27,35 @@
 //------------------------------------------------------------------------------
 
 struct COLOUR{
- double R, G, B;
- COLOUR(double R, double G, double B){
+ double R, G, B, A;
+ COLOUR(double R, double G, double B, double A){
   this->R = R;
   this->G = G;
   this->B = B;
+  this->A = A;
  }
 };
+//------------------------------------------------------------------------------
+
+int OpaqueCount = 0;
+struct OPAQUE_STACK{
+ pdfOpaque*    Opaque;
+ OPAQUE_STACK* Next;
+
+ OPAQUE_STACK(double Value){
+  JString Name;
+  Name.Set('O'), Name.Append(++OpaqueCount);
+  Opaque = new pdfOpaque(Name.String);
+  Next   = 0;
+  Opaque->Opacity(Value);
+ }
+
+ ~OPAQUE_STACK(){
+  delete Opaque;
+  if(Next) delete Next;
+ }
+};
+OPAQUE_STACK* OpaqueStack = 0;
 //------------------------------------------------------------------------------
 
 struct APERTURE{

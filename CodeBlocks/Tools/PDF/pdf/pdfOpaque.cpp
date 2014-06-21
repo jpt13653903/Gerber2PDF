@@ -18,16 +18,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>
 //==============================================================================
 
-#include "pdfOpague.h"
+#include "pdfOpaque.h"
 //------------------------------------------------------------------------------
 
-pdfOpague::pdfOpague(const char* Name){
+pdfOpaque::pdfOpaque(const char* Name){
  Object = &Dictionary;
 
  CurrentStrokeAlpha = 1.0;
  CurrentFillAlpha   = 1.0;
 
- pdfOpague::Name.Set(Name);
+ pdfOpaque::Name.Set(Name);
 
  Dictionary.Clear();
  Dictionary.AddEntry("CA", &CurrentStrokeAlpha);
@@ -35,7 +35,7 @@ pdfOpague::pdfOpague(const char* Name){
 }
 //------------------------------------------------------------------------------
 
-void pdfOpague::Opacity(double Opacity){
+void pdfOpaque::Opacity(double Opacity){
  CurrentStrokeAlpha = Opacity;
  CurrentFillAlpha   = Opacity;
 }

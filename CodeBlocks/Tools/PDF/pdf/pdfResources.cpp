@@ -56,8 +56,8 @@ void pdfResources::AddImage(pdfImage* Image){
 }
 //------------------------------------------------------------------------------
 
-void pdfResources::AddOpague(pdfOpague* Opague){
- ExtGState.AddEntry(Opague->Name.Get(), Opague);
+void pdfResources::AddOpaque(pdfOpaque* Opaque){
+ ExtGState.AddEntry(Opaque->Name.Get(), Opaque);
  Update();
 }
 //------------------------------------------------------------------------------

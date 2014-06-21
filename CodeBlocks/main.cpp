@@ -25,8 +25,7 @@ JPDF pdf;
 bool Mirror   = false;
 bool Negative = false;
 
-COLOUR Dark (0.0, 0.0, 0.0);
-COLOUR Clear(1.0, 1.0, 1.0);
+COLOUR Dark(0.0, 0.0, 0.0, 1.0);
 
 APERTURE* ApertureStack = 0;
 APERTURE* TempApertureStack;
@@ -34,6 +33,8 @@ APERTURE* TempApertureStack;
 int      ApertureCount = 0;
 pdfForm* Apertures[1000];
 pdfForm* CurrentAperture = 0;
+
+pdfOpaque* Opaque;
 
 bool   SolidCircle    = false;
 bool   SolidRectangle = false;
@@ -249,8 +250,9 @@ int RenderLayer(
  Contents->Push();
 
  if(Level->Negative != Negative){
-  Contents->StrokeColour(Clear.R, Clear.G, Clear.B);
-  Contents->FillColour  (Clear.R, Clear.G, Clear.B);
+  Contents->Opaque      (Opaque);
+  Contents->StrokeColour(1.0, 1.0, 1.0);
+  Contents->FillColour  (1.0, 1.0, 1.0);
  }
 
  while(Render){
@@ -534,7 +536,7 @@ int main(int argc, char** argv){
    "along with this program.  If not, see <http://www.gnu.org/licenses/>\n"
    "\n"
    "Usage: Gerber2pdf [-output=output_file_name] file_1 [-combine] file_2 ...\n"
-   "       [-colour=R,G,B] [-mirror] [-nomirror] file_N\n"
+   "       [-colour=R,G,B[,A]] [-mirror] [-nomirror] file_N\n"
    "\n"
    "Example: Gerber2pdf -output=My_Project\n"
    "         top_silk.grb bottom_silk.grb\n"
@@ -543,13 +545,13 @@ int main(int argc, char** argv){
    "         bottom_solder_mask.grb top_solder_mask.grb\n"
    "         board_outline.grb\n"
    "         -combine -mirror\n"
-   "         -colour=255,0,0 bottom_copper.grb\n"
-   "         -colour=0,128,0 bottom_solder_mask.grb\n"
-   "         -colour=0,0,255 board_outline.grb\n"
+   "         -colour=255,0,0     bottom_copper.grb\n"
+   "         -colour=0,128,0,200 bottom_solder_mask.grb\n"
+   "         -colour=0,0,255     board_outline.grb\n"
    "         -combine -nomirror\n"
-   "         -colour=255,0,0 top_copper.grb\n"
-   "         -colour=0,128,0 top_solder_mask.grb\n"
-   "         -colour=0,0,255 board_outline.grb\n"
+   "         -colour=255,0,0     top_copper.grb\n"
+   "         -colour=0,128,0,200 top_solder_mask.grb\n"
+   "         -colour=0,0,255     board_outline.grb\n"
   );
   Pause();
   return 0;
@@ -587,6 +589,10 @@ int main(int argc, char** argv){
  Outline  = new pdfOutlineItems[argc];
  Contents = new pdfContents    [argc];
 
+ Opaque = new pdfOpaque("Opaque");
+ Opaque->Opacity(1.0);
+ pdf.AddIndirect(Opaque);
+
  // For each argument...
  for(arg = 1; arg < argc; arg++){
   // Check for options
@@ -596,16 +602,23 @@ int main(int argc, char** argv){
 
    }else if(StringStart(argv[arg]+1, "colour=")){
     int i = 8;
-    int R, G, B;
+    int R, G, B, A;
     if(!GetInt(argv[arg], &i, &R)) continue;
     if(!GetInt(argv[arg], &i, &G)) continue;
     if(!GetInt(argv[arg], &i, &B)) continue;
+    if(argv[arg][i]){
+     if(!GetInt(argv[arg], &i, &A)) continue;
+    }else{
+     A = 255;
+    }
     if(R < 0 || R > 255) continue;
     if(G < 0 || G > 255) continue;
     if(B < 0 || B > 255) continue;
+    if(A < 0 || A > 255) continue;
     Dark.R = R/255.0;
     Dark.G = G/255.0;
     Dark.B = B/255.0;
+    Dark.A = A/255.0;
 
    }else if(StringStart(argv[arg]+1, "combine")){
     Combine     = true;
@@ -691,6 +704,8 @@ int main(int argc, char** argv){
    Pages   .AddChild   (ThePage    );
    PageCount++;
 
+   ThePage->Resources.AddOpaque(Opaque);
+
    TheContents->LineCap (pdfContents::csRound);
    TheContents->LineJoin(pdfContents::jsRound);
    TheContents->Use_mm();
@@ -758,6 +773,7 @@ int main(int argc, char** argv){
       Level->Top
      );
 
+     LevelStack->Level->Resources.AddOpaque(Opaque);
      Result = RenderLayer(Layer->Form, LevelStack->Level, Level);
      if(Result) return Result;
 
@@ -782,6 +798,7 @@ int main(int argc, char** argv){
      LevelStack->Level->Deflate();
 
     }else{
+     Layer->Form->Resources.AddOpaque(Opaque);
      Result = RenderLayer(Layer->Form, Layer->Form, Level);
      if(Result) return Result;
     }
@@ -796,6 +813,18 @@ int main(int argc, char** argv){
   ThePage    ->Update();
   TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
   TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
+
+  if(Dark.A == 1.0){
+   TheContents->Opaque(Opaque);
+  }else{
+   OPAQUE_STACK* TempOpaque = new OPAQUE_STACK(Dark.A);
+   TempOpaque->Next = OpaqueStack;
+   OpaqueStack      = TempOpaque;
+   pdf.AddIndirect(TempOpaque->Opaque);
+   ThePage->Resources.AddOpaque(TempOpaque->Opaque);
+   TheContents->Opaque(TempOpaque->Opaque);
+  }
+
   if(Mirror){
    TheContents->Push();
    TheContents->Scale(-1, 1);
@@ -837,6 +866,8 @@ int main(int argc, char** argv){
  delete[] Outline;
  delete[] Contents;
 
+ delete Opaque;
+
  while(ApertureStack){
   TempApertureStack = ApertureStack;
   ApertureStack     = ApertureStack->Next;
@@ -844,8 +875,9 @@ int main(int argc, char** argv){
   delete TempApertureStack;
  }
 
- if(Layers    ) delete Layers;
- if(LevelStack) delete LevelStack;
+ if(Layers     ) delete Layers;
+ if(LevelStack ) delete LevelStack;
+ if(OpaqueStack) delete OpaqueStack;
 
  Pause();
 

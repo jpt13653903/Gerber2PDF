@@ -28,7 +28,7 @@
 
 // Remember to add this to the pdf indirect list and the resource of the page
 // or form in which it is used
-class pdfOpague : public pdfIndirect{
+class pdfOpaque : public pdfIndirect{
 private:
  pdfDictionary Dictionary;
 
@@ -38,7 +38,7 @@ private:
 public:
  pdfName Name; // Do not use the name directly
 
- pdfOpague(const char* Name);
+ pdfOpaque(const char* Name);
 
  void Opacity(double Opacity);
 };

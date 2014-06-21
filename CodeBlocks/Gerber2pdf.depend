@@ -294,7 +294,7 @@
 1335448251 source:w:\projects\shared\cpp\string\jstring.cpp
 	"JString.h"
 
-1403346190 source:w:\projects\12\1204 - gerber2pdf\codeblocks\main.cpp
+1403352490 source:w:\projects\12\1204 - gerber2pdf\codeblocks\main.cpp
 	"main.h"
 
 1335255571 w:\projects\shared\cpp\gerber\jgerber.h
@@ -407,11 +407,11 @@
 	"pdfRectangle.h"
 	"pdfStream.h"
 
-1335191362 w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfresources.h
+1403351217 w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfresources.h
 	"pdfFont.h"
 	"pdfImage.h"
 	"pdfStream.h"
-	"pdfOpague.h"
+	"pdfOpaque.h"
 	"pdfDictionary.h"
 
 1334560980 w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdffont.h
@@ -459,13 +459,13 @@
 	"pdfArray.h"
 	"pdfNumber.h"
 
-1403266624 w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfcontents.h
+1403351217 w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfcontents.h
 	<math.h>
 	"pdfStream.h"
 	"pdfArray.h"
 	"pdfNumber.h"
 	"pdfString.h"
-	"pdfOpague.h"
+	"pdfOpaque.h"
 
 1334483886 w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfstring.h
 	"pdfObject.h"
@@ -598,7 +598,7 @@
 1334504613 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfcatalogue.cpp
 	"pdfCatalogue.h"
 
-1403269258 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfcontents.cpp
+1403351217 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfcontents.cpp
 	"pdfContents.h"
 	"pdfFont.h"
 	"pdfForm.h"
@@ -672,7 +672,7 @@
 1334582320 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfrectangle.cpp
 	"pdfRectangle.h"
 
-1335191049 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfresources.cpp
+1403351217 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfresources.cpp
 	"pdfResources.h"
 	"pdfForm.h"
 
@@ -703,7 +703,14 @@
 1403122509 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\gerber\gerber\gerberlevel.cpp
 	"GerberLevel.h"
 
-1403345423 w:\projects\12\1204 - gerber2pdf\codeblocks\main.h
+1403352490 w:\projects\12\1204 - gerber2pdf\codeblocks\main.h
 	"JPDF.h"
 	"JGerber.h"
+
+1403351217 w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfopaque.h
+	"pdfIndirect.h"
+	"pdfDictionary.h"
+
+1403351217 source:w:\projects\12\1204 - gerber2pdf\codeblocks\tools\pdf\pdf\pdfopaque.cpp
+	"pdfOpaque.h"
 

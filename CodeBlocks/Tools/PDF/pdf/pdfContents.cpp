@@ -45,14 +45,14 @@ void pdfContents::Pop(){
 }
 //------------------------------------------------------------------------------
 
-void pdfContents::Opague(pdfOpague* Opague){
+void pdfContents::Opaque(pdfOpaque* Opaque){
  int l;
  char* Buffer;
 
- l = Opague->Name.GetLength();
+ l = Opaque->Name.GetLength();
  Buffer = new char[l+4];
 
- l = Opague->Name.GetOutput(Buffer);
+ l = Opaque->Name.GetOutput(Buffer);
 
  Buffer[l++] = ' ';
  Buffer[l++] = 'g';
@@ -545,6 +545,8 @@ void pdfContents::Arc(double x, double y, double a){
  double x1, y1; // Bezier Control 1
  double x2, y2; // Bezier Control 2
  double x3, y3; // End
+
+ if(fabs(X-x) < 1e-15 && fabs(Y-y) < 1e-15) return;
 
  if(fabs(a) > 45.001){ // Slightly large so that the circle has 4 segments
   a /= 2.0;

@@ -29,7 +29,7 @@
 #include "pdfArray.h"
 #include "pdfNumber.h"
 #include "pdfString.h"
-#include "pdfOpague.h"
+#include "pdfOpaque.h"
 //------------------------------------------------------------------------------
 
 class pdfFont;
@@ -79,7 +79,7 @@ public:
 
  void StrokeColour(double red, double green, double blue); // [0.0, 1.0]
  void FillColour  (double red, double green, double blue); // [0.0, 1.0]
- void Opague      (pdfOpague* Opague);
+ void Opaque      (pdfOpaque* Opaque);
 
  // Use these to begin a line
  void Rectangle(double x, double y, double w, double h);

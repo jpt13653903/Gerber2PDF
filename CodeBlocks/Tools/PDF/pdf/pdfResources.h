@@ -25,7 +25,7 @@
 #include "pdfFont.h"
 #include "pdfImage.h"
 #include "pdfStream.h"
-#include "pdfOpague.h"
+#include "pdfOpaque.h"
 #include "pdfDictionary.h"
 //------------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ public:
  void AddFont  (pdfFont*   Font);
  void AddForm  (pdfForm*   Form);
  void AddImage (pdfImage*  Image);
- void AddOpague(pdfOpague* Opague);
+ void AddOpaque(pdfOpaque* Opaque);
 };
 //------------------------------------------------------------------------------
 

@@ -90,8 +90,8 @@
 		<Unit filename="Tools/PDF/pdf/pdfNumber.h" />
 		<Unit filename="Tools/PDF/pdf/pdfObject.cpp" />
 		<Unit filename="Tools/PDF/pdf/pdfObject.h" />
-		<Unit filename="Tools/PDF/pdf/pdfOpague.cpp" />
-		<Unit filename="Tools/PDF/pdf/pdfOpague.h" />
+		<Unit filename="Tools/PDF/pdf/pdfOpaque.cpp" />
+		<Unit filename="Tools/PDF/pdf/pdfOpaque.h" />
 		<Unit filename="Tools/PDF/pdf/pdfOutlineItems.cpp" />
 		<Unit filename="Tools/PDF/pdf/pdfOutlineItems.h" />
 		<Unit filename="Tools/PDF/pdf/pdfOutlines.cpp" />
