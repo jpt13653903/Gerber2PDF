@@ -30,6 +30,9 @@
 			<Add directory="Tools/File" />
 			<Add directory="Tools/Gerber" />
 		</Compiler>
+		<Unit filename="Resources/resource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="Tools/Deflate/JDeflate.cpp" />
 		<Unit filename="Tools/Deflate/JDeflate.h" />
 		<Unit filename="Tools/File/JFile.cpp" />

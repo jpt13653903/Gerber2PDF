@@ -554,7 +554,7 @@ int main(int argc, char** argv){
    "         -colour=0,128,0,200 top_solder_mask.grb\n"
    "         -colour=0,0,255     board_outline.grb\n"
    "\n"
-   "The -nowarnings option only disables deprecated features warnings.\n"
+   "The -nowarnings option only disables deprecated feature warnings.\n"
   );
   Pause();
   return 0;

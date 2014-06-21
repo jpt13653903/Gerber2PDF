@@ -23,6 +23,7 @@ Changes:
 - Optimised for smaller PDF output by reusing previous Gerber conversions.
 - Added warnings for deprecated features (optionally disabled by the
   "-nowarnings" option).
+- Added an icon to Gerber2pdf.exe.
 
 2014-06-20
 - Fixed bug regarding aperture macros and primitives with "exposure off".
