@@ -17,11 +17,18 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2014-06-21
+- Added transparency to the layers.  Transparency is specified by adding an
+  optional alpha value to the colour.
+- Optimised for smaller PDF output by reusing previous Gerber conversions.
+- Added warnings for deprecated features (optionally disabled by the
+  "-nowarnings" option).
+
 2014-06-20
 - Fixed bug regarding aperture macros and primitives with "exposure off".
 - Added an option to change the layer colour.
 - Added an option to combine layers onto a single page.
-- Added an option to mirror the output
+- Added an option to mirror the output.
 
 Source:
 -------

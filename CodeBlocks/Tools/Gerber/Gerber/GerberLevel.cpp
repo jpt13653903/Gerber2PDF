@@ -128,12 +128,16 @@ void GerberLevel::Add(GerberRender* Render){
 }
 //------------------------------------------------------------------------------
 
-void GerberLevel::Move(){
+void GerberLevel::Move(unsigned LineNumber){
  GerberRender* Temp;
 
  if(Path){
   if(OutlineFill){
    if(fX != X || fY != Y){
+    if(GerberWarnings) printf(
+     "Line %d - Warning: Deprecated feature: Open contours\n",
+     LineNumber
+    );
     Temp = new GerberRender;
     Temp->Command = gcClose;
     Add(Temp);
@@ -362,11 +366,11 @@ void GerberLevel::Flash(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLevel::ApertureSelect(GerberAperture* Aperture){
+void GerberLevel::ApertureSelect(GerberAperture* Aperture, unsigned LineNumber){
  GerberRender* Temp;
 
  Exposure = geOff;
- Move();
+ Move(LineNumber);
 
  Temp           = new GerberRender;
  Temp->Aperture = Aperture;
@@ -388,11 +392,11 @@ void GerberLevel::OutlineBegin(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLevel::OutlineEnd(){
+void GerberLevel::OutlineEnd(unsigned LineNumber){
  GerberRender* Temp;
 
  Exposure = geOff;
- Move();
+ Move(LineNumber);
 
  Temp           = new GerberRender;
  Temp->Command  = gcEndOutline;
@@ -402,14 +406,14 @@ void GerberLevel::OutlineEnd(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLevel::Do(){
+void GerberLevel::Do(unsigned LineNumber){
  switch(Exposure){
   case geOn:
    Line();
    break;
 
   case geOff:
-   Move();
+   Move(LineNumber);
    break;
 
   case geFlash:

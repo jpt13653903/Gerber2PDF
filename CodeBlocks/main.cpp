@@ -535,8 +535,9 @@ int main(int argc, char** argv){
    "You should have received a copy of the GNU General Public License\n"
    "along with this program.  If not, see <http://www.gnu.org/licenses/>\n"
    "\n"
-   "Usage: Gerber2pdf [-output=output_file_name] file_1 [-combine] file_2 ...\n"
-   "       [-colour=R,G,B[,A]] [-mirror] [-nomirror] file_N\n"
+   "Usage: Gerber2pdf [-nowarnings] [-output=output_file_name] file_1\n"
+   "       [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ... \n"
+   "       [-nomirror] file_N\n"
    "\n"
    "Example: Gerber2pdf -output=My_Project\n"
    "         top_silk.grb bottom_silk.grb\n"
@@ -552,6 +553,8 @@ int main(int argc, char** argv){
    "         -colour=255,0,0     top_copper.grb\n"
    "         -colour=0,128,0,200 top_solder_mask.grb\n"
    "         -colour=0,0,255     board_outline.grb\n"
+   "\n"
+   "The -nowarnings option only disables deprecated features warnings.\n"
   );
   Pause();
   return 0;
@@ -630,6 +633,9 @@ int main(int argc, char** argv){
 
    }else if(StringStart(argv[arg]+1, "nomirror")){
     Mirror = false;
+
+   }else if(StringStart(argv[arg]+1, "nowarnings")){
+    GerberWarnings = false;
    }
    continue; // handle the next argument
   }

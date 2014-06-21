@@ -21,6 +21,9 @@
 #include "JGerber.h"
 //------------------------------------------------------------------------------
 
+bool GerberWarnings = true;
+//------------------------------------------------------------------------------
+
 bool Equal(const char* s1, const char* s2){
  int j;
 
@@ -387,18 +390,27 @@ bool JGerber::GCode(){
    return true;
 
   case 37: // Turn off Outline Area Fill
-   CurrentLevel->OutlineEnd();
+   CurrentLevel->OutlineEnd(LineNumber);
    return true;
 
   case 54: // Tool prepare
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated code: G54\n", LineNumber);
+   }
    CurrentLevel->Exposure = geOff;
    return true;
 
   case 55: // Flash prepare
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated code: G55\n", LineNumber);
+   }
    CurrentLevel->Exposure = geOff;
    return true;
 
   case 70: // Specify inches
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated code: G70\n", LineNumber);
+   }
    CurrentLevel->Units = guInches;
    return true;
 
@@ -415,12 +427,15 @@ bool JGerber::GCode(){
    return true;
 
   case 90: // Specify absolute format
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated code: G90\n", LineNumber);
+   }
    CurrentLevel->Incremental = false;
    return true;
 
   case 91: // Specify incremental format
-   printf(
-    "Line %d - Error: GCode -> Incremental not implemented\n",
+   if(GerberWarnings) printf(
+    "Line %d - Error: Deprecated code not implemented: G91\n",
     LineNumber
    );
    return true;
@@ -478,7 +493,7 @@ bool JGerber::DCode(){
     printf("Line %d - Error: Aperture not defined: D%d\n", LineNumber, Code);
     return false;
    }
-   CurrentLevel->ApertureSelect(Aperture);
+   CurrentLevel->ApertureSelect(Aperture, LineNumber);
    return true;
  }
 
@@ -497,10 +512,13 @@ bool JGerber::MCode(bool* EndOfFile){
  switch(Code){
   case 0: // Program stop
   case 1: // Optional stop
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated code: M%02d\n", LineNumber, Code);
+   }
   case 2: // End of program
    if(CurrentLevel){
     CurrentLevel->Exposure = geOff;
-    CurrentLevel->Do();
+    CurrentLevel->Do(LineNumber);
    }
    *EndOfFile = true;
    return true;
@@ -1018,7 +1036,7 @@ bool JGerber::FormatStatement(){
 //------------------------------------------------------------------------------
 
 bool JGerber::IncludeFile(){
- printf("Line %d - Error: IncludeFile not implimented\n", LineNumber);
+ printf("Line %d - Error: IncludeFile not implemented\n", LineNumber);
 
  StartOfLevel = false;
 
@@ -1087,7 +1105,7 @@ bool JGerber::ImageName(){
 //------------------------------------------------------------------------------
 
 bool JGerber::ImageOffset(){
- printf("Line %d - Error: ImageOffset not implimented\n", LineNumber);
+ printf("Line %d - Error: ImageOffset not implemented\n", LineNumber);
 
  StartOfLevel = false;
 
@@ -1134,7 +1152,7 @@ bool JGerber::ImagePolarity(){
 //------------------------------------------------------------------------------
 
 bool JGerber::ImageRotation(){
- printf("Line %d - Error: ImageRotation not implimented\n", LineNumber);
+ printf("Line %d - Error: ImageRotation not implemented\n", LineNumber);
 
  StartOfLevel = false;
 
@@ -1150,7 +1168,7 @@ bool JGerber::ImageRotation(){
 void JGerber::Add(GerberLevel* Level){
  if(CurrentLevel){
   CurrentLevel->Exposure = geOff;
-  CurrentLevel->Do();
+  CurrentLevel->Do(LineNumber);
  }
 
  if(Levels){
@@ -1165,7 +1183,7 @@ void JGerber::Add(GerberLevel* Level){
 //------------------------------------------------------------------------------
 
 bool JGerber::Knockout(){
- printf("Line %d - Error: Knockout not implimented\n", LineNumber);
+ printf("Line %d - Error: Knockout not implemented\n", LineNumber);
  return false;
 }
 //------------------------------------------------------------------------------
@@ -1240,7 +1258,7 @@ bool JGerber::LevelPolarity(){
 //------------------------------------------------------------------------------
 
 bool JGerber::MirrorImage(){
- printf("Line %d - Error: MirrorImage not implimented\n", LineNumber);
+ printf("Line %d - Error: MirrorImage not implemented\n", LineNumber);
 
  StartOfLevel = false;
 
@@ -1330,7 +1348,7 @@ bool JGerber::Offset(){
 //------------------------------------------------------------------------------
 
 bool JGerber::PlotFilm(){
- printf("Line %d - Error: PlotFilm not implimented\n", LineNumber);
+ printf("Line %d - Error: PlotFilm not implemented\n", LineNumber);
 
  StartOfLevel = false;
 
@@ -1475,6 +1493,9 @@ bool JGerber::Paramater(char Delimiter){
    if(!ApertureMacro()) return false;
 
   }else if(Buffer[Index] == 'A' && Buffer[Index+1] == 'S'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: AS\n", LineNumber);
+   }
    Index += 2;
    if(!AxisSelect()) return false;
 
@@ -1503,6 +1524,9 @@ bool JGerber::Paramater(char Delimiter){
    if(!ImageJustify()) return false;
 
   }else if(Buffer[Index] == 'I' && Buffer[Index+1] == 'N'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: IN\n", LineNumber);
+   }
    Index += 2;
    if(!ImageName()) return false;
 
@@ -1511,10 +1535,16 @@ bool JGerber::Paramater(char Delimiter){
    if(!ImageOffset()) return false;
 
   }else if(Buffer[Index] == 'I' && Buffer[Index+1] == 'P'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: IP\n", LineNumber);
+   }
    Index += 2;
    if(!ImagePolarity()) return false;
 
   }else if(Buffer[Index] == 'I' && Buffer[Index+1] == 'R'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: IR\n", LineNumber);
+   }
    Index += 2;
    if(!ImageRotation()) return false;
 
@@ -1523,6 +1553,9 @@ bool JGerber::Paramater(char Delimiter){
    if(!Knockout()) return false;
 
   }else if(Buffer[Index] == 'L' && Buffer[Index+1] == 'N'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: LN\n", LineNumber);
+   }
    Index += 2;
    if(!LevelName()) return false;
 
@@ -1531,6 +1564,9 @@ bool JGerber::Paramater(char Delimiter){
    if(!LevelPolarity()) return false;
 
   }else if(Buffer[Index] == 'M' && Buffer[Index+1] == 'I'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: MI\n", LineNumber);
+   }
    Index += 2;
    if(!MirrorImage()) return false;
 
@@ -1539,6 +1575,9 @@ bool JGerber::Paramater(char Delimiter){
    if(!Mode()) return false;
 
   }else if(Buffer[Index] == 'O' && Buffer[Index+1] == 'F'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: OF\n", LineNumber);
+   }
    Index += 2;
    if(!Offset()) return false;
 
@@ -1547,6 +1586,9 @@ bool JGerber::Paramater(char Delimiter){
    if(!PlotFilm()) return false;
 
   }else if(Buffer[Index] == 'S' && Buffer[Index+1] == 'F'){
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated command: SF\n", LineNumber);
+   }
    Index += 2;
    if(!ScaleFactor()) return false;
 
@@ -1697,13 +1739,14 @@ bool JGerber::GetGerber(){
 
    case '*':
     Index++;
-    if(CurrentLevel) CurrentLevel->Do();
+    if(CurrentLevel) CurrentLevel->Do(LineNumber);
     break;
 
+   case '\n':
+    LineNumber++;
    case ' ' :
    case '\t':
    case '\r':
-   case '\n':
     Index++;
     break;
 

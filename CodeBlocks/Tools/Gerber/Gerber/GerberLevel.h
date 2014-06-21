@@ -31,6 +31,9 @@
 #include "GerberRender.h"
 //------------------------------------------------------------------------------
 
+extern bool GerberWarnings;
+//------------------------------------------------------------------------------
+
 class GerberLevel{
 private:
  GerberRender* RenderList; // Linked list of render commands
@@ -45,7 +48,7 @@ private:
 
  double Get_mm(double Number);
 
- void Move ();
+ void Move (unsigned LineNumber);
  void Line ();
  void Arc  ();
  void Flash();
@@ -82,12 +85,12 @@ public:
  GERBER_EXPOSURE      Exposure;
  GERBER_INTERPOLATION Interpolation;
 
- void ApertureSelect(GerberAperture* Aperture);
+ void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
 
  void OutlineBegin();
- void OutlineEnd  ();
+ void OutlineEnd  (unsigned LineNumber);
 
- void Do(); // Performs the action based on the current parameters
+ void Do(unsigned LineNumber);
 
  // Linked list of render commands
  // Memory freed automatically
