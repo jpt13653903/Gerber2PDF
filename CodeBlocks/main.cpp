@@ -48,7 +48,8 @@ void DrawAperture(
  double Top
 ){
  struct OBJECT{
-  GerberRender* Start;
+  GerberRender* Start; // The first one
+  GerberRender* End;   // The one just after the last one
   OBJECT      * Next;
  };
  OBJECT* Objects = 0;
@@ -57,6 +58,7 @@ void DrawAperture(
  while(Render){
   Object = new OBJECT;
   Object->Start = Render;
+  Object->End   = 0;
   Object->Next  = Objects;
   Objects       = Object;
   while(Render){
@@ -65,9 +67,8 @@ void DrawAperture(
     Render->Command == gcFill   ||
     Render->Command == gcErase
    ){
-    GerberRender* Temp = Render;
     Render = Render->Next;
-    Temp->Next = 0;
+    Object->End = Render;
     break;
    }
    Render = Render->Next;
@@ -83,7 +84,7 @@ void DrawAperture(
   Objects = Objects->Next;
 
   Render = Object->Start;
-  while(Render){
+  while(Render != Object->End){
    switch(Render->Command){
     case gcRectangle:
      if(Mirror > 0.0){
