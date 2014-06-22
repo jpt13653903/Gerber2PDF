@@ -17,6 +17,9 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2014-06-22
+- Added a "-nocombine" option.
+
 2014-06-21
 - Added transparency to the layers.  Transparency is specified by adding an
   optional alpha value to the colour.
@@ -35,5 +38,6 @@ Changes:
 Source:
 -------
 
-The source is available from the downloads page.
+The source is available from the git repository:
+<https://sourceforge.net/p/gerber2pdf/code/>
 

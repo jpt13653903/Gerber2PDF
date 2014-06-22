@@ -537,7 +537,7 @@ int main(int argc, char** argv){
    "\n"
    "Usage: Gerber2pdf [-nowarnings] [-output=output_file_name] file_1\n"
    "       [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ... \n"
-   "       [-nomirror] file_N\n"
+   "       [-nomirror] [-nocombine] ... file_N\n"
    "\n"
    "Example: Gerber2pdf -output=My_Project\n"
    "         top_silk.grb bottom_silk.grb\n"
@@ -627,6 +627,9 @@ int main(int argc, char** argv){
     Combine     = true;
     ThePage     = Page+arg;
     ThePageUsed = false;
+
+   }else if(StringStart(argv[arg]+1, "nocombine")){
+    Combine = false;
 
    }else if(StringStart(argv[arg]+1, "mirror")){
     Mirror = true;
