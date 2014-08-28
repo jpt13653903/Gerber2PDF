@@ -48,6 +48,11 @@ private:
 
  double Get_mm(double Number);
 
+ double GetAngle(
+  double x1, double y1, // Start, relative to center
+  double x2, double y2  // End, relative to center
+ );
+
  void Move (unsigned LineNumber);
  void Line ();
  void Arc  ();

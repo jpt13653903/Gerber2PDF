@@ -190,7 +190,11 @@ void GerberLevel::Line(){
   Add(Temp);
 
  }else{
-  if(pX == Get_mm(X) && pY == Get_mm(Y)) return;
+  if(
+   Interpolation != giClockwiseCircular        &&
+   Interpolation != giCounterclockwiseCircular &&
+   pX == Get_mm(X) && pY == Get_mm(Y)
+  ) return;
  }
  Path = true;
 
@@ -258,43 +262,21 @@ void GerberLevel::Line(){
 }
 //------------------------------------------------------------------------------
 
-void GerberLevel::Arc(){
- double x1, y1; // Start, relative to center
- double x2, y2; // End, relative to center
- double x3, y3; // Center
- double a1, a2, a;
+double GerberLevel::GetAngle(
+ double x1, double y1, // Start, relative to center
+ double x2, double y2  // End, relative to center
+){
+ double a1 = atan2(y1, x1)*180.0/pi;
+ double a2 = atan2(y2, x2)*180.0/pi;
 
- double l, b, r, t;
-
- GerberRender* Temp;
-
- if(Multiquadrant){
-  x3 = pX + Get_mm(I);
-  y3 = pY + Get_mm(J);
- }else{
-  if(Get_mm(X) > pX) x3 = pX + Get_mm(I);
-  else               x3 = pX - Get_mm(I);
-  if(Get_mm(Y) > pY) y3 = pY + Get_mm(J);
-  else               y3 = pY - Get_mm(J);
- }
-
- x1 = pX - x3;
- y1 = pY - y3;
-
- x2 = Get_mm(X) - x3;
- y2 = Get_mm(Y) - y3;
-
- a1 = atan2(y1, x1)*180.0/pi;
- a2 = atan2(y2, x2)*180.0/pi;
-
- a = a2 - a1; // [-360; 360]
+ double a = a2 - a1; // [-360; 360]
 
  if(Interpolation == giClockwiseCircular){ // CW
   while(a >= 0.0) a -= 360.0; // [-360; 0)
-  if(!Multiquadrant && a < -90) a += 360; // [-90; 270)
+  if(!Multiquadrant && a < -90.001) a += 360; // [-90; 270)
  }else{ // CCW
   while(a <= 0.0) a += 360.0; // (0; 360]
-  if(!Multiquadrant && a > 90) a -= 360; // (-270; 90]
+  if(!Multiquadrant && a > 90.001) a -= 360; // (-270; 90]
  }
 
  if(Multiquadrant){
@@ -303,6 +285,76 @@ void GerberLevel::Arc(){
    else         a -= 360;
   }
  }
+
+ return a;
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::Arc(){
+ double x1, y1; // Start, relative to center
+ double x2, y2; // End, relative to center
+ double x3, y3; // Center
+
+ double a, l, b, r, t;
+
+ GerberRender* Temp;
+
+ x1 = pX;        y1 = pY;
+ x2 = Get_mm(X); y2 = Get_mm(Y);
+
+ if(Multiquadrant){
+  x3 = pX + Get_mm(I);
+  y3 = pY + Get_mm(J);
+
+  x1 = pX - x3;
+  y1 = pY - y3;
+  x2 = Get_mm(X) - x3;
+  y2 = Get_mm(Y) - y3;
+
+ }else{
+  int    t, T;
+  double i[4], j[4], error, Error;
+
+  i[0] = Get_mm(I); j[0] = Get_mm(J);
+  i[1] = -i[0]    ; j[1] =  j[0];
+  i[2] = -i[0]    ; j[2] = -j[0];
+  i[3] =  i[0]    ; j[3] = -j[0];
+
+  // Find the best match for the centre coordinates
+  // by minimising the error function.
+  T = 0; Error = 1.0 / 0.0;
+  for(t = 0; t < 4; t++){
+   x3 = pX + i[t];
+   y3 = pY + j[t];
+
+   x1 = pX - x3;
+   y1 = pY - y3;
+   x2 = Get_mm(X) - x3;
+   y2 = Get_mm(Y) - y3;
+
+   a = GetAngle(x1, y1, x2, y2);
+   if(Interpolation == giClockwiseCircular){
+    if(a > 0.0) continue;
+   }else{ // CCW
+    if(a < 0.0) continue;
+   }
+
+   error = fabs((x1*x1 + y1*y1) - (x2*x2 + y2*y2));
+   if(T < 0 || error < Error){
+    T     = t;
+    Error = error;
+   }
+  }
+  x3 = pX + i[T];
+  y3 = pY + j[T];
+
+  x1 = pX - x3;
+  y1 = pY - y3;
+  x2 = Get_mm(X) - x3;
+  y2 = Get_mm(Y) - y3;
+ }
+
+ a = GetAngle(x1, y1, x2, y2);
 
  Temp = new GerberRender;
  Temp->Command = gcArc;
@@ -333,8 +385,7 @@ void GerberLevel::Arc(){
  if(Right  < r) Right  = r;
  if(Top    < t) Top    = t;
 
- // Clear I and J for next arc
- I = J = 0.0;
+ // I and J are cleared in GerberLevel::Do()
 }
 //------------------------------------------------------------------------------
 

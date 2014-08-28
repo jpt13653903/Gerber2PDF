@@ -13,6 +13,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
+				<Option parameters='&quot;W:\Projects\12\1204 - Gerber2pdf\Issues\Chris Dieleman - 2014-08-27\Copper Bottom.gbr&quot;' />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
