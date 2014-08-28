@@ -19,6 +19,7 @@ Changes:
 
 2014-08-28
 - Fixed bug regarding the calculation of arc centres.
+- Fixed bug where paths were sometimes drawn as regions.
 
 2014-06-22
 - Added a "-nocombine" option.

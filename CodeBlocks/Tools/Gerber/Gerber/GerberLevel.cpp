@@ -191,9 +191,8 @@ void GerberLevel::Line(){
 
  }else{
   if(
-   Interpolation != giClockwiseCircular        &&
-   Interpolation != giCounterclockwiseCircular &&
-   pX == Get_mm(X) && pY == Get_mm(Y)
+   pX == Get_mm(X) && pY == Get_mm(Y) &&
+   I  == 0.0       && J  == 0.0
   ) return;
  }
  Path = true;
@@ -340,7 +339,7 @@ void GerberLevel::Arc(){
    }
 
    error = fabs((x1*x1 + y1*y1) - (x2*x2 + y2*y2));
-   if(T < 0 || error < Error){
+   if(error < Error){
     T     = t;
     Error = error;
    }
@@ -432,11 +431,14 @@ void GerberLevel::ApertureSelect(GerberAperture* Aperture, unsigned LineNumber){
 }
 //------------------------------------------------------------------------------
 
-void GerberLevel::OutlineBegin(){
+void GerberLevel::OutlineBegin(unsigned LineNumber){
  GerberRender* Temp;
 
- Temp           = new GerberRender;
- Temp->Command  = gcBeginOutline;
+ Exposure = geOff;
+ Move(LineNumber);
+
+ Temp          = new GerberRender;
+ Temp->Command = gcBeginOutline;
  Add(Temp);
 
  OutlineFill = true;

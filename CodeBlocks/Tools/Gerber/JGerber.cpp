@@ -386,7 +386,7 @@ bool JGerber::GCode(){
    return true;
 
   case 36: // Turn on Outline Area Fill
-   CurrentLevel->OutlineBegin();
+   CurrentLevel->OutlineBegin(LineNumber);
    return true;
 
   case 37: // Turn off Outline Area Fill

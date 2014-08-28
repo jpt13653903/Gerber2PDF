@@ -92,7 +92,7 @@ public:
 
  void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
 
- void OutlineBegin();
+ void OutlineBegin(unsigned LineNumber);
  void OutlineEnd  (unsigned LineNumber);
 
  void Do(unsigned LineNumber);
