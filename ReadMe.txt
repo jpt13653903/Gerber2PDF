@@ -17,6 +17,9 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2014-08-28
+- Fixed bug regarding the calculation of arc centres.
+
 2014-06-22
 - Added a "-nocombine" option.
 
