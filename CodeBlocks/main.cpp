@@ -747,16 +747,31 @@ int main(int argc, char** argv){
    ThePageTop
   );
 
+  if(Layer->Negative){
+   TheContents->Push();
+    TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
+    TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
+
+    if(Dark.A == 1.0){
+     TheContents->Opaque(Opaque);
+    }else{
+     OPAQUE_STACK* TempOpaque = new OPAQUE_STACK(Dark.A);
+     TempOpaque->Next = OpaqueStack;
+     OpaqueStack      = TempOpaque;
+     pdf.AddIndirect(TempOpaque->Opaque);
+     ThePage->Resources.AddOpaque(TempOpaque->Opaque);
+     TheContents->Opaque(TempOpaque->Opaque);
+    }
+
+    TheContents->Rectangle(x-w2-1e6, y-h2-1e6, w+2e6, h+2e6);
+    TheContents->Fill();
+   TheContents->Pop();
+  }
+
   if(!Reusing){
    for(j = 0; j < 1000; j++) Apertures[j] = 0;
 
-   if(Layer->Negative){
-    TheContents->Rectangle(x-w2, y-h2, w, h);
-    TheContents->Fill();
-    Negative = true;
-   }else{
-    Negative = false;
-   }
+   Negative = Layer->Negative;
 
    Level = Gerber.Levels;
    while(Level){

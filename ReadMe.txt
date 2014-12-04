@@ -17,6 +17,9 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2014-12-04
+- Multiple instances of negative image layers now render correctly.
+
 2014-08-28
 - Fixed bug regarding the calculation of arc centres.
 - Fixed bug where paths were sometimes drawn as regions.
