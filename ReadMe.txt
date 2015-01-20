@@ -17,8 +17,12 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2015-01-20
+- Fixed bug where paths was handled wrong when terminated with a flash
+  instead of a move.
+
 2014-12-04
-- Multiple instances of negative image layers now render correctly.
+- Multiple instances of negative image Gerbers now render correctly.
 
 2014-08-28
 - Fixed bug regarding the calculation of arc centres.
