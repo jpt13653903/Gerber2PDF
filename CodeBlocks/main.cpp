@@ -227,6 +227,7 @@ void DrawRectLine(
 //------------------------------------------------------------------------------
 
 void Pause(){
+ if(SilentExit) return;
  printf("\nPress Enter to continue\n");
  char c;
  scanf("%c", &c);
@@ -501,7 +502,7 @@ int main(int argc, char** argv){
  int     j;
  int     PageCount = 0;
  int     Result;
- bool    Combine = false;
+ bool    Combine     = false;
  bool    ThePageUsed = false;
  double  x, y, w, h, w2, h2;
  double  ThePageLeft   =  1e100;
@@ -535,8 +536,9 @@ int main(int argc, char** argv){
    "You should have received a copy of the GNU General Public License\n"
    "along with this program.  If not, see <http://www.gnu.org/licenses/>\n"
    "\n"
-   "Usage: Gerber2pdf [-nowarnings] [-output=output_file_name] file_1\n"
-   "       [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ... \n"
+   "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name]"
+           " ...\n"
+   "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ... \n"
    "       [-nomirror] [-nocombine] ... file_N\n"
    "\n"
    "Example: Gerber2pdf -output=My_Project\n"
@@ -554,7 +556,8 @@ int main(int argc, char** argv){
    "         -colour=0,128,0,200 top_solder_mask.grb\n"
    "         -colour=0,0,255     board_outline.grb\n"
    "\n"
-   "The -nowarnings option only disables deprecated feature warnings.\n"
+   "The -silentexit option disables the pause on exit.\n"
+   "The -nowarnings option disables deprecated feature warnings.\n"
   );
   Pause();
   return 0;
@@ -639,6 +642,9 @@ int main(int argc, char** argv){
 
    }else if(StringStart(argv[arg]+1, "nowarnings")){
     GerberWarnings = false;
+
+   }else if(StringStart(argv[arg]+1, "silentexit")){
+    SilentExit = true;
    }
    continue; // handle the next argument
   }

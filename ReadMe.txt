@@ -17,8 +17,11 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2015-02-21
+- Added silent exit feature
+
 2015-01-20
-- Fixed bug where paths was handled wrong when terminated with a flash
+- Fixed bug where paths were handled wrong when terminated with a flash
   instead of a move.
 
 2014-12-04

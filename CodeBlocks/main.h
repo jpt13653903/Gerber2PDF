@@ -26,6 +26,9 @@
 #include "JGerber.h"
 //------------------------------------------------------------------------------
 
+bool SilentExit = false;
+//------------------------------------------------------------------------------
+
 struct COLOUR{
  double R, G, B, A;
  COLOUR(double R, double G, double B, double A){

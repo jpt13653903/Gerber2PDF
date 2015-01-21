@@ -1050,7 +1050,7 @@ bool JGerber::IncludeFile(){
 //------------------------------------------------------------------------------
 
 bool JGerber::IC(){
- printf("Line %d - Warning: IC Paremeter ignored\n", LineNumber);
+ printf("Line %d - Warning: IC Parameter ignored\n", LineNumber);
 
  StartOfLevel = false;
 

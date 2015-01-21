@@ -210,7 +210,6 @@ void GerberLevel::Line(){
    Temp = new GerberRender;
    Temp->Command = gcLine;
    Temp->X = Get_mm(X)*10.0;
-   Temp->X = Get_mm(X)*10.0;
    Temp->Y = Get_mm(Y)*10.0;
    Add(Temp);
    break;

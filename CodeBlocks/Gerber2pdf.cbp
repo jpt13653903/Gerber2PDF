@@ -13,7 +13,6 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-				<Option parameters='-nowarnings &quot;C:\JPT\Projects\12\1204 - Gerber2pdf\Issues\jamesztyou - 2015-01-20\L1 - Copy.grb&quot;' />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
