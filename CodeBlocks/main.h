@@ -24,13 +24,23 @@
 
 #include "JPDF.h"
 #include "JGerber.h"
+#include "Helvetica_afm.h"
 //------------------------------------------------------------------------------
 
 bool SilentExit = false;
 //------------------------------------------------------------------------------
 
+double ThePageLeft   =  1e100;
+double ThePageBottom =  1e100;
+double ThePageRight  = -1e100;
+double ThePageTop    = -1e100;
+//------------------------------------------------------------------------------
+
 struct COLOUR{
  double R, G, B, A;
+ COLOUR(){
+  R = G = B = 0.0; A = 1.0;
+ }
  COLOUR(double R, double G, double B, double A){
   this->R = R;
   this->G = G;
@@ -38,6 +48,15 @@ struct COLOUR{
   this->A = A;
  }
 };
+//------------------------------------------------------------------------------
+
+struct META_TEXT{ // For header / footer
+ double  Size; // Font height in mm
+ COLOUR  Colour;
+ JString Text;
+};
+META_TEXT Header, Footer;
+bool HaveHeader, HaveFooter;
 //------------------------------------------------------------------------------
 
 int OpaqueCount = 0;

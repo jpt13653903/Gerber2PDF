@@ -29,7 +29,9 @@
 			<Add directory="Tools/String" />
 			<Add directory="Tools/File" />
 			<Add directory="Tools/Gerber" />
+			<Add directory="Resources" />
 		</Compiler>
+		<Unit filename="Resources/Helvetica_afm.h" />
 		<Unit filename="Resources/resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>

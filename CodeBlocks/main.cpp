@@ -498,6 +498,98 @@ LAYER* FindLayer(const char* Filename){
 }
 //------------------------------------------------------------------------------
 
+// Takes in the size of the drawing area, not the new page size
+void Resize(
+ pdfPage* Page,
+ double   Left,
+ double   Bottom,
+ double   Right,
+ double   Top
+){
+ double  x, y, w, h, w2, h2;
+
+ x  =      (Right + Left  )/2.0;
+ y  =      (Top   + Bottom)/2.0;
+ w  = 1.05*(Right - Left  );
+ h  = 1.05*(Top   - Bottom);
+ if(w < 0.0) w *= -1.0;
+ w2 = w/2.0;
+ h2 = h/2.0;
+
+ if(ThePageLeft   > x-w2) ThePageLeft   = x-w2;
+ if(ThePageRight  < x+w2) ThePageRight  = x+w2;
+ if(ThePageBottom > y-h2) ThePageBottom = y-h2;
+ if(ThePageTop    < y+h2) ThePageTop    = y+h2;
+
+ Page->MediaBox.Set_mm(
+  ThePageLeft,
+  ThePageBottom,
+  ThePageRight,
+  ThePageTop
+ );
+}
+//------------------------------------------------------------------------------
+
+void AddText(pdfContents* Contents, pdfFont* Font, pdfPage* Page){
+ double  Left,  Bottom;
+ double tLeft, tBottom, tRight, tTop;
+
+ double Centre = (ThePageLeft+ThePageRight)/2.0;
+
+ if(HaveHeader){
+  Font->Metrics.GetRect(Header.Text.String, &tLeft, &tBottom, &tRight, &tTop);
+  tLeft   *= Header.Size / 1000.0;
+  tBottom *= Header.Size / 1000.0;
+  tRight  *= Header.Size / 1000.0;
+  tTop    *= Header.Size / 1000.0;
+
+  Left   = Centre - (tLeft+tRight)/2.0 - tLeft;
+  Bottom = ThePageTop + Header.Size*0.1;
+
+  Resize(Page, Left+tLeft, Bottom+tBottom, Left+tRight, Bottom+tTop);
+
+  Contents->FillColour(
+   Header.Colour.R,
+   Header.Colour.G,
+   Header.Colour.B
+  );
+  Contents->Font(Font, Header.Size);
+  Contents->Push();
+   Contents->Translate(Left, Bottom);
+   Contents->BeginText();
+    Contents->Text(Header.Text.String);
+   Contents->EndText();
+  Contents->Pop();
+ }
+
+ if(HaveFooter){
+  Font->Metrics.GetRect(Footer.Text.String, &tLeft, &tBottom, &tRight, &tTop);
+  tLeft   *= Footer.Size / 1000.0;
+  tBottom *= Footer.Size / 1000.0;
+  tRight  *= Footer.Size / 1000.0;
+  tTop    *= Footer.Size / 1000.0;
+
+  Left   = Centre - (tLeft+tRight)/2.0 - tLeft;
+  Bottom = ThePageBottom - (tTop-tBottom) - Footer.Size*0.1;
+
+  Resize(Page, Left+tLeft, Bottom+tBottom, Left+tRight, Bottom+tTop);
+
+  Contents->FillColour(
+   Footer.Colour.R,
+   Footer.Colour.G,
+   Footer.Colour.B
+  );
+  Contents->Font(Font, Footer.Size);
+  Contents->Push();
+   Contents->Translate(Left, Bottom);
+   Contents->BeginText();
+    Contents->Text(Footer.Text.String);
+   Contents->EndText();
+  Contents->Pop();
+ }
+}
+//------------------------------------------------------------------------------
+
 int main(int argc, char** argv){
  int     j;
  int     PageCount = 0;
@@ -505,19 +597,17 @@ int main(int argc, char** argv){
  bool    Combine     = false;
  bool    ThePageUsed = false;
  double  x, y, w, h, w2, h2;
- double  ThePageLeft   =  1e100;
- double  ThePageBottom =  1e100;
- double  ThePageRight  = -1e100;
- double  ThePageTop    = -1e100;
  JString OutputFileName;
  JString FileName;
  JString LevelName;
+
+ HaveHeader = HaveFooter = false;
 
  int arg;
 
  if(argc < 2){
   printf(
-   "Gerber2PDF, Version 1.1\n"
+   "Gerber2PDF, Version 1.2\n"
    "Built on "__DATE__" at "__TIME__"\n"
    "\n"
    "Copyright (C) John-Philip Taylor\n"
@@ -541,19 +631,19 @@ int main(int argc, char** argv){
    "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ... \n"
    "       [-nomirror] [-nocombine] ... file_N\n"
    "\n"
-   "Example: Gerber2pdf -output=My_Project\n"
-   "         top_silk.grb bottom_silk.grb\n"
-   "         top_copper.grb inner_copper_1.grb\n"
-   "         inner_copper_2.grb bottom_copper.grb\n"
-   "         bottom_solder_mask.grb top_solder_mask.grb\n"
-   "         board_outline.grb\n"
-   "         -combine -mirror\n"
-   "         -colour=255,0,0     bottom_copper.grb\n"
-   "         -colour=0,128,0,200 bottom_solder_mask.grb\n"
-   "         -colour=0,0,255     board_outline.grb\n"
-   "         -combine -nomirror\n"
-   "         -colour=255,0,0     top_copper.grb\n"
-   "         -colour=0,128,0,200 top_solder_mask.grb\n"
+   "Example: Gerber2pdf -output=My_Project              ^\n"
+   "         top_silk.grb bottom_silk.grb               ^\n"
+   "         top_copper.grb inner_copper_1.grb          ^\n"
+   "         inner_copper_2.grb bottom_copper.grb       ^\n"
+   "         bottom_solder_mask.grb top_solder_mask.grb ^\n"
+   "         board_outline.grb                          ^\n"
+   "         -combine -mirror                           ^\n"
+   "         -colour=255,0,0     bottom_copper.grb      ^\n"
+   "         -colour=0,128,0,200 bottom_solder_mask.grb ^\n"
+   "         -colour=0,0,255     board_outline.grb      ^\n"
+   "         -combine -nomirror                         ^\n"
+   "         -colour=255,0,0     top_copper.grb         ^\n"
+   "         -colour=0,128,0,200 top_solder_mask.grb    ^\n"
    "         -colour=0,0,255     board_outline.grb\n"
    "\n"
    "The -silentexit option disables the pause on exit.\n"
@@ -570,6 +660,14 @@ int main(int argc, char** argv){
  // PDF Variables and Structures
  pdfPages    Pages;    // Single level page tree
  pdfOutlines Outlines; // Single level outline tree
+
+ // Add a font, just is case...
+ pdfFont Font("F1");
+ Font.SetFont(pdfFont::Helvetica);
+ Font.Metrics.LoadAFM_Buffer(Helvetica_afm);
+ Font.SetWinANSI();
+ pdf.AddIndirect(&Font);
+ Pages.Resources.AddFont(&Font);
 
  LAYER* Layer;
 
@@ -627,6 +725,7 @@ int main(int argc, char** argv){
     Dark.A = A/255.0;
 
    }else if(StringStart(argv[arg]+1, "combine")){
+    if(ThePage) AddText(TheContents, &Font, ThePage);
     Combine     = true;
     ThePage     = Page+arg;
     ThePageUsed = false;
@@ -645,6 +744,30 @@ int main(int argc, char** argv){
 
    }else if(StringStart(argv[arg]+1, "silentexit")){
     SilentExit = true;
+
+   }else if(StringStart(argv[arg]+1, "header=")){
+    HaveHeader = false;
+    int i = 8, s;
+    if(!GetInt(argv[arg], &i, &s)) continue;
+    Header.Size = s*25.4/72.0;
+    Header.Text.Append(argv[arg]+i);
+    Header.Colour = Dark;
+    HaveHeader = true;
+
+   }else if(StringStart(argv[arg]+1, "noheader")){
+    HaveHeader = false;
+
+   }else if(StringStart(argv[arg]+1, "footer=")){
+    HaveFooter = false;
+    int i = 8, s;
+    if(!GetInt(argv[arg], &i, &s)) continue;
+    Footer.Size = s*25.4/72.0;
+    Footer.Text.Append(argv[arg]+i);
+    Footer.Colour = Dark;
+    HaveFooter = true;
+
+   }else if(StringStart(argv[arg]+1, "nofooter")){
+    HaveFooter = false;
    }
    continue; // handle the next argument
   }
@@ -699,6 +822,7 @@ int main(int argc, char** argv){
 
   // Write the PDF
   if(!ThePage || !Combine){
+   if(ThePage) AddText(TheContents, &Font, ThePage);
    ThePage     = Page+arg;
    ThePageUsed = false;
   }
@@ -738,20 +862,10 @@ int main(int argc, char** argv){
   h2 = h/2.0;
 
   if(Mirror){
-   if(ThePageLeft  > -x-w2) ThePageLeft  = -x-w2;
-   if(ThePageRight < -x+w2) ThePageRight = -x+w2;
+   Resize(ThePage, -Layer->Left, Layer->Bottom, -Layer->Right, Layer->Top);
   }else{
-   if(ThePageLeft  > x-w2) ThePageLeft  = x-w2;
-   if(ThePageRight < x+w2) ThePageRight = x+w2;
+   Resize(ThePage,  Layer->Left, Layer->Bottom,  Layer->Right, Layer->Top);
   }
-  if(ThePageBottom > y-h2) ThePageBottom = y-h2;
-  if(ThePageTop    < y+h2) ThePageTop    = y+h2;
-  ThePage->MediaBox.Set_mm(
-   ThePageLeft,
-   ThePageBottom,
-   ThePageRight,
-   ThePageTop
-  );
 
   if(Layer->Negative){
    TheContents->Push();
@@ -861,7 +975,10 @@ int main(int argc, char** argv){
    TheContents->Form(Layer->Form);
   TheContents->Pop();
  }
- if(TheContents) TheContents->Deflate();
+ if(TheContents){
+  AddText(TheContents, &Font, ThePage);
+  TheContents->Deflate();
+ }
 
  if(PageCount){
   pdf.AddIndirect(&Pages);

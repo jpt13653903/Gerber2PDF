@@ -43,6 +43,8 @@ public:
  bool Open (const char* FileName);
  void Close();
 
+ void Open_Buffer(const char* Buffer);
+
  bool  GetEndOfLine ();
  void  GetWhiteSpace(); // space; newline; tab
  char* GetLine      (); // Returns a string, caller must free it, excludes EOL

@@ -53,6 +53,17 @@ bool afmParser::Open(const char* FileName){
 }
 //------------------------------------------------------------------------------
 
+void afmParser::Open_Buffer(const char* Buffer){
+ int j;
+
+ Index  = 0;
+ for(Length = 0; Buffer[Length]; Length++);
+
+ this->Buffer = new char[Length];
+ for(j = 0; j < Length; j++) this->Buffer[j] = Buffer[j];
+}
+//------------------------------------------------------------------------------
+
 void afmParser::Close(){
  if(Buffer) delete[] Buffer;
  Buffer = 0;

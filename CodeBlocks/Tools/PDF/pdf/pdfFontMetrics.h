@@ -100,6 +100,9 @@ public:
  // Loads the metrics from an AFM file
  bool LoadAFM(const char* FileName);
 
+ // Loads the metrics from an AFM buffer
+ bool LoadAFM_Buffer(const char* Buffer);
+
  // Changes the encoding to Windows ANSI
  // Call after loading the metrics
  void SetWinANSI();

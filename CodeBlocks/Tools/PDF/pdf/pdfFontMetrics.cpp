@@ -814,6 +814,16 @@ bool pdfFontMetrics::LoadAFM(const char* FileName){
 }
 //------------------------------------------------------------------------------
 
+bool pdfFontMetrics::LoadAFM_Buffer(const char* Buffer){
+ bool b;
+
+ TheParser.Open_Buffer(Buffer);
+ b = LoadAFM(&TheParser);
+ TheParser.Close();
+ return b;
+}
+//------------------------------------------------------------------------------
+
 void pdfFontMetrics::SetEncoding(int Code, const char* Name){
  int j;
 
