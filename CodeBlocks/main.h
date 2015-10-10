@@ -51,7 +51,8 @@ struct COLOUR{
 //------------------------------------------------------------------------------
 
 struct META_TEXT{ // For header / footer
- double  Size; // Font height in mm
+ double  Size;  // Font height in mm
+ double  Space; // Spacing, in mm
  COLOUR  Colour;
  JString Text;
 };

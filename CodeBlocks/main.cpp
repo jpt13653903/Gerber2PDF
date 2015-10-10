@@ -544,13 +544,13 @@ void AddText(pdfContents* Contents, pdfFont* Font, pdfPage* Page){
   tTop    *= Header.Size / 1000.0;
 
   Left   = Centre - (tLeft+tRight)/2.0 - tLeft;
-  Bottom = ThePageTop + Header.Size*0.1;
+  Bottom = ThePageTop + Header.Space;
 
   Resize(Page,
    Left   + tLeft,
    Bottom + tBottom,
    Left   + tRight,
-   Bottom + tTop+Header.Size*0.1
+   Bottom + tTop + Header.Space
   );
 
   Contents->FillColour(
@@ -575,12 +575,12 @@ void AddText(pdfContents* Contents, pdfFont* Font, pdfPage* Page){
   tTop    *= Footer.Size / 1000.0;
 
   Left   = Centre - (tLeft+tRight)/2.0 - tLeft;
-  Bottom = ThePageBottom - (tTop-tBottom) - Footer.Size*0.1;
+  Bottom = ThePageBottom - (tTop-tBottom) - Footer.Space;
 
   Resize(
    Page,
    Left   + tLeft,
-   Bottom + tBottom-Header.Size*0.1,
+   Bottom + tBottom - Footer.Space,
    Left   + tRight,
    Bottom + tTop
   );
@@ -641,7 +641,8 @@ int main(int argc, char** argv){
            " ...\n"
    "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ... \n"
    "       [-nomirror] [-nocombine] ... file_N \n"
-   "       [-header,S,Text] [-footer,S,Text] [-noheader] [-nofooter] \n"
+   "       [-header=Size,Space,Text] [-footer=Size,Space,Text] \n"
+   "       [-noheader] [-nofooter] \n"
    "\n"
    "Example: Gerber2pdf -output=My_Project              ^\n"
    "         top_silk.grb bottom_silk.grb               ^\n"
@@ -657,8 +658,8 @@ int main(int argc, char** argv){
    "         -colour=255,0,0     top_copper.grb         ^\n"
    "         -colour=0,128,0,200 top_solder_mask.grb    ^\n"
    "         -colour=0,0,255     board_outline.grb      ^\n"
-   "         -header=10,HeaderText                      ^\n"
-   "         -footer=10,FooterText                       \n"
+   "         -header=10,5,HeaderText                    ^\n"
+   "         -footer=10,5,FooterText                     \n"
    "\n"
    "The -silentexit option disables the pause on exit.\n"
    "The -nowarnings option disables deprecated feature warnings.\n"
@@ -764,6 +765,8 @@ int main(int argc, char** argv){
     int i = 8, s;
     if(!GetInt(argv[arg], &i, &s)) continue;
     Header.Size = s*25.4/72.0;
+    if(!GetInt(argv[arg], &i, &s)) continue;
+    Header.Space = s*25.4/72.0;
     Header.Text.Set(argv[arg]+i);
     Header.Colour = Dark;
     HaveHeader = true;
@@ -776,6 +779,8 @@ int main(int argc, char** argv){
     int i = 8, s;
     if(!GetInt(argv[arg], &i, &s)) continue;
     Footer.Size = s*25.4/72.0;
+    if(!GetInt(argv[arg], &i, &s)) continue;
+    Footer.Space = s*25.4/72.0;
     Footer.Text.Set(argv[arg]+i);
     Footer.Colour = Dark;
     HaveFooter = true;
