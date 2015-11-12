@@ -365,12 +365,26 @@ void GerberLevel::Arc(){
  pX = Get_mm(X);
  pY = Get_mm(Y);
 
- a = sqrt(x1*x1 + y1*y1); // Radius
+ // Calculate bounding box
+ int    j;
+ double x, y, d, dd, rad;
 
- l = x3-a;
- b = y3-a;
- r = x3+a;
- t = y3+a;
+ rad = sqrt(x1*x1 + y1*y1); // Radius
+
+ l = r = x3 + x1;
+ b = t = y3 + y1;
+
+ d  = a * pi / 180.0;
+ dd = d / 1000.0;
+ for(j = 0; j < 1000; j++){
+  x = x3 + rad*cos(d);
+  y = y3 + rad*sin(d);
+  if(l > x) l = x;
+  if(b > y) b = y;
+  if(r < x) r = x;
+  if(t < y) t = y;
+  d += dd;
+ }
 
  if(CurrentAperture && !OutlineFill){
   l += CurrentAperture->Left;
