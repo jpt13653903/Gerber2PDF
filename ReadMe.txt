@@ -17,6 +17,9 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2015-11-12
+- Fixed bug relating to arc bounding box calculation
+
 2015-02-21
 - Added silent exit feature
 
