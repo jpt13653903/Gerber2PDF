@@ -1152,12 +1152,15 @@ bool JGerber::ImagePolarity(){
 //------------------------------------------------------------------------------
 
 bool JGerber::ImageRotation(){
- printf("Line %d - Error: ImageRotation not implemented\n", LineNumber);
+ printf("Line %d - Warning: ImageRotation not implemented\n", LineNumber);
 
  StartOfLevel = false;
 
  while(Index < Length){
-  if(Buffer[Index] == '%') return true;
+  if(Buffer[Index] == '*'){
+    Index++;
+    return true;
+  }
   Index++;
  }
 
@@ -1258,12 +1261,15 @@ bool JGerber::LevelPolarity(){
 //------------------------------------------------------------------------------
 
 bool JGerber::MirrorImage(){
- printf("Line %d - Error: MirrorImage not implemented\n", LineNumber);
+ printf("Line %d - Warning: MirrorImage not implemented\n", LineNumber);
 
  StartOfLevel = false;
 
  while(Index < Length){
-  if(Buffer[Index] == '%') return true;
+  if(Buffer[Index] == '*'){
+    Index++;
+    return true;
+  }
   Index++;
  }
 
@@ -1478,7 +1484,7 @@ bool JGerber::Attribute(){
 }
 //------------------------------------------------------------------------------
 
-bool JGerber::Paramater(char Delimiter){
+bool JGerber::Parameter(char Delimiter){
  unsigned i = Index;
 
  WhiteSpace();
@@ -1752,7 +1758,7 @@ bool JGerber::GetGerber(){
 
    default:
     Index++;
-    if(!Paramater(Buffer[Index-1])) return false;
+    if(!Parameter(Buffer[Index-1])) return false;
     break;
 
   }

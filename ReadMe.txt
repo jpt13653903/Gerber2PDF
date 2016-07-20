@@ -17,6 +17,9 @@ with the same file-name as the Gerber.
 Changes:
 --------
 
+2016-07-20
+- Fixed bug relating to closed contour warnings
+
 2015-11-12
 - Fixed bug relating to arc bounding box calculation
 

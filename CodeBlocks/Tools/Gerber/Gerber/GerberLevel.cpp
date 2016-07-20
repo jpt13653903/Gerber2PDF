@@ -155,6 +155,8 @@ void GerberLevel::Move(unsigned LineNumber){
 
  Path = false;
 
+ fX = X;
+ fY = Y;
  pX = Get_mm(X);
  pY = Get_mm(Y);
 }
