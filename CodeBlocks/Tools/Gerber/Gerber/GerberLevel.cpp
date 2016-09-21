@@ -64,6 +64,8 @@ GerberLevel::GerberLevel(GerberLevel* PreviousLevel){
   Interpolation = PreviousLevel->Interpolation;
   pX            = PreviousLevel->pX;
   pY            = PreviousLevel->pY;
+   X            = PreviousLevel-> X;
+   Y            = PreviousLevel-> Y;
 
   CountX = PreviousLevel->CountX;
   CountY = PreviousLevel->CountY;
@@ -155,6 +157,8 @@ void GerberLevel::Move(unsigned LineNumber){
 
  Path = false;
 
+ fX = X;
+ fY = Y;
  pX = Get_mm(X);
  pY = Get_mm(Y);
 }

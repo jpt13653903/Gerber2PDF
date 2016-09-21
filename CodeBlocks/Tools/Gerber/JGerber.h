@@ -144,7 +144,7 @@ private:
  // Attributes
  bool Attribute();
 
- bool Paramater(char Delimiter);
+ bool Parameter(char Delimiter);
 
  // Root of the parser
  void SetBBox();
