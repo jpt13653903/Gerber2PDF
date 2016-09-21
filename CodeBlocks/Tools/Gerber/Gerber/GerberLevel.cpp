@@ -64,6 +64,8 @@ GerberLevel::GerberLevel(GerberLevel* PreviousLevel){
   Interpolation = PreviousLevel->Interpolation;
   pX            = PreviousLevel->pX;
   pY            = PreviousLevel->pY;
+   X            = PreviousLevel-> X;
+   Y            = PreviousLevel-> Y;
 
   CountX = PreviousLevel->CountX;
   CountY = PreviousLevel->CountY;
