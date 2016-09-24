@@ -302,9 +302,6 @@ void GerberLevel::Arc(){
 
  GerberRender* Temp;
 
- x1 = pX;        y1 = pY;
- x2 = Get_mm(X); y2 = Get_mm(Y);
-
  if(Multiquadrant){
   x3 = pX + Get_mm(I);
   y3 = pY + Get_mm(J);
@@ -378,8 +375,8 @@ void GerberLevel::Arc(){
  l = r = x3 + x1;
  b = t = y3 + y1;
 
- d  = a * pi / 180.0;
- dd = d / 1000.0;
+ d  = atan2(y1, x1);
+ dd = a * pi / 180e3;
  for(j = 0; j < 1000; j++){
   x = x3 + rad*cos(d);
   y = y3 + rad*sin(d);

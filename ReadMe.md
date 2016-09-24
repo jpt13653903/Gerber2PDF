@@ -1,20 +1,20 @@
 # Gerber2PDF
 
-Gerber2PDF is a command-line tool to convert Gerber files to PDF for 
-proofing and hobbyist printing purposes.
+Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing and hobbyist printing purposes.
 
 ## Installation:
 
-Download and run Gerber2pdf.exe.
-This will display the copyright and usage information.
+Download and run Gerber2pdf.exe.  This will display the copyright and usage information.
 
 ## Usage:
 
-A batch-file or script is recommended, but a simple "Open with..." link 
-will also work, resulting in a single Gerber to be converted to a PDF 
-with the same file-name as the Gerber.
+A batch-file or script is recommended, but a simple "Open with..." link will also work, resulting in a single Gerber to be converted to a PDF with the same file-name as the Gerber.
 
 ## Changes:
+
+#### 2016-09-24
+
+- Fixed bug relating to arc bounding box calculation
 
 #### 2016-09-21
 
@@ -34,8 +34,7 @@ with the same file-name as the Gerber.
 
 #### 2015-01-20
 
-- Fixed bug where paths were handled wrong when terminated with a flash
-  instead of a move.
+- Fixed bug where paths were handled wrong when terminated with a flash instead of a move.
 
 #### 2014-12-04
 
@@ -52,11 +51,9 @@ with the same file-name as the Gerber.
 
 #### 2014-06-21
 
-- Added transparency to the layers.  Transparency is specified by adding an
-  optional alpha value to the colour.
+- Added transparency to the layers.  Transparency is specified by adding an optional alpha value to the colour.
 - Optimised for smaller PDF output by reusing previous Gerber conversions.
-- Added warnings for deprecated features (optionally disabled by the
-  "-nowarnings" option).
+- Added warnings for deprecated features (optionally disabled by the "-nowarnings" option).
 - Added an icon to Gerber2pdf.exe.
 - Fixed step-and-repeat bug
 
