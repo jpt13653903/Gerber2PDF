@@ -12,6 +12,10 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 
 ## Changes:
 
+#### 2016-09-25
+
+- Added an option to change the background colour
+
 #### 2016-09-24
 
 - Fixed bug relating to arc bounding box calculation
