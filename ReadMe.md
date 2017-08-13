@@ -12,6 +12,10 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 
 ## Changes:
 
+#### 2017-08-13
+
+- Fixed bug relating to the Open Contour warning.
+
 #### 2016-10-09
 
 - Fixed bug relating to Gerbers that specify units by means of the deprecated codes `G70` or `G71`, instead of the mandatory `%MO??*%` parameter.
