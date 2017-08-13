@@ -352,7 +352,12 @@ int RenderLayer(
     break;
 
    case gcStroke:
-    Contents->Stroke();
+    if(ConvertStrokesToFills){
+     Contents->Close      ();
+     Contents->FillEvenOdd();
+    }else{
+     Contents->Stroke();
+    }
     break;
 
    case gcFill:
@@ -518,7 +523,7 @@ int main(int argc, char** argv){
 
  if(argc < 2){
   printf(
-   "Gerber2PDF, Version 1.2\n"
+   "Gerber2PDF, Version 1.3\n"
    "Built on "__DATE__" at "__TIME__"\n"
    "\n"
    "Copyright (C) John-Philip Taylor\n"
@@ -539,7 +544,7 @@ int main(int argc, char** argv){
    "\n"
    "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name]"
            " ...\n"
-   "       [-background=R,G,B[,A]] ...\n"
+   "       [-background=R,G,B[,A]] [-strokes2fills] ...\n"
    "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...\n"
    "       [-nomirror] [-nocombine] ... file_N\n"
    "\n"
@@ -568,6 +573,12 @@ int main(int argc, char** argv){
    "for every subsequent use of that layer, irrespective of the \"current\"\n"
    "background colour.  To work around this limitation, use separate Gerber\n"
    "files for every different background colour.\n"
+   "\n"
+   "The -strokes2fills option converts all strokes to fills for the next\n"
+   "file, thereby converting outlines to areas.  This option has to be\n"
+   "applied to the first instance of that file, and applies to all other\n"
+   "instances.  To work around this limitation,\n"
+   "make a copy of the file in question.\n"
   );
   Pause();
   return 0;
@@ -682,13 +693,19 @@ int main(int argc, char** argv){
 
    }else if(StringStart(argv[arg]+1, "silentexit")){
     SilentExit = true;
+
+   }else if(StringStart(argv[arg]+1, "strokes2fills")){
+    ConvertStrokesToFills = true;
    }
    continue; // handle the next argument
   }
 
   // Read the gerber
   FileName.Set(argv[arg]);
-  if(FileName.GetLength() < 2) continue;
+  if(FileName.GetLength() < 2){
+   ConvertStrokesToFills = false;
+   continue;
+  }
   if(FileName.String[1] != '\\' && FileName.String[1] != ':'){
    FileName.Prefix(Path);
   }
@@ -708,6 +725,7 @@ int main(int argc, char** argv){
    Gerber.Clear();
    if(!Gerber.LoadGerber(FileName.String)){
     printf("Info: There were errors while reading the gerber\n");
+    ConvertStrokesToFills = false;
     continue;
    }
    if(Gerber.Name){
@@ -909,6 +927,8 @@ int main(int argc, char** argv){
    if(Mirror) TheContents->Scale(-1, 1);
    TheContents->Form(Layer->Form);
   TheContents->Pop();
+
+  ConvertStrokesToFills = false;
  }
  if(TheContents) TheContents->Deflate();
 

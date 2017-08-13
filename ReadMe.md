@@ -14,6 +14,7 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 
 #### 2017-08-13
 
+- Implemented a new "-strokes2fills" command-line option.
 - Fixed bug relating to the Open Contour warning.
 
 #### 2016-10-09

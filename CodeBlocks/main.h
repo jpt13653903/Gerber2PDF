@@ -26,7 +26,8 @@
 #include "JGerber.h"
 //------------------------------------------------------------------------------
 
-bool SilentExit = false;
+bool SilentExit            = false;
+bool ConvertStrokesToFills = false;
 //------------------------------------------------------------------------------
 
 struct COLOUR{
