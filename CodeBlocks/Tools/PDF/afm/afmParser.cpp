@@ -240,6 +240,8 @@ bool afmParser::GetNumber(double* Number){
  if(Index < Length && Buffer[Index] == '-'){
   Index++;
   Negative = true;
+ }else if(Index < Length && Buffer[Index] == '+'){
+  Index++;
  }
 
  while(Index < Length){
@@ -330,6 +332,8 @@ bool afmParser::GetInteger(int* Integer){
  if(Index < Length && Buffer[Index] == '-'){
   Index++;
   Negative = true;
+ }else if(Index < Length && Buffer[Index] == '+'){
+  Index++;
  }
 
  if(Buffer[Index] == '<'){

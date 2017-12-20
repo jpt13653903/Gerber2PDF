@@ -178,6 +178,8 @@ bool JGerber::GetInteger(int* Integer){
  if(Index < Length && Buffer[Index] == '-'){
   Sign = true;
   Index++;
+ }else if(Index < Length && Buffer[Index] == '+'){
+  Index++;
  }
 
  while(Index < Length){
@@ -206,6 +208,8 @@ bool JGerber::GetFloat(double* Number){
 
  if(Index < Length && Buffer[Index] == '-'){
   Sign = true;
+  Index++;
+ }else if(Index < Length && Buffer[Index] == '+'){
   Index++;
  }
 
@@ -256,6 +260,8 @@ bool JGerber::GetCoordinate(double* Number, int Integer, int Decimal){
 
  if(Index < Length && Buffer[Index] == '-'){
   Sign = true;
+  Index++;
+ }else if(Index < Length && Buffer[Index] == '+'){
   Index++;
  }
 

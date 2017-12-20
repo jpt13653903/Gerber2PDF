@@ -12,6 +12,10 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 
 ## Changes:
 
+#### 2017-12-20
+
+- Fixed bug relating to explicit positive numbers
+
 #### 2017-08-13
 
 - Implemented a new "-strokes2fills" command-line option.

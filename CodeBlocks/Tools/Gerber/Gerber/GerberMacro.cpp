@@ -1000,6 +1000,8 @@ bool GerberMacro::Float(double* Number){
  if(Index < Length && Buffer[Index] == '-'){
   Sign = true;
   Index++;
+ }else if(Index < Length && Buffer[Index] == '+'){
+  Index++;
  }
 
  while(Index < Length){
@@ -1045,6 +1047,8 @@ bool GerberMacro::Integer(int* Integer){
 
  if(Index < Length && Buffer[Index] == '-'){
   Sign = true;
+  Index++;
+ }else if(Index < Length && Buffer[Index] == '+'){
   Index++;
  }
 
