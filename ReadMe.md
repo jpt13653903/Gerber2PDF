@@ -4,7 +4,7 @@ Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing an
 
 ## Installation:
 
-Download and run Gerber2pdf.exe.  This will display the copyright and usage information.
+Download and run [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/latest/download).  This will display the copyright and usage information.
 
 ## Usage:
 
