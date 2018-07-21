@@ -10,6 +10,10 @@ Download and run [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/fi
 
 A batch-file or script is recommended, but a simple "Open with..." link will also work, resulting in a single Gerber to be converted to a PDF with the same file-name as the Gerber.
 
+## Source:
+
+The source is available from the [git repository](https://sourceforge.net/p/gerber2pdf/code/) and [GitHub](https://github.com/jpt13653903/Gerber2PDF).
+
 ## Changes:
 
 #### 2017-12-20
@@ -80,9 +84,4 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 - Added an option to change the layer colour.
 - Added an option to combine layers onto a single page.
 - Added an option to mirror the output.
-
-## Source:
-
-The source is available from the git repository:
-<https://sourceforge.net/p/gerber2pdf/code/>
 
