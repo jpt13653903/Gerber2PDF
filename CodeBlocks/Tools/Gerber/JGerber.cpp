@@ -411,10 +411,15 @@ bool JGerber::GCode(){
    if(GerberWarnings){
     printf("Line %d - Warning: Deprecated code: G70\n", LineNumber);
    }
+                 Units = guInches;
    CurrentLevel->Units = guInches;
    return true;
 
   case 71: // Specify millimeters
+   if(GerberWarnings){
+    printf("Line %d - Warning: Deprecated code: G71\n", LineNumber);
+   }
+                 Units = guMillimeters;
    CurrentLevel->Units = guMillimeters;
    return true;
 
@@ -942,7 +947,7 @@ bool JGerber::ApertureMacro(){
  j = Index;
  while(Index < Length){
   if(Buffer[Index] == '%'){
-   Macro->LoadMacro(Buffer+j, Index-j, Units==guInches);
+   Macro->LoadMacro(Buffer+j, Index-j, Units == guInches);
    Add(Macro);
    return true;
   }
@@ -1292,6 +1297,7 @@ bool JGerber::Mode(){
    Index += 2;
 
   }else if(Buffer[Index] == '*'){
+   if(CurrentLevel) CurrentLevel->Units = Units;
    Index++;
    return true;
 

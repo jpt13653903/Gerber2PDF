@@ -12,6 +12,19 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 
 ## Changes:
 
+#### 2017-08-13
+
+- Implemented a new "-strokes2fills" command-line option.
+- Fixed bug relating to the Open Contour warning.
+
+#### 2016-10-09
+
+- Fixed bug relating to Gerbers that specify units by means of the deprecated codes `G70` or `G71`, instead of the mandatory `%MO??*%` parameter.
+
+#### 2016-09-25
+
+- Added an option to change the background colour
+
 #### 2016-09-24
 
 - Fixed bug relating to arc bounding box calculation

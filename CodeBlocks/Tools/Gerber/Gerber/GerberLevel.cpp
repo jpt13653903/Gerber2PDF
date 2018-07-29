@@ -135,7 +135,7 @@ void GerberLevel::Move(unsigned LineNumber){
 
  if(Path){
   if(OutlineFill){
-   if(fX != X || fY != Y){
+   if(fX != pX || fY != pY){
     if(GerberWarnings) printf(
      "Line %d - Warning: Deprecated feature: Open contours\n",
      LineNumber
@@ -157,10 +157,10 @@ void GerberLevel::Move(unsigned LineNumber){
 
  Path = false;
 
- fX = X;
- fY = Y;
- pX = Get_mm(X);
- pY = Get_mm(Y);
+ fX = Get_mm(X);
+ fY = Get_mm(Y);
+ pX = fX;
+ pY = fY;
 }
 //------------------------------------------------------------------------------
 

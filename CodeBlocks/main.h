@@ -27,7 +27,8 @@
 #include "Helvetica_afm.h"
 //------------------------------------------------------------------------------
 
-bool SilentExit = false;
+bool SilentExit            = false;
+bool ConvertStrokesToFills = false;
 //------------------------------------------------------------------------------
 
 double ThePageLeft   =  1e100;

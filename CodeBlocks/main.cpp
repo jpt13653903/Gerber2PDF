@@ -25,7 +25,8 @@ JPDF pdf;
 bool Mirror   = false;
 bool Negative = false;
 
-COLOUR Dark(0.0, 0.0, 0.0, 1.0);
+COLOUR Light(1.0, 1.0, 1.0, 0.0);
+COLOUR Dark (0.0, 0.0, 0.0, 1.0);
 
 APERTURE* ApertureStack = 0;
 APERTURE* TempApertureStack;
@@ -252,8 +253,8 @@ int RenderLayer(
 
  if(Level->Negative != Negative){
   Contents->Opaque      (Opaque);
-  Contents->StrokeColour(1.0, 1.0, 1.0);
-  Contents->FillColour  (1.0, 1.0, 1.0);
+  Contents->StrokeColour(Light.R, Light.G, Light.B);
+  Contents->FillColour  (Light.R, Light.G, Light.B);
  }
 
  while(Render){
@@ -351,7 +352,12 @@ int RenderLayer(
     break;
 
    case gcStroke:
-    Contents->Stroke();
+    if(ConvertStrokesToFills){
+     Contents->Close      ();
+     Contents->FillEvenOdd();
+    }else{
+     Contents->Stroke();
+    }
     break;
 
    case gcFill:
@@ -618,7 +624,7 @@ int main(int argc, char** argv){
 
  if(argc < 2){
   printf(
-   "Gerber2PDF, Version 1.2\n"
+   "Gerber2PDF, Version 1.3\n"
    "Built on "__DATE__" at "__TIME__"\n"
    "\n"
    "Copyright (C) John-Philip Taylor\n"
@@ -639,8 +645,8 @@ int main(int argc, char** argv){
    "\n"
    "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name]"
            " ...\n"
-   "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ... \n"
-   "       [-nomirror] [-nocombine] ... file_N \n"
+   "       [-background=R,G,B[,A]] [-strokes2fills] ...\n"
+   "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...\n"
    "       [-header=Size,Space,Text] [-footer=Size,Space,Text] \n"
    "       [-noheader] [-nofooter] \n"
    "\n"
@@ -663,6 +669,20 @@ int main(int argc, char** argv){
    "\n"
    "The -silentexit option disables the pause on exit.\n"
    "The -nowarnings option disables deprecated feature warnings.\n"
+   "\n"
+   "The optional -background colour is either transparent or opaque.  The\n"
+   "threshold is A=128.  Set it just before the target page is created.  Take\n"
+   "care when using this option, because this background colour is used to\n"
+   "draw the copper pour cut-outs.  That same colour will therefore apply\n"
+   "for every subsequent use of that layer, irrespective of the \"current\"\n"
+   "background colour.  To work around this limitation, use separate Gerber\n"
+   "files for every different background colour.\n"
+   "\n"
+   "The -strokes2fills option converts all strokes to fills for the next\n"
+   "file, thereby converting outlines to areas.  This option has to be\n"
+   "applied to the first instance of that file, and applies to all other\n"
+   "instances.  To work around this limitation,\n"
+   "make a copy of the file in question.\n"
   );
   Pause();
   return 0;
@@ -739,6 +759,33 @@ int main(int argc, char** argv){
     Dark.B = B/255.0;
     Dark.A = A/255.0;
 
+   }else if(StringStart(argv[arg]+1, "background=")){
+    int i = 12;
+    int R, G, B, A;
+    if(!GetInt(argv[arg], &i, &R)) continue;
+    if(!GetInt(argv[arg], &i, &G)) continue;
+    if(!GetInt(argv[arg], &i, &B)) continue;
+    if(argv[arg][i]){
+     if(!GetInt(argv[arg], &i, &A)) continue;
+    }else{
+     A = 255;
+    }
+    if(R < 0 || R > 255) continue;
+    if(G < 0 || G > 255) continue;
+    if(B < 0 || B > 255) continue;
+    if(A < 0 || A > 255) continue;
+    if(A < 128){
+     Light.R = 1.0;
+     Light.G = 1.0;
+     Light.B = 1.0;
+     Light.A = 0.0;
+    }else{
+     Light.R = R/255.0;
+     Light.G = G/255.0;
+     Light.B = B/255.0;
+     Light.A =     1.0;
+    }
+
    }else if(StringStart(argv[arg]+1, "combine")){
     if(ThePage) AddText(TheContents, &Font, ThePage);
     Combine     = true;
@@ -787,13 +834,19 @@ int main(int argc, char** argv){
 
    }else if(StringStart(argv[arg]+1, "nofooter")){
     HaveFooter = false;
+
+   }else if(StringStart(argv[arg]+1, "strokes2fills")){
+    ConvertStrokesToFills = true;
    }
    continue; // handle the next argument
   }
 
   // Read the gerber
   FileName.Set(argv[arg]);
-  if(FileName.GetLength() < 2) continue;
+  if(FileName.GetLength() < 2){
+   ConvertStrokesToFills = false;
+   continue;
+  }
   if(FileName.String[1] != '\\' && FileName.String[1] != ':'){
    FileName.Prefix(Path);
   }
@@ -813,6 +866,7 @@ int main(int argc, char** argv){
    Gerber.Clear();
    if(!Gerber.LoadGerber(FileName.String)){
     printf("Info: There were errors while reading the gerber\n");
+    ConvertStrokesToFills = false;
     continue;
    }
    if(Gerber.Name){
@@ -871,6 +925,18 @@ int main(int argc, char** argv){
    ThePageBottom =  1e100;
    ThePageRight  = -1e100;
    ThePageTop    = -1e100;
+
+   if(Light.A > 0.5){
+    TheContents->Push();
+     TheContents->StrokeColour(Light.R, Light.G, Light.B);
+     TheContents->FillColour  (Light.R, Light.G, Light.B);
+
+     TheContents->Opaque(Opaque);
+
+     TheContents->Rectangle(-1e6, -1e6, 2e6, 2e6);
+     TheContents->Fill();
+    TheContents->Pop();
+   }
   }
 
   x  =      (Layer->Right + Layer->Left  )/2.0;
@@ -993,6 +1059,8 @@ int main(int argc, char** argv){
    if(Mirror) TheContents->Scale(-1, 1);
    TheContents->Form(Layer->Form);
   TheContents->Pop();
+
+  ConvertStrokesToFills = false;
  }
  if(TheContents){
   AddText(TheContents, &Font, ThePage);
