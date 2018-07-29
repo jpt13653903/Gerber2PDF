@@ -543,7 +543,7 @@ int main(int argc, char** argv){
       "along with this program.  If not, see <http://www.gnu.org/licenses/>\n"
       "\n"
       "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name]"
-                      " ...\n"
+              " ...\n"
       "       [-background=R,G,B[,A]] [-strokes2fills] ...\n"
       "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...\n"
       "       [-nomirror] [-nocombine] ... file_N\n"
