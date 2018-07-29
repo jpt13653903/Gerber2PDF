@@ -29,13 +29,13 @@
 // Image XObject
 class pdfJPEG : public pdfImage{
 private:
- void Update();
- void GetSizes(const unsigned char* Buffer, unsigned Length);
+  void Update();
+  void GetSizes(const unsigned char* Buffer, unsigned Length);
 
 public:
- pdfJPEG(const char* Name);
+  pdfJPEG(const char* Name);
 
- bool LoadFromFile(const char* Filename);
+  bool LoadFromFile(const char* Filename);
 };
 //------------------------------------------------------------------------------
 

@@ -22,78 +22,78 @@
 //------------------------------------------------------------------------------
 
 pdfFontFile::pdfFontFile(){
- Update();
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfFontFile::Update(){
- Dictionary.Clear();
- Dictionary.AddEntry("Length" , &Length );
+  Dictionary.Clear();
+  Dictionary.AddEntry("Length" , &Length );
 
- if(!Filter.Empty()) Dictionary.AddEntry("Filter", &Filter);
+  if(!Filter.Empty()) Dictionary.AddEntry("Filter", &Filter);
 
- Dictionary.AddEntry("Length1", &Length1);
- Dictionary.AddEntry("Length2", &Length2);
- Dictionary.AddEntry("Length3", &Length3);
+  Dictionary.AddEntry("Length1", &Length1);
+  Dictionary.AddEntry("Length2", &Length2);
+  Dictionary.AddEntry("Length3", &Length3);
 }
 //------------------------------------------------------------------------------
 
 bool pdfFontFile::Starts(const char* s1, const char* s2){
- int j;
- for(j = 0; s2[j]; j++){
-  if(s1[j] != s2[j]) return false;
- }
- return true;
+  int j;
+  for(j = 0; s2[j]; j++){
+    if(s1[j] != s2[j]) return false;
+  }
+  return true;
 }
 //------------------------------------------------------------------------------
 
 void pdfFontFile::CalculateLengths(char* Buffer, int Length){
- // Length1: length in bytes of the clear-text portion
- // Length2: length in bytes of the encrypted portion
- // Length3: length in bytes of the fixed-content portion
+  // Length1: length in bytes of the clear-text portion
+  // Length2: length in bytes of the encrypted portion
+  // Length3: length in bytes of the fixed-content portion
 
- int j = 0;
- while(j < Length-17){
-  if(Starts(Buffer+j, "currentfile eexec")) break;
-  j++;
- }
- j += 17;
- if(Buffer[j] == '\r') j++;
- if(Buffer[j] == '\n') j++;
+  int j = 0;
+  while(j < Length-17){
+    if(Starts(Buffer+j, "currentfile eexec")) break;
+    j++;
+  }
+  j += 17;
+  if(Buffer[j] == '\r') j++;
+  if(Buffer[j] == '\n') j++;
 
- Length1 = j;
+  Length1 = j;
 
- while(j < Length-10){
-  if(Starts(Buffer+j, "0000000000")) break;
-  j++;
- }
+  while(j < Length-10){
+    if(Starts(Buffer+j, "0000000000")) break;
+    j++;
+  }
 
- Length2 = j - Length1.Value;
- Length3 = Length - j;
+  Length2 = j - Length1.Value;
+  Length3 = Length - j;
 }
 //------------------------------------------------------------------------------
 
 bool pdfFontFile::LoadPFB(const char* FileName){
- int   Length;
- bool  b;
- char* Buffer;
- JFile File;
+  int   Length;
+  bool  b;
+  char* Buffer;
+  JFile File;
 
- File.SetFilename(FileName);
- if(File.Open(JFile::Read)){
-  Length = File.GetSize();
-  Buffer = new char[Length];
-  File.ReadBuffer(Buffer, Length, &b);
-  AddBinary((unsigned char*)Buffer, Length);
-  File.Close();
-  CalculateLengths(Buffer, Length);
-  delete[] Buffer;
-  return true;
+  File.SetFilename(FileName);
+  if(File.Open(JFile::Read)){
+    Length = File.GetSize();
+    Buffer = new char[Length];
+    File.ReadBuffer(Buffer, Length, &b);
+    AddBinary((unsigned char*)Buffer, Length);
+    File.Close();
+    CalculateLengths(Buffer, Length);
+    delete[] Buffer;
+    return true;
 
- }else{
-  File.ShowLastError();
- }
+  }else{
+    File.ShowLastError();
+  }
 
- return false;
+  return false;
 }
 //------------------------------------------------------------------------------

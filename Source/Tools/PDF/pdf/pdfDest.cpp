@@ -22,113 +22,113 @@
 //------------------------------------------------------------------------------
 
 void pdfDest::Fit(pdfPage* Page){
- pdfDest::Page = Page;
- Style.Set("Fit");
+  pdfDest::Page = Page;
+  Style.Set("Fit");
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
 }
 //------------------------------------------------------------------------------
 
 void pdfDest::FitB(pdfPage* Page){
- pdfDest::Page = Page;
- Style.Set("FitB");
+  pdfDest::Page = Page;
+  Style.Set("FitB");
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
 }
 //------------------------------------------------------------------------------
 
 void pdfDest::FitH(pdfPage* Page, double Top){
- pdfDest::Page = Page;
- Style.Set("FitH");
- Number[0] = Top;
+  pdfDest::Page = Page;
+  Style.Set("FitH");
+  Number[0] = Top;
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
- Add(Number);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
+  Add(Number);
 }
 //------------------------------------------------------------------------------
 
 void pdfDest::FitV(pdfPage* Page, double Left){
- pdfDest::Page = Page;
- Style.Set("FitV");
- Number[0] = Left;
+  pdfDest::Page = Page;
+  Style.Set("FitV");
+  Number[0] = Left;
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
 }
 //------------------------------------------------------------------------------
 
 void pdfDest::FitBH(pdfPage* Page, double Top){
- pdfDest::Page = Page;
- Style.Set("FitBH");
- Number[0] = Top;
+  pdfDest::Page = Page;
+  Style.Set("FitBH");
+  Number[0] = Top;
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
- Add(Number);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
+  Add(Number);
 }
 //------------------------------------------------------------------------------
 
 void pdfDest::FitBV(pdfPage* Page, double Left){
- pdfDest::Page = Page;
- Style.Set("FitBV");
- Number[0] = Left;
+  pdfDest::Page = Page;
+  Style.Set("FitBV");
+  Number[0] = Left;
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
- Add(Number);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
+  Add(Number);
 }
 //------------------------------------------------------------------------------
 
 void pdfDest::XYZ(
- pdfPage* Page,
- double   Left,
- double   Top,
- double   Zoom
+  pdfPage* Page,
+  double   Left,
+  double   Top,
+  double   Zoom
 ){
- pdfDest::Page = Page;
- Style.Set("XYZ");
- Number[0] = Left;
- Number[1] = Top;
- Number[2] = Zoom;
+  pdfDest::Page = Page;
+  Style.Set("XYZ");
+  Number[0] = Left;
+  Number[1] = Top;
+  Number[2] = Zoom;
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
- Add(Number  );
- Add(Number+1);
- Add(Number+2);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
+  Add(Number  );
+  Add(Number+1);
+  Add(Number+2);
 }
 //------------------------------------------------------------------------------
 
 void pdfDest::FitR(
- pdfPage* Page,
- double   Left,
- double   Bottom,
- double   Right,
- double   Top
+  pdfPage* Page,
+  double   Left,
+  double   Bottom,
+  double   Right,
+  double   Top
 ){
- pdfDest::Page = Page;
- Style.Set("FitR");
- Number[0] = Left;
- Number[1] = Bottom;
- Number[2] = Right;
- Number[3] = Top;
+  pdfDest::Page = Page;
+  Style.Set("FitR");
+  Number[0] = Left;
+  Number[1] = Bottom;
+  Number[2] = Right;
+  Number[3] = Top;
 
- Clear();
- Add(pdfDest::Page);
- Add(&Style);
- Add(Number  );
- Add(Number+1);
- Add(Number+2);
- Add(Number+3);
+  Clear();
+  Add(pdfDest::Page);
+  Add(&Style);
+  Add(Number  );
+  Add(Number+1);
+  Add(Number+2);
+  Add(Number+3);
 }
 //------------------------------------------------------------------------------

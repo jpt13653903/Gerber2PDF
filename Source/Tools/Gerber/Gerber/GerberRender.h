@@ -34,14 +34,14 @@
 class GerberAperture;
 class GerberRender{
 public:
- GerberRender();
+  GerberRender();
 
- GERBER_COMMAND Command;
+  GERBER_COMMAND Command;
 
- double X, Y, W, H, A; // W and H used for D, Dx and Dy; A in degrees
+  double X, Y, W, H, A; // W and H used for D, Dx and Dy; A in degrees
 
- GerberAperture* Aperture; // Used for gcApertureSelect
- GerberRender*   Next; // Points to the next render command
+  GerberAperture* Aperture; // Used for gcApertureSelect
+  GerberRender*   Next; // Points to the next render command
 };
 //------------------------------------------------------------------------------
 

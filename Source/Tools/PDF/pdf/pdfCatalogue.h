@@ -30,41 +30,41 @@
 
 class pdfCatalogue : public pdfIndirect{
 public:
- enum PAGE_LAYOUT{
-  SinglePage,
-  OneColumn,
-  TwoColumnLeft,
-  TwoColumnRight,
-  TwoPageLeft,
-  TwoPageRight
- };
+  enum PAGE_LAYOUT{
+    SinglePage,
+    OneColumn,
+    TwoColumnLeft,
+    TwoColumnRight,
+    TwoPageLeft,
+    TwoPageRight
+  };
 
- enum PAGE_MODE{
-  UseNone,
-  UseOutlines,
-  UseThumbs,
-  FullScreen
- };
+  enum PAGE_MODE{
+    UseNone,
+    UseOutlines,
+    UseThumbs,
+    FullScreen
+  };
 
 private:
- pdfDictionary Dictionary;
- pdfName       Type;
- pdfPages*     Pages;
- pdfOutlines*  Outlines;
- pdfName       PageLayout;
- pdfName       PageMode;
+  pdfDictionary Dictionary;
+  pdfName       Type;
+  pdfPages*     Pages;
+  pdfOutlines*  Outlines;
+  pdfName       PageLayout;
+  pdfName       PageMode;
 
- void Update();
+  void Update();
 
 public:
 
- pdfCatalogue();
+  pdfCatalogue();
 
- void SetPages   (pdfPages*    Pages);
- void SetOutlines(pdfOutlines* Outlines);
+  void SetPages   (pdfPages*    Pages);
+  void SetOutlines(pdfOutlines* Outlines);
 
- void SetPageLayout(PAGE_LAYOUT Layout);
- void SetPageMode  (PAGE_MODE   Mode);
+  void SetPageLayout(PAGE_LAYOUT Layout);
+  void SetPageMode  (PAGE_MODE   Mode);
 };
 //------------------------------------------------------------------------------
 

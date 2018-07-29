@@ -22,22 +22,22 @@
 //------------------------------------------------------------------------------
 
 pdfOpaque::pdfOpaque(const char* Name){
- Object = &Dictionary;
+  Object = &Dictionary;
 
- CurrentStrokeAlpha = 1.0;
- CurrentFillAlpha   = 1.0;
+  CurrentStrokeAlpha = 1.0;
+  CurrentFillAlpha   = 1.0;
 
- pdfOpaque::Name.Set(Name);
+  pdfOpaque::Name.Set(Name);
 
- Dictionary.Clear();
- Dictionary.AddEntry("CA", &CurrentStrokeAlpha);
- Dictionary.AddEntry("ca", &CurrentFillAlpha);
+  Dictionary.Clear();
+  Dictionary.AddEntry("CA", &CurrentStrokeAlpha);
+  Dictionary.AddEntry("ca", &CurrentFillAlpha);
 }
 //------------------------------------------------------------------------------
 
 void pdfOpaque::Opacity(double Opacity){
- CurrentStrokeAlpha = Opacity;
- CurrentFillAlpha   = Opacity;
+  CurrentStrokeAlpha = Opacity;
+  CurrentFillAlpha   = Opacity;
 }
 //------------------------------------------------------------------------------
 

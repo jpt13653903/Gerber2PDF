@@ -36,70 +36,70 @@ extern bool GerberWarnings;
 
 class GerberLevel{
 private:
- GerberRender* RenderList; // Linked list of render commands
- GerberRender* LastRender; // Last render command used for easy additions
+  GerberRender* RenderList; // Linked list of render commands
+  GerberRender* LastRender; // Last render command used for easy additions
 
- void Add(GerberRender* Render);
+  void Add(GerberRender* Render);
 
- bool   Path; // Busy with path definition
- bool   OutlineFill;
- double pX, pY; // Previous point used for relative data
- double fX, fY; // First point of polygon
+  bool   Path; // Busy with path definition
+  bool   OutlineFill;
+  double pX, pY; // Previous point used for relative data
+  double fX, fY; // First point of polygon
 
- double Get_mm(double Number);
+  double Get_mm(double Number);
 
- double GetAngle(
-  double x1, double y1, // Start, relative to center
-  double x2, double y2  // End, relative to center
- );
+  double GetAngle(
+    double x1, double y1, // Start, relative to center
+    double x2, double y2  // End, relative to center
+  );
 
- void Move (unsigned LineNumber);
- void Line ();
- void Arc  ();
- void Flash();
+  void Move (unsigned LineNumber);
+  void Line ();
+  void Arc  ();
+  void Flash();
 
- GerberAperture* CurrentAperture;
+  GerberAperture* CurrentAperture;
 
 public:
   GerberLevel(GerberLevel* PreviousLevel);
  ~GerberLevel();
 
- GerberLevel* Next;
+  GerberLevel* Next;
 
- // Image bounding box
- double Left;
- double Bottom;
- double Right;
- double Top;
+  // Image bounding box
+  double Left;
+  double Bottom;
+  double Right;
+  double Top;
 
- // Step-and-Repeat
- int    CountX, CountY;
- double StepX , StepY;
+  // Step-and-Repeat
+  int    CountX, CountY;
+  double StepX , StepY;
 
- void SetName(const char* Name);
+  void SetName(const char* Name);
 
- char* Name; // null for default level
- bool  Negative;
- bool  Relative;
- bool  Incremental;
- bool  Multiquadrant;
+  char* Name; // null for default level
+  bool  Negative;
+  bool  Relative;
+  bool  Incremental;
+  bool  Multiquadrant;
 
- double X, Y, I, J;
+  double X, Y, I, J;
 
- GERBER_UNIT          Units;
- GERBER_EXPOSURE      Exposure;
- GERBER_INTERPOLATION Interpolation;
+  GERBER_UNIT          Units;
+  GERBER_EXPOSURE      Exposure;
+  GERBER_INTERPOLATION Interpolation;
 
- void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
+  void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
 
- void OutlineBegin(unsigned LineNumber);
- void OutlineEnd  (unsigned LineNumber);
+  void OutlineBegin(unsigned LineNumber);
+  void OutlineEnd  (unsigned LineNumber);
 
- void Do(unsigned LineNumber);
+  void Do(unsigned LineNumber);
 
- // Linked list of render commands
- // Memory freed automatically
- GerberRender* Render();
+  // Linked list of render commands
+  // Memory freed automatically
+  GerberRender* Render();
 };
 //------------------------------------------------------------------------------
 

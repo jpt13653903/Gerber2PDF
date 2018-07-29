@@ -29,21 +29,21 @@
 // Image XObject
 class pdfPNG : public pdfImage{
 private:
- pdfDictionary DecodeParms;
- pdfNumber     Predictor;
- pdfNumber     Colours;
- bool          InterpolateImage;
+  pdfDictionary DecodeParms;
+  pdfNumber     Predictor;
+  pdfNumber     Colours;
+  bool          InterpolateImage;
 
- void Update();
- void RemoveAlpha();
- void Decode(const unsigned char* Buffer, unsigned Length);
+  void Update();
+  void RemoveAlpha();
+  void Decode(const unsigned char* Buffer, unsigned Length);
 
 public:
- pdfPNG(const char* Name);
+  pdfPNG(const char* Name);
 
- void SetInterpolate(bool Interpolate);
+  void SetInterpolate(bool Interpolate);
 
- bool LoadFromFile(const char* Filename);
+  bool LoadFromFile(const char* Filename);
 };
 //------------------------------------------------------------------------------
 

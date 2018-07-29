@@ -31,25 +31,25 @@
 
 class pdfFontDescriptor : public pdfIndirect{
 private:
- pdfDictionary Dictionary;
+  pdfDictionary Dictionary;
 
- pdfName      Type;
- pdfName      FontName;
- pdfNumber    Flags;
- pdfRectangle FontBBox;
- pdfNumber    ItalicAngle;
- pdfNumber    Ascent;
- pdfNumber    Descent;
- pdfNumber    CapHeight; // M Height
- pdfNumber    XHeight;
- pdfNumber    StemV;
+  pdfName      Type;
+  pdfName      FontName;
+  pdfNumber    Flags;
+  pdfRectangle FontBBox;
+  pdfNumber    ItalicAngle;
+  pdfNumber    Ascent;
+  pdfNumber    Descent;
+  pdfNumber    CapHeight; // M Height
+  pdfNumber    XHeight;
+  pdfNumber    StemV;
 
 public:
- pdfFontDescriptor();
+  pdfFontDescriptor();
 
- pdfFontFile FontFile;
+  pdfFontFile FontFile;
 
- void LoadMetrics(pdfFontMetrics* Metrics);
+  void LoadMetrics(pdfFontMetrics* Metrics);
 };
 //------------------------------------------------------------------------------
 

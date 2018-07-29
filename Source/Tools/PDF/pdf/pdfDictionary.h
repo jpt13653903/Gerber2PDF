@@ -28,29 +28,29 @@
 
 class pdfDictionary : public pdfObject{
 private:
- struct Element{
-  pdfName    Property;
-  pdfObject* Value;
-  Element  * Next;
- };
- Element* First;
- Element* Last;
+  struct Element{
+    pdfName    Property;
+    pdfObject* Value;
+    Element  * Next;
+  };
+  Element* First;
+  Element* Last;
 
- int Count;
+  int Count;
 
 public:
   pdfDictionary();
  ~pdfDictionary();
 
- bool OneLine;
- int  Indent;
+  bool OneLine;
+  int  Indent;
 
- void Clear();
- void AddEntry(const char* Property, pdfObject* Value);
- int  GetCount();
+  void Clear();
+  void AddEntry(const char* Property, pdfObject* Value);
+  int  GetCount();
 
- int GetLength();
- int GetOutput(char* Buffer);
+  int GetLength();
+  int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

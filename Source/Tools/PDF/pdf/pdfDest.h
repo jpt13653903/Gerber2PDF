@@ -30,20 +30,20 @@
 
 class pdfDest : public pdfArray{
 private:
- pdfPage*  Page;
- pdfName   Style; // Display Style
- pdfNumber Number[4];
+  pdfPage*  Page;
+  pdfName   Style; // Display Style
+  pdfNumber Number[4];
 
 public:
- void Fit  (pdfPage* Page);
- void FitB (pdfPage* Page);
- void FitH (pdfPage* Page, double Top );
- void FitV (pdfPage* Page, double Left);
- void FitBH(pdfPage* Page, double Top );
- void FitBV(pdfPage* Page, double Left);
- void XYZ  (pdfPage* Page, double Left , double Top, double Zoom);
- void FitR (pdfPage* Page, double Left , double Bottom,
-                           double Right, double Top);
+  void Fit  (pdfPage* Page);
+  void FitB (pdfPage* Page);
+  void FitH (pdfPage* Page, double Top );
+  void FitV (pdfPage* Page, double Left);
+  void FitBH(pdfPage* Page, double Top );
+  void FitBV(pdfPage* Page, double Left);
+  void XYZ  (pdfPage* Page, double Left , double Top, double Zoom);
+  void FitR (pdfPage* Page, double Left , double Bottom,
+                            double Right, double Top);
 };
 //------------------------------------------------------------------------------
 

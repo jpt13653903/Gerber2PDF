@@ -22,26 +22,26 @@
 //------------------------------------------------------------------------------
 
 int pdfBool::GetLength(){
- if(Value) return 4;
- return 5;
+  if(Value) return 4;
+  return 5;
 }
 //------------------------------------------------------------------------------
 
 int pdfBool::GetOutput(char* Buffer){
- if(Value){
-  Buffer[0] = 't';
-  Buffer[1] = 'r';
-  Buffer[2] = 'u';
-  Buffer[3] = 'e';
-  return 4;
- }else{
-  Buffer[0] = 'f';
-  Buffer[1] = 'a';
-  Buffer[2] = 'l';
-  Buffer[3] = 's';
-  Buffer[4] = 'e';
-  return 5;
- }
+  if(Value){
+    Buffer[0] = 't';
+    Buffer[1] = 'r';
+    Buffer[2] = 'u';
+    Buffer[3] = 'e';
+    return 4;
+  }else{
+    Buffer[0] = 'f';
+    Buffer[1] = 'a';
+    Buffer[2] = 'l';
+    Buffer[3] = 's';
+    Buffer[4] = 'e';
+    return 5;
+  }
 }
 //------------------------------------------------------------------------------
 

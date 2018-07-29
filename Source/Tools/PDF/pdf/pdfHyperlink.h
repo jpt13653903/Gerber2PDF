@@ -33,35 +33,35 @@
 
 class pdfHyperlink : public pdfAnnotation{
 private:
- pdfDest       Dest;
- pdfDictionary Action;
- pdfArray      Border;
+  pdfDest       Dest;
+  pdfDictionary Action;
+  pdfArray      Border;
 
- pdfNumber Zero; // The number Zero, used in Border
+  pdfNumber Zero; // The number Zero, used in Border
 
- // Members of Action
- pdfName   URISubtype;
- pdfString URI;
+  // Members of Action
+  pdfName   URISubtype;
+  pdfString URI;
 
- virtual void Update();
+  virtual void Update();
 
 public:
- pdfHyperlink();
+  pdfHyperlink();
 
- pdfNumber BorderWidth;
+  pdfNumber BorderWidth;
 
- // All length units are in mm
- void DestFit  (pdfPage* Page);
- void DestFitB (pdfPage* Page);
- void DestFitH (pdfPage* Page, double Top );
- void DestFitV (pdfPage* Page, double Left);
- void DestFitBH(pdfPage* Page, double Top );
- void DestFitBV(pdfPage* Page, double Left);
- void DestXYZ  (pdfPage* Page, double Left , double Top, double Zoom);
- void DestFitR (pdfPage* Page, double Left , double Bottom,
-                               double Right, double Top);
+  // All length units are in mm
+  void DestFit  (pdfPage* Page);
+  void DestFitB (pdfPage* Page);
+  void DestFitH (pdfPage* Page, double Top );
+  void DestFitV (pdfPage* Page, double Left);
+  void DestFitBH(pdfPage* Page, double Top );
+  void DestFitBV(pdfPage* Page, double Left);
+  void DestXYZ  (pdfPage* Page, double Left , double Top, double Zoom);
+  void DestFitR (pdfPage* Page, double Left , double Bottom,
+                                double Right, double Top);
 
- void DestURI(const char* URI); // External Web Link
+  void DestURI(const char* URI); // External Web Link
 };
 //------------------------------------------------------------------------------
 

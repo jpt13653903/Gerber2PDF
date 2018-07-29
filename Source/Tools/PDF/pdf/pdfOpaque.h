@@ -30,17 +30,17 @@
 // or form in which it is used
 class pdfOpaque : public pdfIndirect{
 private:
- pdfDictionary Dictionary;
+  pdfDictionary Dictionary;
 
- pdfNumber CurrentStrokeAlpha;
- pdfNumber CurrentFillAlpha;
+  pdfNumber CurrentStrokeAlpha;
+  pdfNumber CurrentFillAlpha;
 
 public:
- pdfName Name; // Do not use the name directly
+  pdfName Name; // Do not use the name directly
 
- pdfOpaque(const char* Name);
+  pdfOpaque(const char* Name);
 
- void Opacity(double Opacity);
+  void Opacity(double Opacity);
 };
 //------------------------------------------------------------------------------
 

@@ -38,24 +38,24 @@ double ThePageTop    = -1e100;
 //------------------------------------------------------------------------------
 
 struct COLOUR{
- double R, G, B, A;
- COLOUR(){
-  R = G = B = 0.0; A = 1.0;
- }
- COLOUR(double R, double G, double B, double A){
-  this->R = R;
-  this->G = G;
-  this->B = B;
-  this->A = A;
- }
+  double R, G, B, A;
+  COLOUR(){
+    R = G = B = 0.0; A = 1.0;
+  }
+  COLOUR(double R, double G, double B, double A){
+    this->R = R;
+    this->G = G;
+    this->B = B;
+    this->A = A;
+  }
 };
 //------------------------------------------------------------------------------
 
 struct META_TEXT{ // For header / footer
- double  Size;  // Font height in mm
- double  Space; // Spacing, in mm
- COLOUR  Colour;
- JString Text;
+  double  Size;  // Font height in mm
+  double  Space; // Spacing, in mm
+  COLOUR  Colour;
+  JString Text;
 };
 META_TEXT Header, Footer;
 bool HaveHeader, HaveFooter;
@@ -63,67 +63,67 @@ bool HaveHeader, HaveFooter;
 
 int OpaqueCount = 0;
 struct OPAQUE_STACK{
- pdfOpaque*    Opaque;
- OPAQUE_STACK* Next;
+  pdfOpaque*    Opaque;
+  OPAQUE_STACK* Next;
 
- OPAQUE_STACK(double Value){
-  JString Name;
-  Name.Set('O'), Name.Append(++OpaqueCount);
-  Opaque = new pdfOpaque(Name.String);
-  Next   = 0;
-  Opaque->Opacity(Value);
- }
+  OPAQUE_STACK(double Value){
+    JString Name;
+    Name.Set('O'), Name.Append(++OpaqueCount);
+    Opaque = new pdfOpaque(Name.String);
+    Next   = 0;
+    Opaque->Opacity(Value);
+  }
 
- ~OPAQUE_STACK(){
-  delete Opaque;
-  if(Next) delete Next;
- }
+  ~OPAQUE_STACK(){
+    delete Opaque;
+    if(Next) delete Next;
+  }
 };
 OPAQUE_STACK* OpaqueStack = 0;
 //------------------------------------------------------------------------------
 
 struct APERTURE{
- pdfForm*  Aperture;
- APERTURE* Next;
+  pdfForm*  Aperture;
+  APERTURE* Next;
 };
 //------------------------------------------------------------------------------
 
 struct LEVEL_FORM{
- pdfForm*    Level;
- LEVEL_FORM* Next;
+  pdfForm*    Level;
+  LEVEL_FORM* Next;
 
- LEVEL_FORM(){
-  Level = 0;
-  Next  = 0;
- }
+  LEVEL_FORM(){
+    Level = 0;
+    Next  = 0;
+  }
 
- ~LEVEL_FORM(){
-  if(Level) delete Level;
-  if(Next ) delete Next;
- }
+  ~LEVEL_FORM(){
+    if(Level) delete Level;
+    if(Next ) delete Next;
+  }
 };
 //------------------------------------------------------------------------------
 
 struct LAYER{
- char*    Filename;
- pdfForm* Form;
- LAYER*   Next;
+  char*    Filename;
+  pdfForm* Form;
+  LAYER*   Next;
 
- bool    Negative;
- double  Left, Bottom, Right, Top;
- JString Title;
+  bool    Negative;
+  double  Left, Bottom, Right, Top;
+  JString Title;
 
- LAYER(){
-  Filename  = 0;
-  Form      = 0;
-  Next      = 0;
- }
+  LAYER(){
+    Filename  = 0;
+    Form      = 0;
+    Next      = 0;
+  }
 
- ~LAYER(){
-  if(Filename) delete[] Filename;
-  if(Form    ) delete   Form;
-  if(Next    ) delete   Next;
- }
+  ~LAYER(){
+    if(Filename) delete[] Filename;
+    if(Form    ) delete   Form;
+    if(Next    ) delete   Next;
+  }
 };
 LAYER* Layers = 0; // Stack of layer XObjects
 //------------------------------------------------------------------------------

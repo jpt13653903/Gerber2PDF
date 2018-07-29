@@ -22,47 +22,47 @@
 //------------------------------------------------------------------------------
 
 pdfPage::pdfPage(){
- Object = &Dictionary;
- Type.Set("Page");
+  Object = &Dictionary;
+  Type.Set("Page");
 
- GroupSubtype    .Set("Transparency");
- GroupColourSpace.Set("DeviceRGB");
+  GroupSubtype    .Set("Transparency");
+  GroupColourSpace.Set("DeviceRGB");
 
- Group.AddEntry("S" , &GroupSubtype);
- Group.AddEntry("CS", &GroupColourSpace);
- Group.OneLine = true;
+  Group.AddEntry("S" , &GroupSubtype);
+  Group.AddEntry("CS", &GroupColourSpace);
+  Group.OneLine = true;
 
- Parent          = 0;
- ContentsPointer = 0;
- Update();
+  Parent          = 0;
+  ContentsPointer = 0;
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfPage::Update(){
- Dictionary.Clear();
- Dictionary.AddEntry("Type", &Type);
-                            Dictionary.AddEntry("Group"    , &Group         );
- if(Parent                ) Dictionary.AddEntry("Parent"   , Parent         );
- if(Annotations.GetCount()) Dictionary.AddEntry("Annots"   , &Annotations   );
- if(MediaBox   .HasArea ()) Dictionary.AddEntry("MediaBox" , &MediaBox      );
- if(ContentsPointer       ) Dictionary.AddEntry("Contents" , ContentsPointer);
- if(Resources  .GetCount()) Dictionary.AddEntry("Resources", &Resources     );
+  Dictionary.Clear();
+  Dictionary.AddEntry("Type", &Type);
+                             Dictionary.AddEntry("Group"    , &Group         );
+  if(Parent                ) Dictionary.AddEntry("Parent"   , Parent         );
+  if(Annotations.GetCount()) Dictionary.AddEntry("Annots"   , &Annotations   );
+  if(MediaBox   .HasArea ()) Dictionary.AddEntry("MediaBox" , &MediaBox      );
+  if(ContentsPointer       ) Dictionary.AddEntry("Contents" , ContentsPointer);
+  if(Resources  .GetCount()) Dictionary.AddEntry("Resources", &Resources     );
 }
 //------------------------------------------------------------------------------
 
 void pdfPage::AddAnnotation(pdfAnnotation* Annotation){
- Annotations.Add(Annotation);
+  Annotations.Add(Annotation);
 }
 //------------------------------------------------------------------------------
 
 void pdfPage::SetParent(pdfPages* Parent){
- pdfPage::Parent = Parent;
- Update();
+  pdfPage::Parent = Parent;
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfPage::Contents(pdfContents* Contents){
- ContentsPointer = Contents;
- Update();
+  ContentsPointer = Contents;
+  Update();
 }
 //------------------------------------------------------------------------------

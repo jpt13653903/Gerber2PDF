@@ -31,23 +31,23 @@ class pdfImage : public pdfStream{
 public:
 
 protected:
- pdfName   Type;
- pdfName   Subtype;
- pdfName   ColourSpace;
- pdfNumber BitsPerColour;
- pdfBool   Interpolate;
+  pdfName   Type;
+  pdfName   Subtype;
+  pdfName   ColourSpace;
+  pdfNumber BitsPerColour;
+  pdfBool   Interpolate;
 
 protected:
- virtual void Update();
+  virtual void Update();
 
 public:
- pdfImage(const char* Name);
+  pdfImage(const char* Name);
 
- pdfNumber Width;     // Pixels
- pdfNumber Height;    // Pixels
- double    Width_mm;  // Millimetres
- double    Height_mm; // Millimetres
- pdfName   Name;
+  pdfNumber Width;     // Pixels
+  pdfNumber Height;    // Pixels
+  double    Width_mm;  // Millimetres
+  double    Height_mm; // Millimetres
+  pdfName   Name;
 };
 //------------------------------------------------------------------------------
 

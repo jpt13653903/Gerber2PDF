@@ -29,24 +29,24 @@
 class pdfOutlineItems;
 class pdfOutlines : public pdfIndirect{
 protected:
- pdfDictionary Dictionary;
+  pdfDictionary Dictionary;
 
- // Members of Dictionary:
- pdfName          Type;
- pdfOutlines*     Parent; // Used by children only
- pdfOutlineItems* Next;   // Used by children only
- pdfOutlineItems* Prev;   // Used by children only
- pdfOutlineItems* First;
- pdfOutlineItems* Last;
- pdfNumber        Count; // Number of all open items in all children
+  // Members of Dictionary:
+  pdfName          Type;
+  pdfOutlines*     Parent; // Used by children only
+  pdfOutlineItems* Next;   // Used by children only
+  pdfOutlineItems* Prev;   // Used by children only
+  pdfOutlineItems* First;
+  pdfOutlineItems* Last;
+  pdfNumber        Count; // Number of all open items in all children
 
- virtual void Update();
+  virtual void Update();
 
 public:
- pdfOutlines();
+  pdfOutlines();
 
- // Build the tree bottom-up
- void AddChild(pdfOutlineItems* Child);
+  // Build the tree bottom-up
+  void AddChild(pdfOutlineItems* Child);
 };
 //------------------------------------------------------------------------------
 

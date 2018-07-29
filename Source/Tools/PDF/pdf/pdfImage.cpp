@@ -22,31 +22,31 @@
 //------------------------------------------------------------------------------
 
 pdfImage::pdfImage(const char* Name){
- Type       .Set("XObject");
- Subtype    .Set("Image");
- ColourSpace.Set("DeviceRGB");
- Interpolate.Value = true;
+  Type       .Set("XObject");
+  Subtype    .Set("Image");
+  ColourSpace.Set("DeviceRGB");
+  Interpolate.Value = true;
 
- pdfImage::Name.Set(Name);
+  pdfImage::Name.Set(Name);
 
- BitsPerColour = 8;
+  BitsPerColour = 8;
 
- Update();
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfImage::Update(){
- Dictionary.Clear();
- Dictionary.AddEntry("Type"            , &Type);
- Dictionary.AddEntry("Subtype"         , &Subtype);
- Dictionary.AddEntry("Name"            , &Name);
- Dictionary.AddEntry("Width"           , &Width);
- Dictionary.AddEntry("Height"          , &Height);
- Dictionary.AddEntry("ColorSpace"      , &ColourSpace);
- Dictionary.AddEntry("BitsPerComponent", &BitsPerColour);
- Dictionary.AddEntry("Interpolate"     , &Interpolate);
- Dictionary.AddEntry("Length"          , &Length);
+  Dictionary.Clear();
+  Dictionary.AddEntry("Type"            , &Type);
+  Dictionary.AddEntry("Subtype"         , &Subtype);
+  Dictionary.AddEntry("Name"            , &Name);
+  Dictionary.AddEntry("Width"           , &Width);
+  Dictionary.AddEntry("Height"          , &Height);
+  Dictionary.AddEntry("ColorSpace"      , &ColourSpace);
+  Dictionary.AddEntry("BitsPerComponent", &BitsPerColour);
+  Dictionary.AddEntry("Interpolate"     , &Interpolate);
+  Dictionary.AddEntry("Length"          , &Length);
 
- if(!Filter.Empty())  Dictionary.AddEntry("Filter", &Filter);
+  if(!Filter.Empty())  Dictionary.AddEntry("Filter", &Filter);
 }
 //------------------------------------------------------------------------------

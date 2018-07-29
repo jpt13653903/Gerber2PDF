@@ -27,19 +27,19 @@
 
 class pdfIndirect : public pdfObject{
 public:
- pdfIndirect();
+  pdfIndirect();
 
- unsigned Reference; // Must be unique
+  unsigned Reference; // Must be unique
 
- pdfObject* Object;
+  pdfObject* Object;
 
- // This returns the reference, not the body
- int GetLength();
- int GetOutput(char* Buffer);
+  // This returns the reference, not the body
+  int GetLength();
+  int GetOutput(char* Buffer);
 
- // This returns the body
- virtual int GetBodyLength();
- virtual int GetBody      (char* Buffer);
+  // This returns the body
+  virtual int GetBodyLength();
+  virtual int GetBody      (char* Buffer);
 };
 //------------------------------------------------------------------------------
 

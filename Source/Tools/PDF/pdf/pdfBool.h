@@ -27,10 +27,10 @@
 
 class pdfBool : public pdfObject{
 public:
- bool Value;
+  bool Value;
 
- int GetLength();
- int GetOutput(char* Buffer);
+  int GetLength();
+  int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

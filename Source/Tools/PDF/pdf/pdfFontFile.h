@@ -28,20 +28,20 @@
 
 class pdfFontFile : public pdfStream{
 private:
- pdfNumber Length1;
- pdfNumber Length2;
- pdfNumber Length3;
+  pdfNumber Length1;
+  pdfNumber Length2;
+  pdfNumber Length3;
 
- void Update();
+  void Update();
 
- bool Starts(const char* s1, const char* s2); // does s1 start with s2?
- void CalculateLengths(char* Buffer, int Length);
+  bool Starts(const char* s1, const char* s2); // does s1 start with s2?
+  void CalculateLengths(char* Buffer, int Length);
 
 public:
- pdfFontFile();
+  pdfFontFile();
 
- // Load a PFB file
- bool LoadPFB(const char* FileName);
+  // Load a PFB file
+  bool LoadPFB(const char* FileName);
 };
 //------------------------------------------------------------------------------
 

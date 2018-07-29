@@ -30,22 +30,22 @@
 // Form XObject
 class pdfForm : public pdfContents{
 protected:
- pdfName       Type;
- pdfName       SubType;
- pdfDictionary Group;
+  pdfName       Type;
+  pdfName       SubType;
+  pdfDictionary Group;
 
- // Components of Group
- pdfName GroupSubtype;
+  // Components of Group
+  pdfName GroupSubtype;
 
 public:
- pdfForm(const char* Name);
+  pdfForm(const char* Name);
 
- pdfName      Name;
- pdfRectangle BBox;
+  pdfName      Name;
+  pdfRectangle BBox;
 
- // Call Update after changing Resources for the first time
- pdfResources Resources;
- virtual void Update();
+  // Call Update after changing Resources for the first time
+  pdfResources Resources;
+  virtual void Update();
 };
 //------------------------------------------------------------------------------
 

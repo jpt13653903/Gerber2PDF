@@ -23,50 +23,50 @@
 //------------------------------------------------------------------------------
 
 pdfOutlines::pdfOutlines(){
- Object = &Dictionary;
+  Object = &Dictionary;
 
- Type.Set("Outlines");
- Parent = 0;
- Next   = 0;
- Prev   = 0;
- First  = 0;
- Last   = 0;
- Count  = 0;
+  Type.Set("Outlines");
+  Parent = 0;
+  Next   = 0;
+  Prev   = 0;
+  First  = 0;
+  Last   = 0;
+  Count  = 0;
 
- Update();
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlines::Update(){
- Dictionary.Clear();
- Dictionary.AddEntry("Type" , &Type);
+  Dictionary.Clear();
+  Dictionary.AddEntry("Type" , &Type);
 
- if(Last ) Dictionary.AddEntry("Last" ,  Last);
- if(First) Dictionary.AddEntry("First",  First);
+  if(Last ) Dictionary.AddEntry("Last" ,  Last);
+  if(First) Dictionary.AddEntry("First",  First);
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlines::AddChild(pdfOutlineItems* Child){
- Child->Parent = this;
+  Child->Parent = this;
 
- if(Last){
-  Child->Next = 0;
-  Child->Prev = Last;
-  Last ->Next = Child;
+  if(Last){
+    Child->Next = 0;
+    Child->Prev = Last;
+    Last ->Next = Child;
 
- ((pdfOutlines*)Last)->Update();
+  ((pdfOutlines*)Last)->Update();
 
- }else{
-  Child->Next = 0;
-  Child->Prev = 0;
-  First       = Child;
- }
+  }else{
+    Child->Next = 0;
+    Child->Prev = 0;
+    First       = Child;
+  }
 
- Last = Child;
+  Last = Child;
 
- Count.Value--;
+  Count.Value--;
 
- ((pdfOutlines*)Child)->Update();
- Update();
+  ((pdfOutlines*)Child)->Update();
+  Update();
 }
 //------------------------------------------------------------------------------

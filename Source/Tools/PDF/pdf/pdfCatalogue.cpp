@@ -22,96 +22,96 @@
 //------------------------------------------------------------------------------
 
 pdfCatalogue::pdfCatalogue(){
- Object = &Dictionary;
- Type.Set("Catalog");
- Pages    = 0;
- Outlines = 0;
+  Object = &Dictionary;
+  Type.Set("Catalog");
+  Pages    = 0;
+  Outlines = 0;
 
- SetPageLayout(SinglePage);
- SetPageMode  (UseOutlines);
+  SetPageLayout(SinglePage);
+  SetPageMode  (UseOutlines);
 
- Update();
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfCatalogue::Update(){
- Dictionary.Clear();
+  Dictionary.Clear();
 
-              Dictionary.AddEntry("Type"      , &Type);
- if(Pages   ) Dictionary.AddEntry("Pages"     , Pages);
- if(Outlines) Dictionary.AddEntry("Outlines"  , Outlines);
-              Dictionary.AddEntry("PageMode"  , &PageMode);
-              Dictionary.AddEntry("PageLayout", &PageLayout);
+               Dictionary.AddEntry("Type"      , &Type);
+  if(Pages   ) Dictionary.AddEntry("Pages"     , Pages);
+  if(Outlines) Dictionary.AddEntry("Outlines"  , Outlines);
+               Dictionary.AddEntry("PageMode"  , &PageMode);
+               Dictionary.AddEntry("PageLayout", &PageLayout);
 }
 //------------------------------------------------------------------------------
 
 void pdfCatalogue::SetPages(pdfPages* Pages){
- pdfCatalogue::Pages = Pages;
- Update();
+  pdfCatalogue::Pages = Pages;
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfCatalogue::SetOutlines(pdfOutlines* Outlines){
- pdfCatalogue::Outlines = Outlines;
- Update();
+  pdfCatalogue::Outlines = Outlines;
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfCatalogue::SetPageLayout(PAGE_LAYOUT Layout){
- switch(Layout){
-  case SinglePage:
-   PageLayout.Set("SinglePage");
-   break;
+  switch(Layout){
+    case SinglePage:
+      PageLayout.Set("SinglePage");
+      break;
 
-  case OneColumn:
-   PageLayout.Set("OneColumn");
-   break;
+    case OneColumn:
+      PageLayout.Set("OneColumn");
+      break;
 
-  case TwoColumnLeft:
-   PageLayout.Set("TwoColumnLeft");
-   break;
+    case TwoColumnLeft:
+      PageLayout.Set("TwoColumnLeft");
+      break;
 
-  case TwoColumnRight:
-   PageLayout.Set("TwoColumnRight");
-   break;
+    case TwoColumnRight:
+      PageLayout.Set("TwoColumnRight");
+      break;
 
-  case TwoPageLeft:
-   PageLayout.Set("TwoPageLeft");
-   break;
+    case TwoPageLeft:
+      PageLayout.Set("TwoPageLeft");
+      break;
 
-  case TwoPageRight:
-   PageLayout.Set("TwoPageRight");
-   break;
+    case TwoPageRight:
+      PageLayout.Set("TwoPageRight");
+      break;
 
-  default:
-   PageLayout.Set("SinglePage");
-   break;
+    default:
+      PageLayout.Set("SinglePage");
+      break;
 
- };
+  };
 }
 //------------------------------------------------------------------------------
 
 void pdfCatalogue::SetPageMode(PAGE_MODE Mode){
- switch(Mode){
-  case UseNone:
-   PageMode.Set("UseNone");
-   break;
+  switch(Mode){
+    case UseNone:
+      PageMode.Set("UseNone");
+      break;
 
-  case UseOutlines:
-   PageMode.Set("UseOutlines");
-   break;
+    case UseOutlines:
+      PageMode.Set("UseOutlines");
+      break;
 
-  case UseThumbs:
-   PageMode.Set("UseThumbs");
-   break;
+    case UseThumbs:
+      PageMode.Set("UseThumbs");
+      break;
 
-  case FullScreen:
-   PageMode.Set("FullScreen");
-   break;
+    case FullScreen:
+      PageMode.Set("FullScreen");
+      break;
 
-  default:
-   PageMode.Set("UseNone");
-   break;
- }
+    default:
+      PageMode.Set("UseNone");
+      break;
+  }
 }
 //------------------------------------------------------------------------------

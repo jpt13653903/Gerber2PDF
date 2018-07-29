@@ -4,13 +4,21 @@ Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing an
 
 ## Installation:
 
-Download and run Gerber2pdf.exe.  This will display the copyright and usage information.
+Download and run [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/latest/download).  This will display the copyright and usage information.
 
 ## Usage:
 
 A batch-file or script is recommended, but a simple "Open with..." link will also work, resulting in a single Gerber to be converted to a PDF with the same file-name as the Gerber.
 
+## Source:
+
+The source is available from the [git repository](https://sourceforge.net/p/gerber2pdf/code/) and [GitHub](https://github.com/jpt13653903/Gerber2PDF).
+
 ## Changes:
+
+#### 2017-12-20
+
+- Fixed bug relating to explicit positive numbers
 
 #### 2017-08-13
 
@@ -76,9 +84,4 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 - Added an option to change the layer colour.
 - Added an option to combine layers onto a single page.
 - Added an option to mirror the output.
-
-## Source:
-
-The source is available from the git repository:
-<https://sourceforge.net/p/gerber2pdf/code/>
 

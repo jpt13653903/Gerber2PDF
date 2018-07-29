@@ -29,15 +29,15 @@
 
 class pdfAnnotation : public pdfDictionary{
 protected:
- pdfName Type;
- pdfName Subtype;
+  pdfName Type;
+  pdfName Subtype;
 
- virtual void Update();
+  virtual void Update();
 
 public:
- pdfAnnotation();
+  pdfAnnotation();
 
- pdfRectangle Rect;
+  pdfRectangle Rect;
 };
 //------------------------------------------------------------------------------
 

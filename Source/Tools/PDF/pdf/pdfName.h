@@ -27,20 +27,20 @@
 
 class pdfName : public pdfObject{
 private:
- unsigned char* Value;
+  unsigned char* Value;
 public:
 
   pdfName();
  ~pdfName();
 
- void  Set(const char* Value);
- char* Get();
+  void  Set(const char* Value);
+  char* Get();
 
- bool Empty();
- bool Equal(const char* String);
+  bool Empty();
+  bool Equal(const char* String);
 
- int GetLength();
- int GetOutput(char* Buffer);
+  int GetLength();
+  int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

@@ -33,26 +33,26 @@
 class pdfPage;
 class pdfPages : public pdfIndirect{
 private:
- pdfDictionary Dictionary;
- pdfName       Type;
- pdfPages*     Parent;
- pdfArray      Children;
- pdfNumber     Count;
+  pdfDictionary Dictionary;
+  pdfName       Type;
+  pdfPages*     Parent;
+  pdfArray      Children;
+  pdfNumber     Count;
 
 public:
- pdfPages();
+  pdfPages();
 
- // Called by the parent upon adding these pages to the parent:
- void SetParent(pdfPages* Parent);
+  // Called by the parent upon adding these pages to the parent:
+  void SetParent(pdfPages* Parent);
 
- // Call Update after changing Mediabox or Resources for the first time
- pdfRectangle MediaBox;
- pdfResources Resources;
- void Update();
+  // Call Update after changing Mediabox or Resources for the first time
+  pdfRectangle MediaBox;
+  pdfResources Resources;
+  void Update();
 
- // Build the tree bottom-up
- void AddChild(pdfPages* Child);
- void AddChild(pdfPage*  Page);
+  // Build the tree bottom-up
+  void AddChild(pdfPages* Child);
+  void AddChild(pdfPage*  Page);
 };
 //------------------------------------------------------------------------------
 

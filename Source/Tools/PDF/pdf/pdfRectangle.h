@@ -31,20 +31,20 @@
 
 class pdfRectangle : public pdfArray{
 private:
- pdfNumber Left;
- pdfNumber Right;
- pdfNumber Top;
- pdfNumber Bottom;
+  pdfNumber Left;
+  pdfNumber Right;
+  pdfNumber Top;
+  pdfNumber Bottom;
 
 public:
- pdfRectangle();
+  pdfRectangle();
 
- void SetA4();
- void SetA4Landscape();
- void Set_mm(double Left, double Bottom, double Right, double Top);
- void Set   (double Left, double Bottom, double Right, double Top);
+  void SetA4();
+  void SetA4Landscape();
+  void Set_mm(double Left, double Bottom, double Right, double Top);
+  void Set   (double Left, double Bottom, double Right, double Top);
 
- bool HasArea();
+  bool HasArea();
 };
 //------------------------------------------------------------------------------
 

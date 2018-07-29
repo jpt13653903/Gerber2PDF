@@ -29,26 +29,26 @@
 
 class pdfString : public pdfObject{
 private:
- char* Value;
+  char* Value;
 
 public:
- void Set(const char* String); // null-terminated
- void Set(const char* String, unsigned Length);
- void Set(
-  int Year      ,
-  int Month  = 0,
-  int Day    = 0,
-  int Hour   = 0,
-  int Minute = 0,
-  int Second = 0
- );
+  void Set(const char* String); // null-terminated
+  void Set(const char* String, unsigned Length);
+  void Set(
+    int Year      ,
+    int Month  = 0,
+    int Day    = 0,
+    int Hour   = 0,
+    int Minute = 0,
+    int Second = 0
+  );
 
   pdfString(); // Initialise the memory to a 1-length array with null value
  ~pdfString(); // Delete the memory
 
- bool Empty();
- int  GetLength();
- int  GetOutput(char* Buffer);
+  bool Empty();
+  int  GetLength();
+  int  GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

@@ -31,17 +31,17 @@
 
 class pdfNumber : public pdfObject{
 private:
- int IntegerPart;
+  int IntegerPart;
 
 public:
- pdfNumber();
+  pdfNumber();
 
- double operator= (double Number);
+  double operator= (double Number);
 
- double Value;
+  double Value;
 
- int GetLength();
- int GetOutput(char* Buffer);
+  int GetLength();
+  int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

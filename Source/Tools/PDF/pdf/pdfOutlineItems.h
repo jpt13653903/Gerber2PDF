@@ -30,43 +30,43 @@
 class pdfOutlines;
 class pdfOutlineItems : public pdfOutlines{
 private:
- // Members of Dictionary:
- //  pdfOutlines::Next;
- //  pdfOutlines::Prev;
- //  pdfOutlines::First;
- //  pdfOutlines::Last;
- //  pdfOutlines::Parent;
- //  pdfOutlines::Count; -> Number of children, negative it they are closed
- pdfDest          Dest;
- pdfArray         ColourArray;
- pdfNumber        FontFlags;
+  // Members of Dictionary:
+  //  pdfOutlines::Next;
+  //  pdfOutlines::Prev;
+  //  pdfOutlines::First;
+  //  pdfOutlines::Last;
+  //  pdfOutlines::Parent;
+  //  pdfOutlines::Count; -> Number of children, negative it they are closed
+  pdfDest          Dest;
+  pdfArray         ColourArray;
+  pdfNumber        FontFlags;
 
- // Members of Colour:
- pdfNumber Red;
- pdfNumber Green;
- pdfNumber Blue;
+  // Members of Colour:
+  pdfNumber Red;
+  pdfNumber Green;
+  pdfNumber Blue;
 
- void Update();
+  void Update();
 
 public:
- pdfOutlineItems();
+  pdfOutlineItems();
 
- pdfString Title;
+  pdfString Title;
 
- void Colour(double Red, double Green, double Blue);
- void Bold  ();
- void Italic();
+  void Colour(double Red, double Green, double Blue);
+  void Bold  ();
+  void Italic();
 
- // All length units are in mm
- void DestFit  (pdfPage* Page);
- void DestFitB (pdfPage* Page);
- void DestFitH (pdfPage* Page, double Top );
- void DestFitV (pdfPage* Page, double Left);
- void DestFitBH(pdfPage* Page, double Top );
- void DestFitBV(pdfPage* Page, double Left);
- void DestXYZ  (pdfPage* Page, double Left , double Top, double Zoom);
- void DestFitR (pdfPage* Page, double Left , double Bottom,
-                               double Right, double Top);
+  // All length units are in mm
+  void DestFit  (pdfPage* Page);
+  void DestFitB (pdfPage* Page);
+  void DestFitH (pdfPage* Page, double Top );
+  void DestFitV (pdfPage* Page, double Left);
+  void DestFitBH(pdfPage* Page, double Top );
+  void DestFitBV(pdfPage* Page, double Left);
+  void DestXYZ  (pdfPage* Page, double Left , double Top, double Zoom);
+  void DestFitR (pdfPage* Page, double Left , double Bottom,
+                                double Right, double Top);
 };
 //------------------------------------------------------------------------------
 

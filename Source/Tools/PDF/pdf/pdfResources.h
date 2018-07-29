@@ -32,19 +32,19 @@
 class pdfForm;
 class pdfResources : public pdfDictionary{
 private:
- pdfDictionary Fonts;
- pdfDictionary XObjects;
- pdfDictionary ExtGState;
+  pdfDictionary Fonts;
+  pdfDictionary XObjects;
+  pdfDictionary ExtGState;
 
- void Update();
+  void Update();
 
 public:
- pdfResources();
+  pdfResources();
 
- void AddFont  (pdfFont*   Font);
- void AddForm  (pdfForm*   Form);
- void AddImage (pdfImage*  Image);
- void AddOpaque(pdfOpaque* Opaque);
+  void AddFont  (pdfFont*   Font);
+  void AddForm  (pdfForm*   Form);
+  void AddImage (pdfImage*  Image);
+  void AddOpaque(pdfOpaque* Opaque);
 };
 //------------------------------------------------------------------------------
 

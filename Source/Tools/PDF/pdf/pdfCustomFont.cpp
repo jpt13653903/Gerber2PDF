@@ -22,84 +22,84 @@
 //------------------------------------------------------------------------------
 
 pdfCustomFont::pdfCustomFont(const char* Name) : pdfFont(Name){
- Widths.Object = &WidthsArray;
+  Widths.Object = &WidthsArray;
 
- Dictionary.Clear();
- Dictionary.AddEntry("Type"          , &Type);
- Dictionary.AddEntry("Subtype"       , &Subtype);
- Dictionary.AddEntry("Widths"        , &Widths);
- Dictionary.AddEntry("LastChar"      , &LastChar);
- Dictionary.AddEntry("BaseFont"      , &BaseFont);
- Dictionary.AddEntry("FirstChar"     , &FirstChar);
- Dictionary.AddEntry("FontDescriptor", &FontDescriptor);
+  Dictionary.Clear();
+  Dictionary.AddEntry("Type"          , &Type);
+  Dictionary.AddEntry("Subtype"       , &Subtype);
+  Dictionary.AddEntry("Widths"        , &Widths);
+  Dictionary.AddEntry("LastChar"      , &LastChar);
+  Dictionary.AddEntry("BaseFont"      , &BaseFont);
+  Dictionary.AddEntry("FirstChar"     , &FirstChar);
+  Dictionary.AddEntry("FontDescriptor", &FontDescriptor);
 
- TheWidths = 0;
+  TheWidths = 0;
 }
 //------------------------------------------------------------------------------
 
 pdfCustomFont::~pdfCustomFont(){
- if(TheWidths) delete[] TheWidths;
+  if(TheWidths) delete[] TheWidths;
 }
 //------------------------------------------------------------------------------
 
 void pdfCustomFont::SetWidths(){
- int j;
- int FirstChar = 0;
- int LastChar  = 0;
+  int j;
+  int FirstChar = 0;
+  int LastChar  = 0;
 
- FirstChar = 0;
- while(FirstChar < 0x100 && !Metrics.HasGlyph(FirstChar)){
-  FirstChar++;
- }
+  FirstChar = 0;
+  while(FirstChar < 0x100 && !Metrics.HasGlyph(FirstChar)){
+    FirstChar++;
+  }
 
- LastChar = 0xFF;
- while(LastChar >= 0 && !Metrics.HasGlyph(LastChar)){
-  LastChar--;
- }
- if(LastChar < 0) LastChar = 0;
+  LastChar = 0xFF;
+  while(LastChar >= 0 && !Metrics.HasGlyph(LastChar)){
+    LastChar--;
+  }
+  if(LastChar < 0) LastChar = 0;
 
- if(FirstChar > LastChar) FirstChar = LastChar;
- pdfCustomFont::FirstChar = FirstChar;
- pdfCustomFont::LastChar  = LastChar;
+  if(FirstChar > LastChar) FirstChar = LastChar;
+  pdfCustomFont::FirstChar = FirstChar;
+  pdfCustomFont::LastChar  = LastChar;
 
- if(TheWidths) delete[] TheWidths;
- TheWidths = new pdfNumber[LastChar - FirstChar + 1];
+  if(TheWidths) delete[] TheWidths;
+  TheWidths = new pdfNumber[LastChar - FirstChar + 1];
 
- for(j = FirstChar; j <= LastChar; j++){
-  TheWidths[j-FirstChar] = Metrics.Advance(j);
-  WidthsArray.Add(&(TheWidths[j-FirstChar]));
- }
+  for(j = FirstChar; j <= LastChar; j++){
+    TheWidths[j-FirstChar] = Metrics.Advance(j);
+    WidthsArray.Add(&(TheWidths[j-FirstChar]));
+  }
 }
 //------------------------------------------------------------------------------
 
 void pdfCustomFont::LoadFont(const char* FileName){
- int   j;
- char* Buffer;
+  int   j;
+  char* Buffer;
 
- for(j = 0; FileName[j]; j++);
- Buffer = new char[j+5];
+  for(j = 0; FileName[j]; j++);
+  Buffer = new char[j+5];
 
- for(j = 0; FileName[j]; j++){
-  Buffer[j] = FileName[j];
- }
- Buffer[j++] = '.';
- Buffer[j++] = 'a';
- Buffer[j++] = 'f';
- Buffer[j++] = 'm';
- Buffer[j  ] = 0;
+  for(j = 0; FileName[j]; j++){
+    Buffer[j] = FileName[j];
+  }
+  Buffer[j++] = '.';
+  Buffer[j++] = 'a';
+  Buffer[j++] = 'f';
+  Buffer[j++] = 'm';
+  Buffer[j  ] = 0;
 
- if(Metrics.LoadAFM(Buffer)){
-  Buffer[j-3] = 'p';
-  Buffer[j-2] = 'f';
-  Buffer[j-1] = 'b';
-  FontDescriptor.FontFile.LoadPFB( Buffer );
-  FontDescriptor.LoadMetrics     (&Metrics);
-  BaseFont.Set(Metrics.FontName);
-  SetWidths();
- }
+  if(Metrics.LoadAFM(Buffer)){
+    Buffer[j-3] = 'p';
+    Buffer[j-2] = 'f';
+    Buffer[j-1] = 'b';
+    FontDescriptor.FontFile.LoadPFB( Buffer );
+    FontDescriptor.LoadMetrics     (&Metrics);
+    BaseFont.Set(Metrics.FontName);
+    SetWidths();
+  }
 
- FontDescriptor.FontFile.Deflate();
+  FontDescriptor.FontFile.Deflate();
 
- delete[] Buffer;
+  delete[] Buffer;
 }
 //------------------------------------------------------------------------------

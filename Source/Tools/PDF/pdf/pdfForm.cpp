@@ -22,30 +22,30 @@
 //------------------------------------------------------------------------------
 
 pdfForm::pdfForm(const char* Name){
- Type   .Set("XObject");
- SubType.Set("Form");
+  Type   .Set("XObject");
+  SubType.Set("Form");
 
- GroupSubtype.Set("Transparency");
+  GroupSubtype.Set("Transparency");
 
- Group.AddEntry("S", &GroupSubtype);
- Group.OneLine = true;
+  Group.AddEntry("S", &GroupSubtype);
+  Group.OneLine = true;
 
- pdfForm::Name.Set(Name);
+  pdfForm::Name.Set(Name);
 
- Update();
+  Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfForm::Update(){
- Dictionary.Clear();
- Dictionary.AddEntry("Type"   , &Type);
- Dictionary.AddEntry("Subtype", &SubType);
- Dictionary.AddEntry("Name"   , &Name);
- Dictionary.AddEntry("BBox"   , &BBox);
- Dictionary.AddEntry("Group"  , &Group);
- Dictionary.AddEntry("Length" , &Length);
+  Dictionary.Clear();
+  Dictionary.AddEntry("Type"   , &Type);
+  Dictionary.AddEntry("Subtype", &SubType);
+  Dictionary.AddEntry("Name"   , &Name);
+  Dictionary.AddEntry("BBox"   , &BBox);
+  Dictionary.AddEntry("Group"  , &Group);
+  Dictionary.AddEntry("Length" , &Length);
 
- if(!Filter   .Empty   ()) Dictionary.AddEntry("Filter"   , &Filter);
- if( Resources.GetCount()) Dictionary.AddEntry("Resources", &Resources);
+  if(!Filter   .Empty   ()) Dictionary.AddEntry("Filter"   , &Filter);
+  if( Resources.GetCount()) Dictionary.AddEntry("Resources", &Resources);
 }
 //------------------------------------------------------------------------------

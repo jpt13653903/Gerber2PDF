@@ -51,129 +51,129 @@
 class GerberRender;
 class GerberMacro{
 private:
- enum PRIMITIVE{
-  pComment       =  0,
-  pCircle        =  1,
-  pLineVector    =  2,
-  pLineVector2   = 20,
-  pLineCenter    = 21,
-  pLineLowerLeft = 22,
-  pEndOfFile     =  3,
-  pOutline       =  4,
-  pPolygon       =  5,
-  pMoire         =  6,
-  pThermal       =  7,
-  pAssignment    = -1,
- };
-
- enum OPERATOR{
-  opAdd,
-  opSubtract,
-  opMultiply,
-  opDivide,
-
-  opVariable,
-  opLiteral
- };
-
- struct OPERATOR_ITEM{
-  OPERATOR       Operator;
-  OPERATOR_ITEM* Left;
-  OPERATOR_ITEM* Right;
-
-  union{
-   int    Index; // Variable Index
-   double Value; // Literal Value
+  enum PRIMITIVE{
+    pComment       =  0,
+    pCircle        =  1,
+    pLineVector    =  2,
+    pLineVector2   = 20,
+    pLineCenter    = 21,
+    pLineLowerLeft = 22,
+    pEndOfFile     =  3,
+    pOutline       =  4,
+    pPolygon       =  5,
+    pMoire         =  6,
+    pThermal       =  7,
+    pAssignment    = -1,
   };
 
-   OPERATOR_ITEM();
-  ~OPERATOR_ITEM();
- };
+  enum OPERATOR{
+    opAdd,
+    opSubtract,
+    opMultiply,
+    opDivide,
 
- struct PRIMITIVE_ITEM{
-  PRIMITIVE       Primitive;
-  OPERATOR_ITEM** Modifier; // Modifier Tree for each modifier in the array
-  int             ModifierCount;
-  int             Index;    // Used for assignment primitives
+    opVariable,
+    opLiteral
+  };
 
-  PRIMITIVE_ITEM* Next;
+  struct OPERATOR_ITEM{
+    OPERATOR       Operator;
+    OPERATOR_ITEM* Left;
+    OPERATOR_ITEM* Right;
 
-   PRIMITIVE_ITEM();
-  ~PRIMITIVE_ITEM();
- };
- PRIMITIVE_ITEM* Primitives;
- PRIMITIVE_ITEM* PrimitivesLast;
- void Add(PRIMITIVE_ITEM* Primitive);
+    union{
+      int    Index; // Variable Index
+      double Value; // Literal Value
+    };
 
- GerberRender* RenderList;
- GerberRender* RenderLast;
- void Add(GerberRender* Render);
+    OPERATOR_ITEM();
+   ~OPERATOR_ITEM();
+  };
 
- double Evaluate(OPERATOR_ITEM* Root);
+  struct PRIMITIVE_ITEM{
+    PRIMITIVE       Primitive;
+    OPERATOR_ITEM** Modifier; // Modifier Tree for each modifier in the array
+    int             ModifierCount;
+    int             Index;    // Used for assignment primitives
 
- void RenderLine(
-  double x1, double y1,
-  double x2, double y2,
-  double x3, double y3,
-  double x4, double y4,
-  double xR, double yR, // Rotation Center
-  double A
- );
+    PRIMITIVE_ITEM* Next;
 
- bool RenderCircle       (PRIMITIVE_ITEM* Primitive);
- bool RenderLineVector   (PRIMITIVE_ITEM* Primitive);
- bool RenderLineCenter   (PRIMITIVE_ITEM* Primitive);
- bool RenderLineLowerLeft(PRIMITIVE_ITEM* Primitive);
- bool RenderOutline      (PRIMITIVE_ITEM* Primitive);
- bool RenderPolygon      (PRIMITIVE_ITEM* Primitive);
- bool RenderMoire        (PRIMITIVE_ITEM* Primitive);
- bool RenderThermal      (PRIMITIVE_ITEM* Primitive);
- bool RenderAssignment   (PRIMITIVE_ITEM* Primitive);
+    PRIMITIVE_ITEM();
+   ~PRIMITIVE_ITEM();
+  };
+  PRIMITIVE_ITEM* Primitives;
+  PRIMITIVE_ITEM* PrimitivesLast;
+  void Add(PRIMITIVE_ITEM* Primitive);
 
- double* Modifiers;
- int     ModifierCount;
- bool    NewModifiers;
- bool    Exposure;
+  GerberRender* RenderList;
+  GerberRender* RenderLast;
+  void Add(GerberRender* Render);
 
- const char* Buffer;
- unsigned    Length;
- unsigned    Index;
- bool        Inches;
+  double Evaluate(OPERATOR_ITEM* Root);
 
- double Get_mm(double Number);
+  void RenderLine(
+    double x1, double y1,
+    double x2, double y2,
+    double x3, double y3,
+    double x4, double y4,
+    double xR, double yR, // Rotation Center
+    double A
+  );
 
- bool Float     (double* Number);
- bool Integer   (int*    Integer);
- void WhiteSpace();
+  bool RenderCircle       (PRIMITIVE_ITEM* Primitive);
+  bool RenderLineVector   (PRIMITIVE_ITEM* Primitive);
+  bool RenderLineCenter   (PRIMITIVE_ITEM* Primitive);
+  bool RenderLineLowerLeft(PRIMITIVE_ITEM* Primitive);
+  bool RenderOutline      (PRIMITIVE_ITEM* Primitive);
+  bool RenderPolygon      (PRIMITIVE_ITEM* Primitive);
+  bool RenderMoire        (PRIMITIVE_ITEM* Primitive);
+  bool RenderThermal      (PRIMITIVE_ITEM* Primitive);
+  bool RenderAssignment   (PRIMITIVE_ITEM* Primitive);
 
- OPERATOR_ITEM* Modifier  ();
- OPERATOR_ITEM* Term      ();
- OPERATOR_ITEM* Factor    ();
- OPERATOR_ITEM* Variable  ();
+  double* Modifiers;
+  int     ModifierCount;
+  bool    NewModifiers;
+  bool    Exposure;
 
- bool Primitive     ();
- bool Comment       ();
- bool Circle        ();
- bool Line_Vector   ();
- bool Line_Center   ();
- bool Line_LowerLeft();
- bool Outline       ();
- bool Polygon       ();
- bool Moire         ();
- bool Thermal       ();
- bool Assignment    ();
+  const char* Buffer;
+  unsigned    Length;
+  unsigned    Index;
+  bool        Inches;
+
+  double Get_mm(double Number);
+
+  bool Float     (double* Number);
+  bool Integer   (int*    Integer);
+  void WhiteSpace();
+
+  OPERATOR_ITEM* Modifier  ();
+  OPERATOR_ITEM* Term      ();
+  OPERATOR_ITEM* Factor    ();
+  OPERATOR_ITEM* Variable  ();
+
+  bool Primitive     ();
+  bool Comment       ();
+  bool Circle        ();
+  bool Line_Vector   ();
+  bool Line_Center   ();
+  bool Line_LowerLeft();
+  bool Outline       ();
+  bool Polygon       ();
+  bool Moire         ();
+  bool Thermal       ();
+  bool Assignment    ();
 
 public:
   GerberMacro();
  ~GerberMacro();
 
- char* Name;
+  char* Name;
 
- // Modifiers is a null-terminated array
- // Returns a new list of render commands => The user must free the memory
- GerberRender* Render(double* Modifiers, int ModifierCount);
+  // Modifiers is a null-terminated array
+  // Returns a new list of render commands => The user must free the memory
+  GerberRender* Render(double* Modifiers, int ModifierCount);
 
- bool LoadMacro(const char* Buffer, unsigned Length, bool Inches);
+  bool LoadMacro(const char* Buffer, unsigned Length, bool Inches);
 };
 //------------------------------------------------------------------------------
 

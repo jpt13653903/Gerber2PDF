@@ -22,126 +22,126 @@
 //------------------------------------------------------------------------------
 
 pdfName::pdfName(){
- Value = 0;
+  Value = 0;
 }
 //------------------------------------------------------------------------------
 
 pdfName::~pdfName(){
- if(Value){
-  delete[] Value;
- }
+  if(Value){
+    delete[] Value;
+  }
 }
 //------------------------------------------------------------------------------
 
 void pdfName::Set(const char* Value){
- int j, q;
+  int j, q;
 
- unsigned char* val = (unsigned char*)Value;
+  unsigned char* val = (unsigned char*)Value;
 
- for(j = 0; Value[j]; j++){
-  if(
-   val[j]  < '!'  || // 0x21
-   val[j]  > '~'  || // 0x7E
-   val[j] == '('  ||
-   val[j] == ')'  ||
-   val[j] == '<'  ||
-   val[j] == '>'  ||
-   val[j] == '['  ||
-   val[j] == ']'  ||
-   val[j] == '{'  ||
-   val[j] == '}'  ||
-   val[j] == '/'  ||
-   val[j] == '%'  ||
-   val[j] == '#'
-  ) j += 2;
- }
-
- if(pdfName::Value) delete[] pdfName::Value;
- pdfName::Value = new unsigned char[j+1];
-
- j = 0;
- q = 0;
- while(val[j]){
-  if(
-   val[j]  < '!'  || // 0x21
-   val[j]  > '~'  || // 0x7E
-   val[j] == '('  ||
-   val[j] == ')'  ||
-   val[j] == '<'  ||
-   val[j] == '>'  ||
-   val[j] == '['  ||
-   val[j] == ']'  ||
-   val[j] == '{'  ||
-   val[j] == '}'  ||
-   val[j] == '/'  ||
-   val[j] == '%'  ||
-   val[j] == '#'
-  ){
-   pdfName::Value[q] = '#';
-   q++;
-   pdfName::Value[q] = (val[j] >> 4) + '0';
-   if(pdfName::Value[q] > '9') pdfName::Value[q] += 'A' - '0' - 10;
-   q++;
-   pdfName::Value[q] = (val[j] & 0x0F) + '0';
-   if(pdfName::Value[q] > '9') pdfName::Value[q] += 'A' - '0' - 10;
-
-  }else{
-   pdfName::Value[q] = val[j];
+  for(j = 0; Value[j]; j++){
+    if(
+      val[j]  < '!'  || // 0x21
+      val[j]  > '~'  || // 0x7E
+      val[j] == '('  ||
+      val[j] == ')'  ||
+      val[j] == '<'  ||
+      val[j] == '>'  ||
+      val[j] == '['  ||
+      val[j] == ']'  ||
+      val[j] == '{'  ||
+      val[j] == '}'  ||
+      val[j] == '/'  ||
+      val[j] == '%'  ||
+      val[j] == '#'
+    ) j += 2;
   }
-  q++;
-  j++;
- }
- pdfName::Value[q] = 0;
+
+  if(pdfName::Value) delete[] pdfName::Value;
+  pdfName::Value = new unsigned char[j+1];
+
+  j = 0;
+  q = 0;
+  while(val[j]){
+    if(
+      val[j]  < '!'  || // 0x21
+      val[j]  > '~'  || // 0x7E
+      val[j] == '('  ||
+      val[j] == ')'  ||
+      val[j] == '<'  ||
+      val[j] == '>'  ||
+      val[j] == '['  ||
+      val[j] == ']'  ||
+      val[j] == '{'  ||
+      val[j] == '}'  ||
+      val[j] == '/'  ||
+      val[j] == '%'  ||
+      val[j] == '#'
+    ){
+      pdfName::Value[q] = '#';
+      q++;
+      pdfName::Value[q] = (val[j] >> 4) + '0';
+      if(pdfName::Value[q] > '9') pdfName::Value[q] += 'A' - '0' - 10;
+      q++;
+      pdfName::Value[q] = (val[j] & 0x0F) + '0';
+      if(pdfName::Value[q] > '9') pdfName::Value[q] += 'A' - '0' - 10;
+
+    }else{
+      pdfName::Value[q] = val[j];
+    }
+    q++;
+    j++;
+  }
+  pdfName::Value[q] = 0;
 }
 //------------------------------------------------------------------------------
 
 char* pdfName::Get(){
- return (char*)Value;
+  return (char*)Value;
 }
 //------------------------------------------------------------------------------
 
 bool pdfName::Empty(){
- if(!Value   ) return true;
- if( Value[0]) return false;
- return true;
+  if(!Value   ) return true;
+  if( Value[0]) return false;
+  return true;
 }
 //------------------------------------------------------------------------------
 
 bool pdfName::Equal(const char* String){
- if(!Value) return 0;
+  if(!Value) return 0;
 
- int j;
+  int j;
 
- for(j = 0; String[j] && Value[j]; j++){
+  for(j = 0; String[j] && Value[j]; j++){
+    if(String[j] != Value[j]) return false;
+  }
   if(String[j] != Value[j]) return false;
- }
- if(String[j] != Value[j]) return false;
 
- return true;
+  return true;
 }
 //------------------------------------------------------------------------------
 
 int pdfName::GetLength(){
- if(!Value) return 0;
+  if(!Value) return 0;
 
- int r = 0;
- while(Value[r]) r++;
- return r+1;
+  int r = 0;
+  while(Value[r]) r++;
+  return r+1;
 }
 //------------------------------------------------------------------------------
 
 int pdfName::GetOutput(char* Buffer){
- if(!Value) return 0;
+  if(!Value) return 0;
 
- int i = 0;
+  int i = 0;
 
- Buffer[0] = '/';
- while(Value[i]){
-  Buffer[i+1] = Value[i];
-  i++;
- }
+  Buffer[0] = '/';
+  while(Value[i]){
+    Buffer[i+1] = Value[i];
+    i++;
+  }
 
- return i+1;
+  return i+1;
 }
 //------------------------------------------------------------------------------
 

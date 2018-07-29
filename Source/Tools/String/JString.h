@@ -24,48 +24,48 @@
 
 #include <math.h>
 #ifdef __BORLANDC__
- double _RTLENTRY _EXPFUNC round(double __x);
+  double _RTLENTRY _EXPFUNC round(double __x);
 #endif
 //------------------------------------------------------------------------------
 
 class JString{
- private:
-  int   Memory;
-  int   Length;
+  private:
+    int   Memory;
+    int   Length;
 
-  void Expand  (int Length);
-  void Contract(int Length);
+    void Expand  (int Length);
+    void Contract(int Length);
 
- public:
-  char* String;
+  public:
+    char* String;
 
-   JString();
-  ~JString();
+    JString();
+   ~JString();
 
-  int  GetLength();
-  void Set      (const char* String);
-  void Set      (char     c);
-  void Set      (int      i);
-  void Set      (unsigned i, unsigned Places); // Hexadecimal
-  void Set      (double   d, unsigned Places = 9, bool Fill = false);
-  void Append   (const char* String);
-  void Append   (char     c);
-  void Append   (int      i);
-  void Append   (unsigned i, unsigned Places); // Hexadecimal
-  void Append   (double   d, unsigned Places = 9, bool Fill = false);
-  void Prefix   (const char* String);
-  void Prefix   (char     c);
-  void Prefix   (int      i);
-  void Prefix   (unsigned i, unsigned Places); // Hexadecimal
-  void Prefix   (double   d, unsigned Places = 9, bool Fill = false);
-  void Insert   (const char* String, int Index);
-  void Insert   (char     c, int Index);
-  void Insert   (int      i, int Index);
-  void Insert   (unsigned i, unsigned Places, int Index); // Hexadecimal
-  void Insert   (double   d, unsigned Places, int Index);
-  void Remove   (int      i);
-  int  Compare  (const char* String);
-  void Reverse  ();
+    int  GetLength();
+    void Set      (const char* String);
+    void Set      (char     c);
+    void Set      (int      i);
+    void Set      (unsigned i, unsigned Places); // Hexadecimal
+    void Set      (double   d, unsigned Places = 9, bool Fill = false);
+    void Append   (const char* String);
+    void Append   (char     c);
+    void Append   (int      i);
+    void Append   (unsigned i, unsigned Places); // Hexadecimal
+    void Append   (double   d, unsigned Places = 9, bool Fill = false);
+    void Prefix   (const char* String);
+    void Prefix   (char     c);
+    void Prefix   (int      i);
+    void Prefix   (unsigned i, unsigned Places); // Hexadecimal
+    void Prefix   (double   d, unsigned Places = 9, bool Fill = false);
+    void Insert   (const char* String, int Index);
+    void Insert   (char     c, int Index);
+    void Insert   (int      i, int Index);
+    void Insert   (unsigned i, unsigned Places, int Index); // Hexadecimal
+    void Insert   (double   d, unsigned Places, int Index);
+    void Remove   (int      i);
+    int  Compare  (const char* String);
+    void Reverse  ();
 };
 //------------------------------------------------------------------------------
 

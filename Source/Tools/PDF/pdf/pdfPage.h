@@ -36,35 +36,35 @@
 class pdfPages;
 class pdfPage : public pdfIndirect{
 private:
- pdfDictionary Dictionary;
- pdfName       Type;
- pdfDictionary Group;
- pdfPages*     Parent;
- pdfContents*  ContentsPointer;
- pdfArray      Annotations;
+  pdfDictionary Dictionary;
+  pdfName       Type;
+  pdfDictionary Group;
+  pdfPages*     Parent;
+  pdfContents*  ContentsPointer;
+  pdfArray      Annotations;
 
- // Components of Group
- pdfName GroupSubtype;
- pdfName GroupColourSpace;
+  // Components of Group
+  pdfName GroupSubtype;
+  pdfName GroupColourSpace;
 
 public:
- pdfPage();
+  pdfPage();
 
- // Called by the parent upon adding this page as a child.
- // Do not call directly.
- void SetParent(pdfPages* Parent);
+  // Called by the parent upon adding this page as a child.
+  // Do not call directly.
+  void SetParent(pdfPages* Parent);
 
- // Call Update after changing Mediabox or Resources for the first time
- pdfRectangle MediaBox;
- pdfResources Resources;
- void Update();
+  // Call Update after changing Mediabox or Resources for the first time
+  pdfRectangle MediaBox;
+  pdfResources Resources;
+  void Update();
 
- // Adds an annotation (such as a hyperlink)
- void AddAnnotation(pdfAnnotation* Annotation);
+  // Adds an annotation (such as a hyperlink)
+  void AddAnnotation(pdfAnnotation* Annotation);
 
- // Leave this as external so that two or more pages can have the same contents
- // without duplicating the stream
- void Contents(pdfContents* Contents);
+  // Leave this as external so that two or more pages can have the same contents
+  // without duplicating the stream
+  void Contents(pdfContents* Contents);
 };
 //------------------------------------------------------------------------------
 
