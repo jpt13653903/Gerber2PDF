@@ -71,8 +71,8 @@ Headers = Tools/Deflate/*.h       \
           Tools/String/*.h
 #-------------------------------------------------------------------------------
 
-.PHONY:    clean all
-.PRECIOUS: $(Objects)
+.PHONY: clean all
+.SECONDARY:
 
 all: bin/Gerber2pdf.exe
 
