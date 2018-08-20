@@ -85,7 +85,7 @@ bool JFile::Open(ACCESS Access){
         FILE_ATTRIBUTE_NORMAL,
         0
       );
-      if ((int)Handle < 1){
+      if(Handle == INVALID_HANDLE_VALUE){
         Handle = 0;
         return false;
       }
@@ -101,7 +101,7 @@ bool JFile::Open(ACCESS Access){
         FILE_ATTRIBUTE_NORMAL,
         0
       );
-      if ((int)Handle < 1){
+      if(Handle == INVALID_HANDLE_VALUE){
         Handle = 0;
         return false;
       }
@@ -117,7 +117,7 @@ bool JFile::Open(ACCESS Access){
         FILE_ATTRIBUTE_NORMAL,
         0
       );
-      if ((int)Handle < 1){
+      if(Handle == INVALID_HANDLE_VALUE){
         Handle = 0;
         return false;
       }
@@ -133,7 +133,7 @@ bool JFile::Open(ACCESS Access){
         FILE_ATTRIBUTE_NORMAL,
         0
       );
-      if ((int)Handle < 1){
+      if(Handle == INVALID_HANDLE_VALUE){
         Handle = 0;
         return false;
       }
