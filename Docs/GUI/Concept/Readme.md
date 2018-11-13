@@ -10,6 +10,7 @@
 
 - There should be a button / means to export the batch script.
 - There should be a way to "load" a previous configuration -- maybe from a previously exported batch script?
+- The "combine" check-box could be replaced with a "new page" separator...
 
 ## Questions
 
