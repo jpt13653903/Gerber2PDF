@@ -13,5 +13,6 @@
 
 ## Questions
 
-- How to show / control the transparency of the 
+- How to show / control the transparency of the layers
+- Some users like to control the background colour...
 
