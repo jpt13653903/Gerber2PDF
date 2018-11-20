@@ -41,6 +41,12 @@ struct COLOUR{
 };
 //------------------------------------------------------------------------------
 
+enum PAGE_SIZE{
+  PS_Default = 0,
+  PS_Extents
+} PageSize = PS_Default;
+//------------------------------------------------------------------------------
+
 int OpaqueCount = 0;
 struct OPAQUE_STACK{
   pdfOpaque*    Opaque;

@@ -15,7 +15,7 @@ Libraries  =
 LibInclude = 
 #-------------------------------------------------------------------------------
 
-Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=3
+Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=4
 
 Objects = obj/Tools/Deflate/JDeflate.o             \
           obj/Tools/File/JFile.o                   \

@@ -544,7 +544,7 @@ int main(int argc, char** argv){
       "\n"
       "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name]"
               " ...\n"
-      "       [-background=R,G,B[,A]] [-strokes2fills] ...\n"
+      "       [-background=R,G,B[,A]] [-strokes2fills] [-page_size=extents] ...\n"
       "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...\n"
       "       [-nomirror] [-nocombine] ... file_N\n"
       "\n"
@@ -697,6 +697,13 @@ int main(int argc, char** argv){
 
       }else if(StringStart(argv[arg]+1, "strokes2fills")){
         ConvertStrokesToFills = true;
+
+      }else if(StringStart(argv[arg]+1, "page_size")){
+        if(!strcmp(argv[arg]+10, "=extents")){
+          printf("Yes\n");
+          PageSize = PS_Extents;
+        }else
+          printf("Error: Only \"extents\" page size option supported (for now)\n");
       }
       continue; // handle the next argument
     }
@@ -932,6 +939,32 @@ int main(int argc, char** argv){
     ConvertStrokesToFills = false;
   }
   if(TheContents) TheContents->Deflate();
+
+  if(PageSize != PS_Default){
+    if(PageSize == PS_Extents){
+      int    page;
+      double Left   =  1e100;
+      double Bottom =  1e100;
+      double Right  = -1e100;
+      double Top    = -1e100;
+      for(page = 0; page < argc; page++){
+        if(Page[page].MediaBox.Left  .Value < Page[page].MediaBox.Right.Value &&
+           Page[page].MediaBox.Bottom.Value < Page[page].MediaBox.Top  .Value ){
+          if(Left   > Page[page].MediaBox.Left  .Value)
+             Left   = Page[page].MediaBox.Left  .Value;
+          if(Bottom > Page[page].MediaBox.Bottom.Value)
+             Bottom = Page[page].MediaBox.Bottom.Value;
+          if(Right  < Page[page].MediaBox.Right .Value)
+             Right  = Page[page].MediaBox.Right .Value;
+          if(Top    < Page[page].MediaBox.Top   .Value)
+             Top    = Page[page].MediaBox.Top   .Value;
+        }
+      }
+      for(page = 0; page < argc; page++){
+        Page[page].MediaBox.Set(Left, Bottom, Right, Top);
+      }
+    } // TODO: future feature: standard sizes (A4, letter, etc.)
+  }
 
   if(PageCount){
     pdf.AddIndirect(&Pages);
