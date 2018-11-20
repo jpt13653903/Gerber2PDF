@@ -545,6 +545,7 @@ int main(int argc, char** argv){
       "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name]"
               " ...\n"
       "       [-background=R,G,B[,A]] [-strokes2fills] ...\n"
+      "       [-page_size=extents|A3|A4|letter] ...\n"
       "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...\n"
       "       [-nomirror] [-nocombine] ... file_N\n"
       "\n"
@@ -578,7 +579,10 @@ int main(int argc, char** argv){
       "file, thereby converting outlines to areas.  This option has to be\n"
       "applied to the first instance of that file, and applies to all other\n"
       "instances.  To work around this limitation,\n"
-      "make a copy of the file in question.\n",
+      "make a copy of the file in question.\n"
+      "\n"
+      "The -page_size option takes global effect and can have one of 4 values:\n"
+      "  \"extents\", \"A3\", \"A4\" or \"letter\"\n",
       MAJOR_VERSION, MINOR_VERSION // These are defined in the Makefile
     );
     Pause();
@@ -697,6 +701,14 @@ int main(int argc, char** argv){
 
       }else if(StringStart(argv[arg]+1, "strokes2fills")){
         ConvertStrokesToFills = true;
+
+      }else if(StringStart(argv[arg]+1, "page_size")){
+        if     (!strcmp(argv[arg]+10, "=extents")) PageSize = PS_Extents;
+        else if(!strcmp(argv[arg]+10, "=A3"     )) PageSize = PS_A3;
+        else if(!strcmp(argv[arg]+10, "=A4"     )) PageSize = PS_A4;
+        else if(!strcmp(argv[arg]+10, "=letter" )) PageSize = PS_Letter;
+        else printf("Error: Only \"extents\", \"A3\", \"A4\" and \"letter\"\n"
+                    "       page sizes are supported\n");
       }
       continue; // handle the next argument
     }
@@ -932,6 +944,75 @@ int main(int argc, char** argv){
     ConvertStrokesToFills = false;
   }
   if(TheContents) TheContents->Deflate();
+
+  if(PageSize != PS_Default){
+    int    page;
+    double Left   =  1e100;
+    double Bottom =  1e100;
+    double Right  = -1e100;
+    double Top    = -1e100;
+    double Width;
+    double Height;
+    double Delta;
+
+    // Calculate the extents
+    for(page = 0; page < argc; page++){
+      if(Page[page].MediaBox.Left  .Value < Page[page].MediaBox.Right.Value &&
+         Page[page].MediaBox.Bottom.Value < Page[page].MediaBox.Top  .Value ){
+        if(Left   > Page[page].MediaBox.Left  .Value)
+           Left   = Page[page].MediaBox.Left  .Value;
+        if(Bottom > Page[page].MediaBox.Bottom.Value)
+           Bottom = Page[page].MediaBox.Bottom.Value;
+        if(Right  < Page[page].MediaBox.Right .Value)
+           Right  = Page[page].MediaBox.Right .Value;
+        if(Top    < Page[page].MediaBox.Top   .Value)
+           Top    = Page[page].MediaBox.Top   .Value;
+      }
+    }
+    Width  = Right - Left;
+    Height = Top - Bottom;
+
+    printf("PageSize = %d\n", PageSize);
+
+    // Centre on standard sizes
+    if(PageSize == PS_A3){
+      if(Width > Height){
+        Width  = 420/25.4*72.0;
+        Height = 297/25.4*72.0;
+      }else{
+        Width  = 297/25.4*72.0;
+        Height = 420/25.4*72.0;
+      }
+    }else if(PageSize == PS_A4){
+      if(Width > Height){
+        Width  = 297/25.4*72.0;
+        Height = 210/25.4*72.0;
+      }else{
+        Width  = 210/25.4*72.0;
+        Height = 297/25.4*72.0;
+      }
+    }else if(PageSize == PS_Letter){
+      if(Width > Height){
+        Width  = 11.0*72.0;
+        Height =  8.5*72.0;
+      }else{
+        Width  =  8.5*72.0;
+        Height = 11.0*72.0;
+      }
+    }
+
+    Delta   = (Width - (Right - Left)) / 2.0;
+    Left   -= Delta;
+    Right  += Delta;
+
+    Delta   = (Height - (Top - Bottom)) / 2.0;
+    Bottom -= Delta;
+    Top    += Delta;
+
+    for(page = 0; page < argc; page++){
+      Page[page].MediaBox.Set(Left, Bottom, Right, Top);
+    }
+  }
 
   if(PageCount){
     pdf.AddIndirect(&Pages);
