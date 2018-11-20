@@ -37,5 +37,8 @@ file, thereby converting outlines to areas.  This option has to be
 applied to the first instance of that file, and applies to all other
 instances.  To work around this limitation,
 make a copy of the file in question.
+
+The -page_size option takes global effect and can have one of 4 values:
+  "extents", "A3", "A4" or "letter"
 ```
 
