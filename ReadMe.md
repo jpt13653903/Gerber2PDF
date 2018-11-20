@@ -16,6 +16,11 @@ The source is available from the [git repository](https://sourceforge.net/p/gerb
 
 ## Changes:
 
+#### 2018-11-20
+
+- Version-bump to 1.4
+- Added the `-page_size` command-line option
+
 #### 2017-12-20
 
 - Fixed bug relating to explicit positive numbers
