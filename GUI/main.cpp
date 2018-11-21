@@ -5,24 +5,22 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-#include "logic.hpp"
-
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl2.h"
 
+#include "gui_main.hpp"
 
 static void glfw_error_callback(int error, const char* description) {
     std::cerr << "Glfw Error "<<error<<" "<<description<<"\n";
 }
-
 
 int main(int argc, char** argv) {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
 
-    GLFWwindow* window = glfwCreateWindow(200, 500, "Gerber2PdfGui", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(300, 400, "Gerber2PdfGui", NULL, NULL);
     if (window == NULL) {
         std::cerr << "Could not create GLFW window\n";
         return 1;
@@ -37,10 +35,8 @@ int main(int argc, char** argv) {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL2_Init();
 
-    ImGui::StyleColorsDark();
-
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 16.0f);
+    gui_setup(argc, argv);
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     while (!glfwWindowShouldClose(window))
@@ -53,9 +49,7 @@ int main(int argc, char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::End();
+        gui_loop();
 
         ImGui::Render();
         int display_w, display_h;

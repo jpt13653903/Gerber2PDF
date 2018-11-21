@@ -4,6 +4,7 @@ GL = dependency('GL')
 glfw = dependency('glfw3')
 executable('Gerber2PdfGui', 
            'main.cpp', 
+           'gui_main.cpp',
            'imgui/imgui.cpp',
            'imgui/examples/imgui_impl_glfw.cpp',
            'imgui/examples/imgui_impl_opengl2.cpp',

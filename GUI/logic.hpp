@@ -3,11 +3,13 @@
 
 #include <string>
 #include <variant>
+#include <tuple>
 #include <vector>
 
 struct GerberFile {
     std::string file_uri;
     bool is_mirrored;
+    float color_rgba[4];
 };
 
 struct PageBreak {};
