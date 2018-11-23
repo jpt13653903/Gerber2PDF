@@ -594,7 +594,6 @@ int main(int argc, char** argv){
       "\n"
       "The -page_size option takes global effect and can have one of 4 values:\n"
       "  \"extents\", \"A3\", \"A4\" or \"letter\"\n",
-
       MAJOR_VERSION, MINOR_VERSION // These are defined in the Makefile
     );
     Pause();

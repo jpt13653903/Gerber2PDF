@@ -1,9 +1,15 @@
 # Example
 
-## Usage
+## Usage (Windows)
 
 1. Edit `Convert.bat` and correct the path to `Gerber2pdf`.
 1. Run `Convert.bat`.
+
+## Usage (Linux)
+
+1. Edit `Convert.sh` and correct the path to `Gerber2pdf`.
+1. Run `Convert.sh`.
+1. Open `Output.pdf` in your favourite PDF viewer.
 
 ## Background Info
 
