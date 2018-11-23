@@ -7,6 +7,7 @@
 #include <vector>
 
 struct GerberFile {
+    std::string file_name;
     std::string file_uri;
     bool is_mirrored;
     float color_rgba[4];

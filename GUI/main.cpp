@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     if (!glfwInit())
         return 1;
 
-    GLFWwindow* window = glfwCreateWindow(300, 400, "Gerber2PdfGui", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(500, 400, "Gerber2PdfGui", NULL, NULL);
     if (window == NULL) {
         std::cerr << "Could not create GLFW window\n";
         return 1;
