@@ -28,6 +28,41 @@ JFile::JFile(){
 }
 //---------------------------------------------------------------------------
 
+#ifdef __linux__
+  bool ReadFile(
+    FILE*          File,
+    void*          Buffer,
+    unsigned long  NumberOfBytesToRead,
+    unsigned long* NumberOfBytesRead,
+    void*          Overlapped
+  ){
+    *NumberOfBytesRead = fread(Buffer, 1, NumberOfBytesToRead, File);
+    return *NumberOfBytesRead;
+  }
+#endif
+//---------------------------------------------------------------------------
+
+#ifdef __linux__
+  bool WriteFile(
+    FILE*          File,
+    const void*    Buffer,
+    unsigned long  NumberOfBytesToWrite,
+    unsigned long* NumberOfBytesWritten,
+    void*          Overlapped
+  ){
+    *NumberOfBytesWritten = fwrite(Buffer, 1, NumberOfBytesToWrite, File);
+    return *NumberOfBytesWritten;
+  }
+#endif
+//---------------------------------------------------------------------------
+
+#ifdef __linux__
+  void CloseHandle(FILE*  Handle){
+    fclose(Handle);
+  }
+#endif
+//---------------------------------------------------------------------------
+
 bool JFile::LineInput(JString* s){
   unsigned long X;
   char          x[2];
@@ -74,94 +109,134 @@ void JFile::Close(void){
 
 bool JFile::Open(ACCESS Access){
   Close();
-  switch(Access){
-    case Read:
-      Handle = CreateFile(
-        Filename.String,
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        0,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        0
-      );
-      if(Handle == INVALID_HANDLE_VALUE){
-        Handle = 0;
+
+  #if defined(WINVER)
+    switch(Access){
+      case Read:
+        Handle = CreateFile(
+          Filename.String,
+          GENERIC_READ,
+          FILE_SHARE_READ,
+          0,
+          OPEN_EXISTING,
+          FILE_ATTRIBUTE_NORMAL,
+          0
+        );
+        if(Handle == INVALID_HANDLE_VALUE){
+          Handle = 0;
+          return false;
+        }
+        CurrentAccess = Read;
+        break;
+      case Write:
+        Handle = CreateFile(
+          Filename.String,
+          GENERIC_WRITE,
+          FILE_SHARE_READ,
+          0,
+          OPEN_ALWAYS,
+          FILE_ATTRIBUTE_NORMAL,
+          0
+        );
+        if(Handle == INVALID_HANDLE_VALUE){
+          Handle = 0;
+          return false;
+        }
+        CurrentAccess = Write;
+        break;
+      case Create:
+        Handle = CreateFile(
+          Filename.String,
+          GENERIC_WRITE,
+          FILE_SHARE_READ,
+          0,
+          CREATE_ALWAYS,
+          FILE_ATTRIBUTE_NORMAL,
+          0
+        );
+        if(Handle == INVALID_HANDLE_VALUE){
+          Handle = 0;
+          return false;
+        }
+        CurrentAccess = Create;
+        break;
+      case WriteDevice:
+        Handle = CreateFile(
+          Filename.String,
+          GENERIC_WRITE,
+          FILE_SHARE_READ | FILE_SHARE_WRITE,
+          0,
+          OPEN_EXISTING,
+          FILE_ATTRIBUTE_NORMAL,
+          0
+        );
+        if(Handle == INVALID_HANDLE_VALUE){
+          Handle = 0;
+          return false;
+        }
+        CurrentAccess = Write;
+        break;
+      default:
         return false;
-      }
-      CurrentAccess = Read;
-      break;
-    case Write:
-      Handle = CreateFile(
-        Filename.String,
-        GENERIC_WRITE,
-        FILE_SHARE_READ,
-        0,
-        OPEN_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL,
-        0
-      );
-      if(Handle == INVALID_HANDLE_VALUE){
-        Handle = 0;
+    }
+  #elif defined(__linux__)
+    switch(Access){
+      case Read:
+        Handle = fopen(Filename.String, "rb");
+        if(!Handle) return false;
+        CurrentAccess = Read;
+        break;
+
+      case Write:
+        Handle = fopen(Filename.String, "wb");
+        if(!Handle) return false;
+        CurrentAccess = Write;
+        break;
+
+      case Create:
+        Handle = fopen(Filename.String, "wb");
+        if(!Handle) return false;
+        CurrentAccess = Create;
+        break;
+
+      case WriteDevice:
+        printf("JFile.cpp Error: Write Device not implemented for Linux.");
         return false;
-      }
-      CurrentAccess = Write;
-      break;
-    case Create:
-      Handle = CreateFile(
-        Filename.String,
-        GENERIC_WRITE,
-        FILE_SHARE_READ,
-        0,
-        CREATE_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL,
-        0
-      );
-      if(Handle == INVALID_HANDLE_VALUE){
-        Handle = 0;
+
+      default:
         return false;
-      }
-      CurrentAccess = Create;
-      break;
-    case WriteDevice:
-      Handle = CreateFile(
-        Filename.String,
-        GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE,
-        0,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        0
-      );
-      if(Handle == INVALID_HANDLE_VALUE){
-        Handle = 0;
-        return false;
-      }
-      CurrentAccess = Write;
-      break;
-    default:
-      return false;
-  }
+    }
+  #endif
+
   return true;
 }
 //---------------------------------------------------------------------------
 
 int JFile::FormatLastError(JString* Error){
-  char Buffer[0x100];
-  int Err = GetLastError();
+  #if defined(WINVER)
+    char Buffer[0x100];
+    int Err = GetLastError();
+  
+    FormatMessage((unsigned long)FORMAT_MESSAGE_FROM_SYSTEM,
+                  (const void*)FORMAT_MESSAGE_FROM_HMODULE,
+                  (unsigned long)Err,
+                  (unsigned long)0,
+                  (char*)Buffer,
+                  (unsigned long)0x100,
+  		0);
+    Error->Set(Err);
+    Error->Append(": ");
+    Error->Append(Buffer);
+  
+    return Err;
+  
+  #elif defined(__linux__)
+    Error->Set(errno);
+    Error->Append(": ");
+    Error->Append(strerror(errno));
 
-  FormatMessage((unsigned long)FORMAT_MESSAGE_FROM_SYSTEM,
-                (const void*)FORMAT_MESSAGE_FROM_HMODULE,
-                (unsigned long)Err,
-                (unsigned long)0,
-                (char*)Buffer,
-                (unsigned long)0x100,
-		0);
-  Error->Set(Err);
-  Error->Append(": ");
-  Error->Append(Buffer);
-
-  return Err;
+    return errno;
+  #endif
 }
 //------------------------------------------------------------------------------
 
@@ -170,24 +245,30 @@ void JFile::ShowLastError(){
   JString s;
 
   Err = FormatLastError(&s);
-  s.Prefix(":\r\n");
-  s.Prefix(Filename.String);
 
-  if(Err){
-    MessageBox(
-      0,
-      s.String,
-      "Error",
-      MB_ICONERROR
-    );
-  }else{
-    MessageBox(
-      0,
-      s.String,
-      "Info",
-      MB_ICONINFORMATION
-    );
-  }
+  #if defined(WINVER)
+    s.Prefix(":\r\n");
+    s.Prefix(Filename.String);
+  
+    if(Err){
+      MessageBox(
+        0,
+        s.String,
+        "Error",
+        MB_ICONERROR
+      );
+    }else{
+      MessageBox(
+        0,
+        s.String,
+        "Info",
+        MB_ICONINFORMATION
+      );
+    }
+  #elif defined(__linux__)
+    if(Err) printf("Error:\n  %s\n  %s", s.String, Filename.String);
+    else    printf("Info:\n  %s\n  %s" , s.String, Filename.String);
+  #endif
 }
 //---------------------------------------------------------------------------
 
@@ -201,20 +282,22 @@ void JFile::SetFilename(const char* Value){
 
   Filename.Set(Value);
 
-  if(Filename.GetLength() < 3){
-    Filename.Set("");
-    return;
-  }
-  if((Value[2] != ':'  || Value[3] != '\\') &&
-     (Value[1] != '\\' && Value[2] != '\\')){
-    JString t;
-    t.Set("Invalid path and filename: ");
-    t.Append(Value);
-    t.Append('.');
-    MessageBox(0, t.String, "Error", MB_ICONERROR);
-    Filename.Set("");
-    return;
-  }
+  #if defined(WINVER)
+    if(Filename.GetLength() < 3){
+      Filename.Set("");
+      return;
+    }
+    if((Value[2] != ':'  || Value[3] != '\\') &&
+       (Value[1] != '\\' && Value[2] != '\\')){
+      JString t;
+      t.Set("Invalid path and filename: ");
+      t.Append(Value);
+      t.Append('.');
+      MessageBox(0, t.String, "Error", MB_ICONERROR);
+      Filename.Set("");
+      return;
+    }
+  #endif
 }
 //---------------------------------------------------------------------------
 
@@ -280,43 +363,23 @@ unsigned long JFile::WriteBuffer(
 //---------------------------------------------------------------------------
 
 long double JFile::GetSize(void){
-  long double   f;
-  unsigned long high = 0;
+  if(!Handle) return 0;
 
-  if(Handle){
+  #if defined(WINVER)
+    long double   f;
+    unsigned long high = 0;
+
     f  = GetFileSize(Handle, &high);
     f += high * 4.294967296e9;
     return f;
-  }
-  return 0;
-}
-//---------------------------------------------------------------------------
 
-long double JFile::GetPosition(void){
-  long double f;
-  long        high = 0;
-
-  if(Handle){
-    f  = SetFilePointer(Handle, 0, &high, FILE_CURRENT);
-    f += high * 4.294967296e9;
-    return f;
-  }
-  return 0;
-}
-//---------------------------------------------------------------------------
-
-void JFile::SetPosition(long double Value){
-  unsigned long low;
-  long          high;
-
-  low  = Value;
-  high = Value / 4.294967296e9;
-  if(Handle) SetFilePointer(Handle, low, &high, FILE_BEGIN);
-}
-//---------------------------------------------------------------------------
-
-bool JFile::GetBusy(void){
-  return (bool)Handle;
+  #elif defined(__linux__)
+    long int position = ftell(Handle);
+    fseek(Handle, 0, SEEK_END);
+    long int size = ftell(Handle);
+    fseek(Handle, position, SEEK_SET);
+    return size;
+  #endif
 }
 //---------------------------------------------------------------------------
 

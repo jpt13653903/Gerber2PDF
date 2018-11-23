@@ -504,6 +504,17 @@ LAYER* FindLayer(const char* Filename){
 }
 //------------------------------------------------------------------------------
 
+#ifdef __linux__
+  unsigned long GetCurrentDirectory(
+    unsigned long BufferLength,
+    char*         Buffer
+  ){
+    if(!getcwd(Buffer, BufferLength)) return 0;
+    return strlen(Buffer);
+  }
+#endif
+//------------------------------------------------------------------------------
+
 int main(int argc, char** argv){
   int     j;
   int     PageCount = 0;
@@ -583,6 +594,7 @@ int main(int argc, char** argv){
       "\n"
       "The -page_size option takes global effect and can have one of 4 values:\n"
       "  \"extents\", \"A3\", \"A4\" or \"letter\"\n",
+
       MAJOR_VERSION, MINOR_VERSION // These are defined in the Makefile
     );
     Pause();
@@ -612,10 +624,17 @@ int main(int argc, char** argv){
   char Path[0x100];
   GetCurrentDirectory(0x100, Path);
   for(j = 0; Path[j]; j++);
-  if(Path[j-1] != '\\'){
-    Path[j++] = '\\';
-    Path[j  ] = 0;
-  }
+  #if defined(WINVER)
+    if(Path[j-1] != '\\'){
+      Path[j++] = '\\';
+      Path[j  ] = 0;
+    }
+  #elif defined(__linux__)
+    if(Path[j-1] != '/'){
+      Path[j++] = '/';
+      Path[j  ] = 0;
+    }
+  #endif
 
   Page     = new pdfPage        [argc];
   Outline  = new pdfOutlineItems[argc];
@@ -719,9 +738,15 @@ int main(int argc, char** argv){
       ConvertStrokesToFills = false;
       continue;
     }
-    if(FileName.String[1] != '\\' && FileName.String[1] != ':'){
-      FileName.Prefix(Path);
-    }
+    #if defined(WINVER)
+      if(FileName.String[1] != '\\' && FileName.String[1] != ':'){
+        FileName.Prefix(Path);
+      }
+    #elif defined(__linux__)
+      if(FileName.String[0] != '/'){
+        FileName.Prefix(Path);
+      }
+    #endif
 
     bool Reusing = false;
     Layer = FindLayer(FileName.String);
@@ -972,8 +997,6 @@ int main(int argc, char** argv){
     Width  = Right - Left;
     Height = Top - Bottom;
 
-    printf("PageSize = %d\n", PageSize);
-
     // Centre on standard sizes
     if(PageSize == PS_A3){
       if(Width > Height){
@@ -1026,9 +1049,15 @@ int main(int argc, char** argv){
     if(!OutputFileName.GetLength()){
       OutputFileName.Set(FileName.String);
     }else{
-      if(OutputFileName.String[1] != '\\' && OutputFileName.String[1] != ':'){
-        OutputFileName.Prefix(Path);
-      }
+      #if defined(WINVER)
+        if(OutputFileName.String[1] != '\\' && OutputFileName.String[1] != ':'){
+          OutputFileName.Prefix(Path);
+        }
+      #elif defined(__linux__)
+        if(OutputFileName.String[0] != '/'){
+          OutputFileName.Prefix(Path);
+        }
+      #endif
     }
     OutputFileName.Append(".pdf");
 
