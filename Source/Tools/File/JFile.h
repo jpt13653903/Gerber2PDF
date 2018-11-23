@@ -31,6 +31,12 @@
 
   #include <windows.h>
 
+#elif defined(__linux__)
+  #include <stdio.h>
+  #include <stdint.h>
+  #include <string.h>
+  #include <errno.h>
+
 #else
   #error JFile.cpp/h is platform dependant, \
          please create an implimentation for your platform
@@ -51,8 +57,12 @@ class JFile{
 //---------------------------------------------------------------------------
 
   private:
+    #if defined(WINVER)
+      HANDLE Handle;
+    #elif defined(__linux__)
+      FILE*  Handle;
+    #endif
     ACCESS  CurrentAccess;
-    HANDLE  Handle;
     JString Filename;
 //---------------------------------------------------------------------------
 
@@ -87,10 +97,6 @@ class JFile{
     char*       GetFilename  ();
     void        SetFilename  (const char* Value);
     long double GetSize      ();
-    void*       GetFileHandle();
-    long double GetPosition  ();
-    void        SetPosition  (long double Value);
-    bool        GetBusy      (void);
 };
 //---------------------------------------------------------------------------
 #endif

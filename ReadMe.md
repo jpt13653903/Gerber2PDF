@@ -14,6 +14,8 @@ A batch-file or script is recommended, but a simple "Open with..." link will als
 
 The source is available from the [git repository](https://sourceforge.net/p/gerber2pdf/code/) and [GitHub](https://github.com/jpt13653903/Gerber2PDF).
 
+To build on Windows, run `make` from within a POSIX-like environment &ndash; I generally use [Git Bash](https://git-scm.com/).  To build on Linux, run `make`.
+
 ## Changes:
 
 #### 2018-11-20
