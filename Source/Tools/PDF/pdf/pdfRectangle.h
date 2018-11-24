@@ -30,13 +30,13 @@
 //------------------------------------------------------------------------------
 
 class pdfRectangle : public pdfArray{
-private:
+public: // Read-only
   pdfNumber Left;
   pdfNumber Right;
   pdfNumber Top;
   pdfNumber Bottom;
 
-public:
+public: // Functions
   pdfRectangle();
 
   void SetA4();

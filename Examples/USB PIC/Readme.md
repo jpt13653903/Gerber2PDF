@@ -1,10 +1,16 @@
 # Example
 
-## Usage
+## Usage (Windows)
 
 1. Either [download the binary](https://sourceforge.net/projects/gerber2pdf/files/latest/download), or [build the project](https://github.com/jpt13653903/Gerber2PDF/blob/master/Makefile).
 1. Edit `Convert.bat` and correct the path to `Gerber2pdf`.
 1. Run `Convert.bat`.
+
+## Usage (Linux)
+
+1. Edit `Convert.sh` and correct the path to `Gerber2pdf`.
+1. Run `Convert.sh`.
+1. Open `Output.pdf` in your favourite PDF viewer.
 
 ## Background Info
 
