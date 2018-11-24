@@ -1,14 +1,15 @@
 project('Gerber2PdfGui', 'cpp', default_options : ['cpp_std=c++14'])
 incdirs = include_directories('imgui', 'imgui/examples', 'imgui/misc/cpp')
-GL = dependency('GL')
 cxx = meson.get_compiler('cpp')
-if build_machine.system() == 'windows'
+if host_machine.system() == 'windows'
+    GL = cxx.find_library('opengl32')
     glfw = cxx.find_library('glfw3')
     boost_fs = [
         cxx.find_library('boost_system-mt'),
         cxx.find_library('boost_filesystem-mt'),
     ]
 else
+    GL = dependency('GL')
     glfw = dependency('glfw3')
     boost_fs = [
         cxx.find_library('boost_system'),
