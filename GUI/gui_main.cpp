@@ -3,9 +3,9 @@
 #include "gui_main.hpp"
 #include "logic.hpp"
 #include <iostream>
-#include <optional>
 #include <sstream>
 #include <boost/filesystem.hpp>
+#include <boost/variant.hpp>
 #include <algorithm>
 #include <cstring>
 #include "custom_widgets.hpp"
@@ -19,7 +19,9 @@ namespace fs = boost::filesystem;
  *      [x] ! Refactor Filechooser
  *      [ ] Implement Save to batch file button
  *      [ ] Refactor for reusability
- *      [ ] Try compiling on windows
+ *      [x] Make it compile in C++14
+ *      [x] Try compiling on windows
+ *      [ ] Fix resize glitch
  */
 
 static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
@@ -102,8 +104,9 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
         if(
             ui_state->active_row_index != SIZE_MAX &&
             ui_state->active_row_index < main_state->gerber_list.size() - 1 &&
-            !std::holds_alternative<PageBreak>(*(main_state->gerber_list.begin()+ui_state->active_row_index)) &&
-            !std::holds_alternative<PageBreak>(*(main_state->gerber_list.begin()+ui_state->active_row_index+1))
+            !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+ui_state->active_row_index)) &&
+            !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+ui_state->active_row_index+1))
+            // ! Fixme: make above two lines more readable
         ) {
             main_state->gerber_list.insert(
                 main_state->gerber_list.begin()+ui_state->active_row_index+1,

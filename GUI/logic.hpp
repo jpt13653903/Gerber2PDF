@@ -3,9 +3,8 @@
 
 #include <string>
 #include <sstream>
-#include <variant>
-#include <tuple>
 #include <vector>
+#include <boost/variant.hpp>
 
 struct GerberFile {
     std::string file_name;
@@ -16,7 +15,7 @@ struct GerberFile {
 
 struct PageBreak {};
 
-typedef std::variant<GerberFile, PageBreak> GerberListEntry;
+typedef boost::variant<GerberFile, PageBreak> GerberListEntry;
 
 enum PAGE_SIZE {
     PAGE_SIZE_A4 = 0,

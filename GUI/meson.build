@@ -1,4 +1,4 @@
-project('Gerber2PdfGui', 'cpp', default_options : ['cpp_std=c++17'])
+project('Gerber2PdfGui', 'cpp', default_options : ['cpp_std=c++14'])
 incdirs = include_directories('imgui', 'imgui/examples', 'imgui/misc/cpp')
 GL = dependency('GL')
 cxx = meson.get_compiler('cpp')
@@ -31,4 +31,4 @@ executable('Gerber2PdfGui',
            include_directories: incdirs,
            dependencies: [GL, glfw, boost_fs],
            cpp_pch: 'pch/pch.hpp',
-           override_options : ['cpp_std=c++17'])
+           override_options : ['cpp_std=c++14'])

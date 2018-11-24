@@ -1,6 +1,5 @@
 #include <vector>
 #include <string>
-#include <optional>
 #include "logic.hpp"
 #include "imgui.h"
 #include <boost/filesystem.hpp>

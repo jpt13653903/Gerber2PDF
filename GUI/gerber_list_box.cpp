@@ -1,6 +1,7 @@
 #include "custom_widgets.hpp"
 #include <iostream>
 #include <cstdio>
+#include <boost/variant.hpp>
 
 static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
@@ -42,8 +43,8 @@ namespace ImGuiExt {
             if(hovered_index == index) effect = RowEffect::Hovered;
             if(*selected_index == index) effect = RowEffect::Selected;
 
-            if(std::holds_alternative<GerberFile>(entry)) {
-                action = GerberFileRow(index, &std::get<GerberFile>(entry), effect);
+            if(boost::get<GerberFile>(&entry)) {
+                action = GerberFileRow(index, boost::get<GerberFile>(&entry), effect);
             } else {
                 action = PageBreakRow(index, effect);
             }
