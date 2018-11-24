@@ -9,8 +9,33 @@
 
 #include "gui_main.hpp"
 
+static const ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
 static void glfw_error_callback(int error, const char* description) {
     std::cerr << "Glfw Error "<<error<<" "<<description<<"\n";
+}
+
+static void draw_frame(GLFWwindow *window, int display_w, int display_h) {
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL2_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    gui_loop();
+
+    ImGui::Render();
+    glViewport(0, 0, display_w, display_h);
+    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
+    glfwMakeContextCurrent(window);
+    glfwSwapBuffers(window);
+}
+
+static void window_resize_cb(GLFWwindow *window, int display_w, int display_h) {
+    // std::cout << "Resize\n";
+    draw_frame(window, display_w, display_h);
 }
 
 int main(int argc, char** argv) {
@@ -36,29 +61,12 @@ int main(int argc, char** argv) {
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     gui_setup(argc, argv);
 
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    while (!glfwWindowShouldClose(window))
-    {
-
+    glfwSetWindowSizeCallback(window, window_resize_cb);
+    while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-
-        // Start the Dear ImGui frame
-        ImGui_ImplOpenGL2_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        gui_loop();
-
-        ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
-
-        glfwMakeContextCurrent(window);
-        glfwSwapBuffers(window);
+        draw_frame(window, display_w, display_h);
     }
     return 0;
 }
