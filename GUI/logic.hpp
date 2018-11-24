@@ -20,7 +20,8 @@ typedef boost::variant<GerberFile, PageBreak> GerberListEntry;
 enum PAGE_SIZE {
     PAGE_SIZE_A4 = 0,
     PAGE_SIZE_A3 = 1,
-    PAGE_SIZE_EXTENTS = 2
+    PAGE_SIZE_EXTENTS = 2,
+    PAGE_SIZE_LETTER = 3
 };
 
 struct MainState {

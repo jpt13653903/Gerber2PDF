@@ -15,8 +15,12 @@ std::string generate_batch_script(const MainState &state) {
         case PAGE_SIZE::PAGE_SIZE_EXTENTS:
             out_string << "extents";
             break;
+        case PAGE_SIZE::PAGE_SIZE_LETTER:
+            out_string << "letter";
+            break;
         
     }
+    out_string << "\n";
     out_string << "-combine\n";
     for(auto &entry: state.gerber_list) {
         if(const GerberFile *file_entry = boost::get<GerberFile>(&entry)) {

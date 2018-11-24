@@ -21,7 +21,7 @@ namespace fs = boost::filesystem;
  *      [ ] Refactor for reusability
  *      [x] Make it compile in C++14
  *      [x] Try compiling on windows
- *      [ ] Fix resize glitch
+ *      [x] Fix resize glitch
  */
 
 static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
@@ -91,7 +91,7 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
     }
     static std::vector<fs::path> files;
     // this needs to be outside the previous `if`
-    if(ImGuiExt::FileChooser("Add gerber files..", &files)) {
+    if(ImGuiExt::FileChooser("Add gerber files..", ImGuiExt::FileChooserAction::OPEN_FILES, &files)) {
         for(auto file: files) {
             main_state->gerber_list.push_back(GerberFile{file.filename().string(), file.string(), true, {0, 0, 0}});
         }
@@ -148,7 +148,14 @@ static void render_output_file(MainState *main_state) {
     ImGui::SameLine();
     ImGui::InputText("", &main_state->output_file);
     ImGui::SameLine();
-    ImGui::Button("Browse");
+    if(ImGui::Button("Browse")) {
+        ImGui::OpenPopup("Browse Output File");
+    } 
+    static std::vector<fs::path> selected_file;
+    if(ImGuiExt::FileChooser("Browse Output File", ImGuiExt::FileChooserAction::SAVE_FILE, &selected_file)) {
+        main_state->output_file = selected_file[0].string();
+        selected_file.clear();
+    }
     ImGui::NewLine();
 }
 
@@ -174,10 +181,10 @@ static void render_page_options(MainState *main_state) {
         ImGui::ColorPicker4("Background Color", main_state->bg_color_rgba, ImGuiColorEditFlags_AlphaBar);
         ImGui::EndPopup();
     }
-    static const char *page_size_names[3] = {"Page Size: A3", "Page Size: A4", "Page Size: Extents"};
+    static const char *page_size_names[4] = {"Page Size: A3", "Page Size: A4", "Page Size: Extents", "Page Size: Letter"};
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     ImGui::BeginChild("Page Size", ImVec2(200, 30));
-    ImGui::Combo("", &main_state->page_size, page_size_names, 3);
+    ImGui::Combo("", &main_state->page_size, page_size_names, 4);
     ImGui::EndChild();
     ImGui::EndGroup();
     ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth()-200);
