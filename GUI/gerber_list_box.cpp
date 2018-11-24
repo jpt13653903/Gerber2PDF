@@ -34,7 +34,7 @@ namespace ImGuiExt {
     void GerberListBox(std::vector<GerberListEntry> *gerber_list, size_t* selected_index, ImVec2 size) {
         static size_t hovered_index = SIZE_MAX;
         size_t index = 0;
-        ImGui::BeginChild("Gerber List", size);
+        ImGui::BeginChild("Gerber List", size, false);
         if(!ImGui::IsWindowHovered()) hovered_index = SIZE_MAX;
         for(GerberListEntry &entry: *gerber_list) {
             RowAction action;
@@ -61,8 +61,11 @@ namespace ImGuiExt {
             index++;
         }
         if(gerber_list->empty()) {
+            ImGui::Indent(20.0);
+            ImGui::NewLine();
             ImGui::Text("Gerber files list is empty.");
             ImGui::Text("Please use the buttons below to add files to the list.");
+            ImGui::Unindent(20.0);
         }
         ImGui::EndChild();
     }
@@ -73,7 +76,7 @@ namespace ImGuiExt {
                          ROW_BG;
 
         static auto MARGIN = 5;
-        auto ROW_WIDTH = ImGui::GetWindowWidth();
+        auto ROW_WIDTH = ImGui::GetWindowContentRegionWidth();
         static auto const ROW_HEIGHT = 60;
         auto DELETE_BTN_SIZE = ImVec2(100, 40);
         ImVec2 COLOR_BTN_SIZE(ROW_HEIGHT-2*MARGIN, ROW_HEIGHT-2*MARGIN);
@@ -94,7 +97,7 @@ namespace ImGuiExt {
                                         entry->color_rgba[1], 
                                         entry->color_rgba[2], 
                                         entry->color_rgba[3]);
-                if(ImGui::ColorButton("Layer Color", 
+                if(ImGui::ColorButton(char_buf, 
                                     im_color,
                                     ImGuiColorEditFlags_AlphaPreview,
                                     COLOR_BTN_SIZE)) {

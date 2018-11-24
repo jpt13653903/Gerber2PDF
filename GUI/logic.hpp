@@ -18,8 +18,18 @@ struct PageBreak {};
 
 typedef std::variant<GerberFile, PageBreak> GerberListEntry;
 
+enum PAGE_SIZE {
+    PAGE_SIZE_A4 = 0,
+    PAGE_SIZE_A3 = 1,
+    PAGE_SIZE_EXTENTS = 2
+};
+
 struct MainState {
     std::vector<GerberListEntry> gerber_list;
+    std::string output_file;
+    float bg_color_rgba[4] = {255,255,255, 1};
+    int page_size = 0;
+    bool is_stroke2fills = false;
 };
 
 std::string generate_batch_script(const MainState &state);
