@@ -3,6 +3,7 @@
 ```
 Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name] ...
        [-background=R,G,B[,A]] [-strokes2fills] ...
+       [-page_size=extents|A3|A4|letter] ...
        file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...
        [-nomirror] [-nocombine] ... file_N
 
@@ -37,5 +38,8 @@ file, thereby converting outlines to areas.  This option has to be
 applied to the first instance of that file, and applies to all other
 instances.  To work around this limitation,
 make a copy of the file in question.
+
+The -page_size option takes global effect and can have one of 4 values:
+  "extents", "A3", "A4" or "letter"
 ```
 

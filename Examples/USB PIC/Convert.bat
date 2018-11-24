@@ -3,6 +3,7 @@ echo off
 "..\..\Source\bin\Gerber2pdf.exe"                                    ^
   -nowarnings                                                        ^
   -silentexit                                                        ^
+  -page_size=extents                                                 ^
   -output=Output                                                     ^
   -combine                                                           ^
     -colour=0,128,0         top_copper.grb                           ^

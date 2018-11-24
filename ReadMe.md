@@ -4,17 +4,26 @@ Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing an
 
 ## Installation:
 
-Download and run [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/latest/download).  This will display the copyright and usage information.
+Download and run [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf.exe/download) (Windows) or [Gerber2pdf](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf/download) (Linux 64-bit).  This will display the copyright and usage information.
 
 ## Usage:
 
-A batch-file or script is recommended, but a simple "Open with..." link will also work, resulting in a single Gerber to be converted to a PDF with the same file-name as the Gerber.
+A batch-file or script is recommended, but a simple "Open with..." link will also work, resulting in a single Gerber converted to a PDF with the same file-name as the Gerber.
 
 ## Source:
 
 The source is available from the [git repository](https://sourceforge.net/p/gerber2pdf/code/) and [GitHub](https://github.com/jpt13653903/Gerber2PDF).
 
+To build on Linux, run `make`.
+
+To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw32-make` from within a POSIX-like environment, such as [Git Bash](https://git-scm.com/).
+
 ## Changes:
+
+#### 2018-11-20
+
+- Version-bump to 1.4
+- Added the `-page_size` command-line option
 
 #### 2017-12-20
 
