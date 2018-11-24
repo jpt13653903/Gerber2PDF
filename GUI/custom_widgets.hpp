@@ -3,6 +3,7 @@
 #include <optional>
 #include "logic.hpp"
 #include "imgui.h"
+#include <boost/filesystem.hpp>
 
 
 
@@ -13,6 +14,9 @@ namespace ImGuiExt {
     /**
      * Returns true just after it is closed.
      * `selected_files` vector is never cleared by this function.
+     * File chooser is implemented as a `Popup`. 
+     * Use `ImGui::OpenPopup(popup_id)` or `ImGui::OpenPopupOnItemClick()`
+     * to open the popup.
      */
-    bool FileChooser(const char *popup_id, std::vector<std::string> *selected_files);
+    bool FileChooser(const char *popup_id, std::vector<boost::filesystem::path> *selected_files);
 }

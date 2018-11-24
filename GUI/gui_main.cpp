@@ -14,8 +14,8 @@ namespace fs = boost::filesystem;
 /** Roadmap:
  *      [x] Implement file chooser
  *      [x] Implement add files button
- *      [ ] ! Refactor Gerber ListBox .
- *      [ ] ! Refactor Filechooser into a class.
+ *      [x] ! Refactor Gerber ListBox
+ *      [x] ! Refactor Filechooser
  *      [ ] Implement Save to batch file button
  *      [ ] Refactor for reusability
  *      [ ] Try compiling on windows
@@ -32,7 +32,6 @@ struct UIState {
 static void render_title();
 static void render_list_box_action_btns(MainState *main_state, UIState *ui_state, ImVec2 size);
 static void render_main_action_btns(MainState *main_stat, ImVec2 size);
-static std::optional<std::vector<fs::path>> open_file_chooser();
 
 static ImGuiView g_imgui_view;
 static MainState main_state;
@@ -44,7 +43,7 @@ void gui_setup(int argc, char **argv) {
     auto io = ImGui::GetIO();
     g_imgui_view.normal_font = io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 16.0f);
     g_imgui_view.title_font = io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 36.0f);
-    main_state.gerber_list.push_back(GerberFile{"File.gbr", "file://File.gbr", true, {155, 205, 255}});
+    main_state.gerber_list.push_back(GerberFile{"File.gbr", "file://File.gbr", true, {0, 0, 1}});
     main_state.gerber_list.push_back(GerberFile{"File1.gbr", "file://File1.gbr", false, {155, 205, 255}});
     main_state.gerber_list.push_back(PageBreak{});
     main_state.gerber_list.push_back(GerberFile{"File3.gbr", "file://File.gbr", true, {155, 205, 255}});
@@ -86,21 +85,22 @@ static void render_title() {
 static void render_list_box_action_btns(MainState *main_state, UIState *ui_state, ImVec2 size) {
     ImGui::BeginChild("Actions", ImVec2(0, 40));
     if(ImGui::Button("Add files")) {
-        ImGui::OpenPopup("File Chooser");
+        ImGui::OpenPopup("Add gerber files..");
     }
-
+    static std::vector<fs::path> files;
     // this needs to be outside the previous `if`
-    if(auto files = open_file_chooser()) {
-        for(auto file: files.value()) {
+    if(ImGuiExt::FileChooser("Add gerber files..", &files)) {
+        for(auto file: files) {
             main_state->gerber_list.push_back(GerberFile{file.filename().string(), file.string(), true, {0, 0, 0}});
         }
+        files.clear();
     }
 
 
     ImGui::SameLine();
     if(ImGui::Button("Insert page break")) {
         if(
-            ui_state->active_row_index != -1 &&
+            ui_state->active_row_index != SIZE_MAX &&
             ui_state->active_row_index < main_state->gerber_list.size() - 1 &&
             !std::holds_alternative<PageBreak>(*(main_state->gerber_list.begin()+ui_state->active_row_index)) &&
             !std::holds_alternative<PageBreak>(*(main_state->gerber_list.begin()+ui_state->active_row_index+1))
@@ -114,66 +114,12 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
     ImGui::EndChild();
 }
 
-static void render_main_action_btns(MainState *main_stat, ImVec2 size) {
+static void render_main_action_btns(MainState *main_state, ImVec2 size) {
     ImGui::BeginChild("Main Actions", ImVec2(0, 40));
-    ImGui::Button("Save to batch file");
+    if(ImGui::Button("Save to batch file")) {
+        std::cout << generate_batch_script(*main_state) << "\nEND\n";
+    }
     ImGui::SameLine();
     ImGui::Button("Execute");
     ImGui::EndChild();
-}
-
-static std::optional<std::vector<fs::path>> open_file_chooser() {
-    static auto cwd = fs::current_path();
-    static bool show_gbr_files_only = true;
-
-    if(ImGui::BeginPopupModal("File Chooser")) {
-        ImGui::Text(cwd.c_str());
-        fs::directory_iterator __dir_iter_end;
-        static std::vector<int> selected_rows;
-        std::vector<fs::path> files;
-        files.push_back(cwd/fs::path(".."));
-        files.insert(files.begin()+1, fs::directory_iterator(cwd), __dir_iter_end);
-        if(ImGui::ListBoxHeader("Listbox")) {
-            //Iterate over dirs
-            int row_index = -1;
-            for(auto file: files) {
-                row_index++;
-                if(!fs::is_directory(file)) continue;
-                if(ImGui::Selectable((file.filename().string()+"/").c_str(), false)) {
-                    cwd = files[row_index].lexically_normal();
-                }
-            }
-            //Iterate over files
-            row_index = -1;
-            for(auto file: files) {
-                row_index++;
-                if(fs::is_directory(file)) continue;
-                if(show_gbr_files_only &&
-                    file.extension() != std::string(".gbr")) continue;
-                bool is_row_selected = 
-                    std::find(selected_rows.begin(), selected_rows.end(), row_index) != selected_rows.end();
-                if(ImGui::Selectable(file.filename().c_str(), is_row_selected)) {
-                    if(is_row_selected) {
-                        selected_rows.erase(std::find(selected_rows.begin(), selected_rows.end(), row_index));
-                    } else {
-                        selected_rows.push_back(row_index);
-                    }
-                }
-            }
-            ImGui::ListBoxFooter();
-        }
-        if(ImGui::Button("Open Selected") && !selected_rows.empty()) {
-            ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
-            std::vector<fs::path> selected_files;
-            for(auto row: selected_rows) {
-                selected_files.push_back(files[row].string());
-            }
-            return selected_files;
-        }
-        ImGui::SameLine();
-        ImGui::Checkbox("Show *.gbr only", &show_gbr_files_only);
-        ImGui::EndPopup();
-    }
-    return {};
 }

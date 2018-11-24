@@ -170,10 +170,6 @@ namespace ImGuiExt {
             ImGui::IsItemHovered()) {
             row_action_to_return = RowAction::Hover;
         }
-        if(row_action_to_return == RowAction::None && 
-            ImGui::IsMouseClicked(1) && effect == RowEffect::Hovered) {
-            row_action_to_return = RowAction::Click;
-        }
         return row_action_to_return;
     }
 }
