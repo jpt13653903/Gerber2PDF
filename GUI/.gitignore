@@ -1,6 +1,7 @@
 build/*
 build.win/*
 .vscode
+*.code-workspace
 *#
 *~
 imgui.ini
