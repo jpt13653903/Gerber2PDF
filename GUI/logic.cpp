@@ -11,10 +11,10 @@ static void pretty_line(std::ostream &ostream, const char * line,
     }
     ostream << line;
     int line_len = std::strlen(line);
-    int pad_len = line_max_len - line_len;
+    int pad_len = line_max_len - line_len - indent_level*2;
     for(int i = 0; i<pad_len; i++)
         ostream << " ";
-    ostream << "\n^";
+    ostream << " ^\n";
 }
 
 std::string generate_batch_script(const MainState &state) {
@@ -59,7 +59,9 @@ std::string generate_batch_script(const MainState &state) {
             line << file_entry->file_uri;
             pretty_line(out_string, line.str().c_str(), 2, LINE_LEN);
         } else {
-            pretty_line(out_string, "-combine", 1, LINE_LEN);
+            // skip the last page break
+            if(&entry != &state.gerber_list.back())
+                pretty_line(out_string, "-combine", 1, LINE_LEN);
         }
     }
     return out_string.str();

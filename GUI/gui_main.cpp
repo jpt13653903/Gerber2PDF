@@ -103,15 +103,23 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
 
     ImGui::SameLine();
     if(ImGui::Button("Insert page break")) {
+        auto insert_after = ui_state->active_row_index != SIZE_MAX ? 
+                            ui_state->active_row_index :
+                            main_state->gerber_list.size() - 1;
         if(
-            ui_state->active_row_index != SIZE_MAX &&
-            ui_state->active_row_index < main_state->gerber_list.size() - 1 &&
-            !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+ui_state->active_row_index)) &&
-            !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+ui_state->active_row_index+1))
-            // ! Fixme: make above two lines more readable
+            // currently selected item is not a page break
+            (
+                !main_state->gerber_list.empty() &&
+                !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+insert_after))
+            ) &&
+            // the item after exists and is not a page break
+            (
+                insert_after == (main_state->gerber_list.size() - 1) ||
+                !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+insert_after+1))
+            )
         ) {
             main_state->gerber_list.insert(
-                main_state->gerber_list.begin()+ui_state->active_row_index+1,
+                main_state->gerber_list.begin()+insert_after+1,
                 PageBreak{}
             );
         }
