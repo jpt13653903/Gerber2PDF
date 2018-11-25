@@ -11,9 +11,6 @@ static ImU32 ROW_BG = IM_COL32(0,10,15, 255);
 static ImU32 ROW_BG_HOVERED = IM_COL32(0, 68, 102, 255);
 static ImU32 ROW_BG_ACTIVE = IM_COL32(0, 114, 171, 255);
 
-static const size_t __BUF_LEN = 100;
-static char char_buf[__BUF_LEN];
-
 namespace ImGuiExt {
 
     enum class RowAction {
@@ -70,7 +67,7 @@ namespace ImGuiExt {
         }
         ImGui::EndChild();
     }
-
+    // ? Remove effect parameter by using multiple BeginGroup with Same ID?
     static RowAction GerberFileRow(size_t index, GerberFile *entry, RowEffect effect) {
         ImU32 bg_color = (effect == RowEffect::Hovered)? ROW_BG_HOVERED :
                          (effect == RowEffect::Selected)? ROW_BG_ACTIVE :
@@ -84,6 +81,7 @@ namespace ImGuiExt {
         auto row_action_to_return = RowAction::None;
 
         auto initial_cursor = ImGui::GetCursorPos();
+        ImGui::PushID(index);
         ImGui::BeginGroup();
         {
             ImGui::GetWindowDrawList()->AddRectFilled(
@@ -93,19 +91,19 @@ namespace ImGuiExt {
             );
             ImGui::SetCursorPos(ImGui::GetCursorPos() + ImVec2(MARGIN, MARGIN));
             { //Color Btn
-                std::snprintf(char_buf, __BUF_LEN, "Layer Color: %s", entry->file_name.c_str());
+                std::string layer_color_label = std::string("Layer Color: ") + entry->file_name;
                 auto im_color = ImColor(entry->color_rgba[0],
                                         entry->color_rgba[1], 
                                         entry->color_rgba[2], 
                                         entry->color_rgba[3]);
-                if(ImGui::ColorButton(char_buf, 
+                if(ImGui::ColorButton(entry->file_name.c_str(), 
                                     im_color,
                                     ImGuiColorEditFlags_AlphaPreview,
                                     COLOR_BTN_SIZE)) {
-                    ImGui::OpenPopup(char_buf);
+                    ImGui::OpenPopup("##LAYER_COLOR");
                 }
-                if(ImGui::BeginPopup(char_buf)) {
-                    ImGui::ColorPicker4(char_buf, entry->color_rgba, ImGuiColorEditFlags_AlphaBar);
+                if(ImGui::BeginPopup("##LAYER_COLOR")) {
+                    ImGui::ColorPicker4(layer_color_label.c_str(), entry->color_rgba, ImGuiColorEditFlags_AlphaBar);
                     ImGui::EndPopup();
                 }
             }
@@ -116,20 +114,19 @@ namespace ImGuiExt {
             { // Mid section
                ImGui::Text(entry->file_name.c_str());
                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-               std::snprintf(char_buf, __BUF_LEN, "Mirrored##%lu", index);
-               ImGui::Checkbox(char_buf, &entry->is_mirrored);
+               ImGui::Checkbox("Mirrored", &entry->is_mirrored);
             }
             ImGui::EndGroup();
 
             ImGui::SameLine();
             ImGui::SetCursorPosX(ROW_WIDTH - DELETE_BTN_SIZE.x - MARGIN);
-            std::snprintf(char_buf, __BUF_LEN, "Delete##%lu", index);
-            if(ImGui::Button(char_buf, DELETE_BTN_SIZE)) {
+            if(ImGui::Button("Delete", DELETE_BTN_SIZE)) {
                 row_action_to_return = RowAction::Delete;
             }
 
         }
         ImGui::EndGroup();
+        ImGui::PopID();
         ImGui::SetCursorPos(initial_cursor + ImVec2(0, ROW_HEIGHT));
 
         if(row_action_to_return == RowAction::None && 
@@ -153,6 +150,7 @@ namespace ImGuiExt {
         auto DELETE_BTN_SIZE = ImVec2(100, 40);
         
         auto row_action_to_return = RowAction::None;
+        ImGui::PushID(index);
         ImGui::BeginGroup();
         {
             ImGui::GetWindowDrawList()->AddRectFilled(
@@ -164,12 +162,12 @@ namespace ImGuiExt {
             ImGui::Text("Page Break");
             ImGui::SameLine();
             ImGui::SetCursorPosX(ROW_WIDTH - DELETE_BTN_SIZE.x - MARGIN);
-            std::snprintf(char_buf, __BUF_LEN, "Delete##%lu", index);
-            if(ImGui::Button(char_buf, DELETE_BTN_SIZE)) {
+            if(ImGui::Button("Delete", DELETE_BTN_SIZE)) {
                 row_action_to_return = RowAction::Delete;
             }
         }
         ImGui::EndGroup();
+        ImGui::PopID();
         if(row_action_to_return == RowAction::None &&
             ImGui::IsItemHovered()) {
             row_action_to_return = RowAction::Hover;

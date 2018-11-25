@@ -95,7 +95,7 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
     // this needs to be outside the previous `if`
     if(ImGuiExt::FileChooser("Add gerber files..", ImGuiExt::FileChooserAction::OPEN_FILES, &files)) {
         for(auto file: files) {
-            main_state->gerber_list.push_back(GerberFile{file.filename().string(), file.string(), true, {0, 0, 0}});
+            main_state->gerber_list.push_back(GerberFile{file.filename().string(), file.string(), true, {0, 0, 0, 1}});
         }
         files.clear();
     }
@@ -169,10 +169,10 @@ static void render_output_file(MainState *main_state) {
     ImGui::PopItemWidth();
     ImGui::SameLine();
     if(ImGui::Button("Browse##OUTPUT_FILE")) {
-        ImGui::OpenPopup("Browse Output File");
+        ImGui::OpenPopup("###FILE_CHOOSER_OUTPUT_FILE");
     } 
     static std::vector<fs::path> selected_file;
-    if(ImGuiExt::FileChooser("Browse Output File", ImGuiExt::FileChooserAction::SAVE_FILE, &selected_file)) {
+    if(ImGuiExt::FileChooser("Browse Output File###FILE_CHOOSER_OUTPUT_FILE", ImGuiExt::FileChooserAction::SAVE_FILE, &selected_file)) {
         main_state->output_file = selected_file[0].string();
         selected_file.clear();
     }

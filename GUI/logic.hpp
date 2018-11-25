@@ -6,7 +6,6 @@
 #include <boost/variant.hpp>
 
 struct GerberFile {
-    int index;
     std::string file_name;
     std::string file_uri;
     bool is_mirrored;
@@ -28,7 +27,7 @@ enum class PageSize {
 struct MainState {
     std::vector<GerberListEntry> gerber_list;
     std::string output_file;
-    float bg_color_rgba[4] = {255,255,255, 1};
+    float bg_color_rgba[4] = {255,255,255, 0};
     int page_size = static_cast<int>(PageSize::TIGHT);
     bool is_stroke2fills = false;
 };
