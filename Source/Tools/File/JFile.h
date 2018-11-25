@@ -23,12 +23,6 @@
 //---------------------------------------------------------------------------
 
 #if defined(__WIN64__) || defined(__WIN32__)
-  #if !defined(NTDDI_VERSION) || !defined(WINVER) || !defined(_WIN32_WINNT)
-    #define  NTDDI_VERSION 0x05010000 // Windown XP
-    #define  WINVER        0x0501     // Windown XP
-    #define _WIN32_WINNT   WINVER     // Windown XP
-  #endif
-
   #include <windows.h>
 
 #elif defined(__linux__)
