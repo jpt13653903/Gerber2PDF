@@ -44,7 +44,6 @@ struct ENGINE{
     bool Mirror;
     bool Combine;
     bool NewPage;
-    bool Negative;
 
     struct COLOUR{
       double R, G, B, A;
@@ -105,6 +104,7 @@ struct ENGINE{
 
     pdfOpaque* Opaque;
 
+    bool   Negative;
     bool   SolidCircle;
     bool   SolidRectangle;
     bool   OutlinePath;
