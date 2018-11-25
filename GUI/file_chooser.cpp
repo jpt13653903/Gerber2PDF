@@ -107,7 +107,7 @@ namespace ImGuiExt {
                     ImGui::Text("File: "); ImGui::SameLine();
                     ImGui::Text(save_file_name.c_str());
                     ImGui::Text("Location: "); ImGui::SameLine();
-                    ImGui::Text(cwd.c_str());
+                    ImGui::Text(cwd.string().c_str());
 
                     if(ImGui::Button("Yes")) {
                         selected_files->push_back(cwd/save_file_name);

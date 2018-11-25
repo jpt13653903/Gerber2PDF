@@ -141,7 +141,7 @@ static void render_main_action_btns(MainState *main_state, ImVec2 size) {
     static std::vector<fs::path> batch_file;
     if(ImGuiExt::FileChooser("##SAVE_BATCH_FILE", ImGuiExt::FileChooserAction::SAVE_FILE, &batch_file)) {
         auto batch_content = generate_batch_script(*main_state);
-        std::ofstream ofstream{batch_file[0].c_str()};
+        std::ofstream ofstream{batch_file[0].string().c_str()};
         ofstream << batch_content;
         ofstream.close();
         batch_file.clear();
