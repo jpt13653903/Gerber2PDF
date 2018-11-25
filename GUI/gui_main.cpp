@@ -3,6 +3,7 @@
 #include "gui_main.hpp"
 #include "logic.hpp"
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include <boost/variant.hpp>
@@ -22,6 +23,7 @@ namespace fs = boost::filesystem;
  *      [x] Make it compile in C++14
  *      [x] Try compiling on windows
  *      [x] Fix resize glitch
+ *      [ ] Remove spaces around Gerber Listbox
  */
 
 static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
@@ -46,7 +48,7 @@ void gui_setup(int argc, char **argv) {
     ImGui::StyleColorsDark();
     ImGui::GetStyle().WindowRounding = 0.0f;
     auto io = ImGui::GetIO();
-    g_imgui_view.normal_font = io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 16.0f);
+    g_imgui_view.normal_font = io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 14.0f);
     g_imgui_view.title_font = io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 36.0f);
     ui_state.active_row_index = -1;
 }
@@ -68,7 +70,7 @@ void gui_loop() {
 
     static auto LISTBOX_ACTION_BTNS_SIZE = ImVec2(0.0, 40);
     static auto MAIN_ACTION_BTNS_SIZE = ImVec2(0.0, 40);
-    auto LISTBOX_SIZE = ImGui::GetWindowSize() - LISTBOX_ACTION_BTNS_SIZE - MAIN_ACTION_BTNS_SIZE - ImVec2(35.0, 200);
+    auto LISTBOX_SIZE = ImGui::GetWindowSize() - LISTBOX_ACTION_BTNS_SIZE - MAIN_ACTION_BTNS_SIZE - ImVec2(25.0, 200);
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY()+20);
     ImGuiExt::GerberListBox(&main_state.gerber_list, &ui_state.active_row_index, LISTBOX_SIZE);
@@ -118,23 +120,39 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
 }
 
 static void render_main_action_btns(MainState *main_state, ImVec2 size) {
-    ImGui::BeginChild("Main Actions", ImVec2(0, 40));
+    ImGui::BeginChild("##MAIN_ACTIONS", ImVec2(0, 40));
     if(ImGui::Button("Save to batch file")) {
         if(main_state->output_file.empty()) {
-            ImGui::OpenPopup("No output file specified");
+            ImGui::OpenPopup("##NO_OUTPUT_FILE");
         } else {
-            std::cout << generate_batch_script(*main_state) << "\nEND\n";
+            ImGui::OpenPopup("##SAVE_BATCH_FILE");
         }
     }
 
-    if(ImGui::BeginPopup("No output file specified")) {
+    static std::vector<fs::path> batch_file;
+    if(ImGuiExt::FileChooser("##SAVE_BATCH_FILE", ImGuiExt::FileChooserAction::SAVE_FILE, &batch_file)) {
+        auto batch_content = generate_batch_script(*main_state);
+        std::ofstream ofstream{batch_file[0].c_str()};
+        ofstream << batch_content;
+        ofstream.close();
+        batch_file.clear();
+        ImGui::OpenPopup("##BATCH_FILE_SAVED");
+    }
+
+    if(ImGui::BeginPopup("##NO_OUTPUT_FILE")) {
         ImGui::Text("Please select an output file");
         ImGui::EndPopup();
     }
+
+    if(ImGui::BeginPopup("##BATCH_FILE_SAVED")) {
+        ImGui::Text("Batch file saved successfully");
+        ImGui::EndPopup();
+    }
+
     ImGui::SameLine();
     if(ImGui::Button("Execute")) {
         if(main_state->output_file.empty()) {
-            ImGui::OpenPopup("No output file specified");
+            ImGui::OpenPopup("##NO_OUTPUT_FILE");
         } else {
             std::cout << "TODO! Execute\n";
         }
@@ -146,9 +164,11 @@ static void render_main_action_btns(MainState *main_state, ImVec2 size) {
 static void render_output_file(MainState *main_state) {
     ImGui::Text("Output File: ");
     ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - 140);
     ImGui::InputText("", &main_state->output_file);
+    ImGui::PopItemWidth();
     ImGui::SameLine();
-    if(ImGui::Button("Browse")) {
+    if(ImGui::Button("Browse##OUTPUT_FILE")) {
         ImGui::OpenPopup("Browse Output File");
     } 
     static std::vector<fs::path> selected_file;
@@ -159,10 +179,18 @@ static void render_output_file(MainState *main_state) {
     ImGui::NewLine();
 }
 
+static bool page_size_to_string_cb(void *data, int index, const char **text) {
+    *text = page_size_to_string(static_cast<PageSize>(index));
+    return true;
+}
+
 static void render_page_options(MainState *main_state) {
     ImVec2 COLOR_BTN_SIZE(40, 40);
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth()-200);
+    ImGui::BeginGroup();
+    ImGui::Text("Background Layer");
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     auto im_color = ImColor(main_state->bg_color_rgba[0],
                             main_state->bg_color_rgba[1], 
                             main_state->bg_color_rgba[2], 
@@ -176,17 +204,17 @@ static void render_page_options(MainState *main_state) {
     ImGui::SameLine();
     ImGui::BeginGroup();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
-    ImGui::Text("Background Layer");
     if(ImGui::BeginPopup("Background Color")) {
         ImGui::ColorPicker4("Background Color", main_state->bg_color_rgba, ImGuiColorEditFlags_AlphaBar);
         ImGui::EndPopup();
     }
-    static const char *page_size_names[4] = {"Page Size: A3", "Page Size: A4", "Page Size: Extents", "Page Size: Letter"};
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-    ImGui::BeginChild("Page Size", ImVec2(200, 30));
-    ImGui::Combo("", &main_state->page_size, page_size_names, 4);
-    ImGui::EndChild();
+    ImGui::Text("Page size "); ImGui::SameLine();
+    ImGui::PushItemWidth(100);
+    ImGui::Combo("##PAGE_SIZE", &main_state->page_size, page_size_to_string_cb, NULL, 4);
+    ImGui::PopItemWidth();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::Checkbox(" Stroke to Fills", &main_state->is_stroke2fills);
     ImGui::EndGroup();
-    ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth()-200);
-    ImGui::Checkbox("  Stroke to Fills", &main_state->is_stroke2fills);
+    ImGui::EndGroup();
 }
