@@ -10,6 +10,7 @@ namespace ImGuiExt {
         static auto cwd = fs::current_path();
         static std::string cwd_str = cwd.string();
         static std::string save_file_name;
+        bool okay_to_exit = false;
 
         if(ImGui::BeginPopupModal(popup_id)) {
             auto WIDTH = ImGui::GetWindowWidth();
@@ -44,67 +45,89 @@ namespace ImGuiExt {
                         cwd = files[row_index].lexically_normal();
                     }
                 }
-                if(action == FileChooserAction::OPEN_FILES) {
-                    //Iterate over files
-                    row_index = -1;
-                    for(auto file: files) {
-                        row_index++;
-                        if(fs::is_directory(file)) continue;
-                        bool is_row_selected = 
-                            std::find(selected_rows.begin(), selected_rows.end(), row_index) != selected_rows.end();
-                        if(ImGui::Selectable(file.filename().string().c_str(), is_row_selected)) {
-                            if(is_row_selected) {
-                                selected_rows.erase(std::find(selected_rows.begin(), selected_rows.end(), row_index));
-                            } else {
+                //Iterate over files
+                row_index = -1;
+                for(auto file: files) {
+                    row_index++;
+                    if(fs::is_directory(file)) continue;
+                    bool is_row_selected = 
+                        std::find(selected_rows.begin(), selected_rows.end(), row_index) != selected_rows.end();
+                    if(ImGui::Selectable(file.filename().string().c_str(), is_row_selected)) {
+                        if(is_row_selected) {
+                            selected_rows.erase(std::find(selected_rows.begin(), selected_rows.end(), row_index));
+                        } else {
+                            // Allow selection of multiple files whe action is OPEN_FILES
+                            if(action == FileChooserAction::OPEN_FILES ||
+                               selected_rows.empty()) {
                                 selected_rows.push_back(row_index);
+                                save_file_name = file.filename().string();
                             }
                         }
                     }
-                    ImGui::ListBoxFooter();
-                } else if(action == FileChooserAction::SAVE_FILE) {
-                    ImGui::ListBoxFooter();
+                }
+                ImGui::ListBoxFooter();
+                if(action == FileChooserAction::SAVE_FILE) {
                     ImGui::Text("Save as: ");
                     ImGui::SameLine();
                     ImGui::PushItemWidth(WIDTH - 175);
-                    ImGui::InputText("##Save file name", &save_file_name);
+                    if(ImGui::InputText("##SAVE_FILE_NAME", &save_file_name)) {
+                        // clear selection when inputing new file name
+                        selected_rows.clear();
+                    }
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
                 }
             }
             if(action == FileChooserAction::OPEN_FILES) {
                 if(ImGui::Button("Open Selected") && !selected_rows.empty()) {
-                    ImGui::CloseCurrentPopup();
-                    ImGui::EndPopup();
                     for(auto row: selected_rows) {
                         selected_files->push_back(files[row].string());
                     }
-                    return true;
+                    okay_to_exit = true;
                 }
             } else if(action == FileChooserAction::SAVE_FILE) {
                 if(ImGui::Button("Save")) {
                     if(save_file_name.empty()) {
-                        ImGui::OpenPopup("Please enter a filename");
+                        ImGui::OpenPopup("##NO_FILE_NAME");
                     } else {
-                        ImGui::CloseCurrentPopup();
-                        ImGui::EndPopup();
-                        selected_files->push_back(cwd/save_file_name);
-                        return true;
+                        if(fs::exists(cwd/save_file_name)) {
+                            ImGui::OpenPopup("##FILE_EXISTS");
+                        } else {
+                            selected_files->push_back(cwd/save_file_name);
+                            okay_to_exit = true;
+                        }
                     }
                 }
-                if(ImGui::BeginPopup("Please enter a filename")) {
+                if(ImGui::BeginPopup("##NO_FILE_NAME")) {
                     ImGui::Text("Please enter a file name to save.");
+                    ImGui::EndPopup();
+                }
+                if(ImGui::BeginPopup("##FILE_EXISTS")) {
+                    ImGui::Text("Are you sure to overwrite this file?");
+                    ImGui::Text("File: "); ImGui::SameLine();
+                    ImGui::Text(save_file_name.c_str());
+                    ImGui::Text("Location: "); ImGui::SameLine();
+                    ImGui::Text(cwd.c_str());
+
+                    if(ImGui::Button("Yes")) {
+                        selected_files->push_back(cwd/save_file_name);
+                        okay_to_exit = true;
+                    }
+                    ImGui::SameLine();
+                    if(ImGui::Button("No")) {
+                        ImGui::CloseCurrentPopup();
+                    }
                     ImGui::EndPopup();
                 }
             }
             ImGui::SameLine();
             if(ImGui::Button("Cancel")) {
                 ImGui::CloseCurrentPopup();
-                ImGui::EndPopup();
-                return false;
             }
             ImGui::SameLine();
+            if(okay_to_exit) ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
         }
-        return false;
+        return okay_to_exit;
     }
 }
