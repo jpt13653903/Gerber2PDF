@@ -18,8 +18,8 @@ namespace fs = boost::filesystem;
  *      [x] Implement add files button
  *      [x] ! Refactor Gerber ListBox
  *      [x] ! Refactor Filechooser
- *      [ ] Implement Save to batch file button
- *      [ ] Refactor for reusability
+ *      [x] Implement Save to batch file button
+ *      [ ] Improve modularity
  *      [x] Make it compile in C++14
  *      [x] Try compiling on windows
  *      [x] Fix resize glitch
@@ -108,11 +108,12 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
                             main_state->gerber_list.size() - 1;
         if(
             // currently selected item is not a page break
+            // doesn't make sense to add two consecutive page breaks
             (
                 !main_state->gerber_list.empty() &&
                 !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+insert_after))
             ) &&
-            // the item after exists and is not a page break
+            // there is no item after, or it is not a pagebreak
             (
                 insert_after == (main_state->gerber_list.size() - 1) ||
                 !boost::get<PageBreak>(&*(main_state->gerber_list.begin()+insert_after+1))
