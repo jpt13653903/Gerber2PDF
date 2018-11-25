@@ -97,7 +97,7 @@ bin/Gerber2pdf: main.cpp main.h obj/libEngine.a
 
 bin/Gerber2pdf.exe: main.cpp main.h obj/libEngine.a $(Resources)
 	mkdir -p bin
-	$(CC) $(Options) $(Version) $(Includes) $< -s -Lobj -lEngine -o $@
+	$(CC) $(Options) $(Version) $(Includes) $< -s $(Resources) -Lobj -lEngine -o $@
 #-------------------------------------------------------------------------------
 
 # Libraries

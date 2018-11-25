@@ -56,7 +56,7 @@ clean:
 
 # Binaries
 
-build.win/Gerber2pdf_GUI.exe: $(Objects) $(Headers) $(DLLs)
+build.win/Gerber2pdf_GUI.exe: $(Objects) $(DLLs)
 	mkdir -p $(@D)
 	$(CC) $(Options) $(Includes) $(Objects) -s $(LibInclude) $(Libraries) -o $@
 #-------------------------------------------------------------------------------
