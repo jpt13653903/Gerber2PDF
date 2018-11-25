@@ -58,10 +58,11 @@ Objects = obj/Tools/Deflate/JDeflate.o             \
           obj/Tools/PDF/pdf/pdfString.o            \
           obj/Tools/PDF/pdf/pdfType1Font.o         \
           obj/Tools/PDF/pdf/pdfType3Font.o         \
-          obj/Tools/String/JString.o
+          obj/Tools/String/JString.o               \
+          obj/Engine.o
 
 ifneq ($(shell uname), Linux)
-Objects += obj/Resources/resource.res
+Resources = obj/Resources/resource.res
 endif
 
 Headers = Tools/Deflate/*.h       \
@@ -71,7 +72,8 @@ Headers = Tools/Deflate/*.h       \
           Tools/PDF/*.h           \
           Tools/PDF/afm/*.h       \
           Tools/PDF/pdf/*.h       \
-          Tools/String/*.h
+          Tools/String/*.h        \
+          *.h
 #-------------------------------------------------------------------------------
 
 .PHONY: clean all
@@ -89,13 +91,20 @@ clean:
 
 # Binaries
 
-bin/Gerber2pdf: main.cpp main.h $(Objects) $(Headers)
+bin/Gerber2pdf: main.cpp main.h obj/libEngine.a
 	mkdir -p bin
-	$(CC) $(Options) $(Version) $(Includes) $< $(Objects) -s $(LibInclude) $(Libraries) -o $@
+	$(CC) $(Options) $(Version) $(Includes) $< -s -Lobj -lEngine -o $@
 
-bin/Gerber2pdf.exe: main.cpp main.h $(Objects) $(Headers)
+bin/Gerber2pdf.exe: main.cpp main.h obj/libEngine.a $(Resources)
 	mkdir -p bin
-	$(CC) $(Options) $(Version) $(Includes) $< $(Objects) -s $(LibInclude) $(Libraries) -o $@
+	$(CC) $(Options) $(Version) $(Includes) $< -s -Lobj -lEngine -o $@
+#-------------------------------------------------------------------------------
+
+# Libraries
+
+obj/libEngine.a: $(Objects)
+	mkdir -p $(@D)
+	ar rcs $@ $(Objects)
 #-------------------------------------------------------------------------------
 
 # Objects
