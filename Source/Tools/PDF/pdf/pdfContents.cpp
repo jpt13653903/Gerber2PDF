@@ -358,7 +358,7 @@ void FindControlPoints(
   r  = sqrt (y1*y1 + x1*x1);
   a1 = atan2(y1    , x1);
 
-    a4 = a1 + a;
+   a4 = a1 + a;
   *x4 = r*cos(a4);
   *y4 = r*sin(a4);
 
@@ -373,7 +373,7 @@ void FindControlPoints(
   // Best extimate
   t1 = 6*x6 - 3*x1 - 3*(*x4);
   t2 = 6*y6 - 3*y1 - 3*(*y4);
-  if(t1 > t2){
+  if(fabs(t1) > fabs(t2)){
     t = (8*x5 - 4*x1 - 4*(*x4))/t1;
   }else{
     t = (8*y5 - 4*y1 - 4*(*y4))/t2;
