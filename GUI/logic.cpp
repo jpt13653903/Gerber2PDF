@@ -22,7 +22,7 @@ std::string generate_batch_script(const MainState &state) {
     std::stringstream out_string;
     pretty_line(out_string, "Gerber2pdf", 0, LINE_LEN);
     pretty_line(out_string, 
-        (std::string("output='") + state.output_file + std::string("'")).c_str(),
+        (std::string("-output=\"") + state.output_file + std::string("\"")).c_str(),
         1, LINE_LEN);
 
     switch(static_cast<PageSize>(state.page_size)) {
