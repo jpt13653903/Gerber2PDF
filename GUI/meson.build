@@ -1,6 +1,8 @@
 project('Gerber2PdfGui', 'cpp', default_options : ['cpp_std=c++14'])
 incdirs = include_directories('imgui', 'imgui/examples', 'imgui/misc/cpp')
 cxx = meson.get_compiler('cpp')
+engine = cxx.find_library('Engine', dirs: meson.current_source_dir()+'/../Source/obj')
+
 if host_machine.system() == 'windows'
     GL = cxx.find_library('opengl32')
     glfw = cxx.find_library('glfw3')
@@ -30,6 +32,6 @@ executable('Gerber2PdfGui',
            'imgui/imgui_draw.cpp',
            'imgui/imgui_widgets.cpp',
            include_directories: incdirs,
-           dependencies: [GL, glfw, boost_fs],
+           dependencies: [engine, GL, glfw, boost_fs],
            cpp_pch: 'pch/pch.hpp',
            override_options : ['cpp_std=c++14'])
