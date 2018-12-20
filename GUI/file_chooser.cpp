@@ -123,9 +123,13 @@ namespace ImGuiExt {
             ImGui::SameLine();
             if(ImGui::Button("Cancel")) {
                 ImGui::CloseCurrentPopup();
+                selected_rows.clear();
             }
             ImGui::SameLine();
-            if(okay_to_exit) ImGui::CloseCurrentPopup();
+            if(okay_to_exit) {
+                ImGui::CloseCurrentPopup();
+                selected_rows.clear();
+            }
             ImGui::EndPopup();
         }
         return okay_to_exit;
