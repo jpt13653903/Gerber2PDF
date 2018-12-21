@@ -1,4 +1,13 @@
 CC      = g++
+AR      = ar
+
+ifdef CROSS
+	# Run make as `make CROSS='TRUE'`
+	# for cross compiling from Linux to Windows
+    CC = i686-w64-mingw32-g++
+    AR = i686-w64-mingw32-ar
+endif
+
 Options = -Wall -fexceptions -O2
 #-------------------------------------------------------------------------------
 
@@ -104,7 +113,7 @@ bin/Gerber2pdf.exe: main.cpp main.h obj/libEngine.a $(Resources)
 
 obj/libEngine.a: $(Objects)
 	mkdir -p $(@D)
-	ar rcs $@ $(Objects)
+	$(AR) rcs $@ $(Objects)
 #-------------------------------------------------------------------------------
 
 # Objects
