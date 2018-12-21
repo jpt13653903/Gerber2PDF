@@ -115,16 +115,22 @@ void execute_gerber2pdf(const MainState &state) {
             break;
     }
 
-    for(int i = 0; i<state.gerber_list.size(); i++) {
+    bool page_break_encountered = false;
+    for(auto i = 0ul; i<state.gerber_list.size(); i++) {
         auto entry = state.gerber_list[i];
         if(!boost::get<GerberFile>(&entry)) {
-            engine.Combine = false;
-            engine.NewPage = true;
+            page_break_encountered = true;
             continue;
         }
         auto page = boost::get<GerberFile>(&entry);
-        engine.Combine = true;
-        engine.NewPage = false;
+        if(page_break_encountered) {
+            engine.Combine = false;
+            engine.NewPage = true;
+            page_break_encountered = false;
+        } else {
+            engine.Combine = true;
+            engine.NewPage = false;
+        }
         engine.Dark.R = page->color_rgba[0];
         engine.Dark.G = page->color_rgba[1];
         engine.Dark.B = page->color_rgba[2];
