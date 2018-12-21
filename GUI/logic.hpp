@@ -34,5 +34,6 @@ struct MainState {
 
 std::string generate_batch_script(const MainState &state);
 const char * page_size_to_string(PageSize page_size);
+void execute_gerber2pdf(const MainState &state);
 
 #endif // __LOGIC_HPP__

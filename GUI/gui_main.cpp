@@ -163,7 +163,7 @@ static void render_main_action_btns(MainState *main_state, ImVec2 size) {
         if(main_state->output_file.empty()) {
             ImGui::OpenPopup("##NO_OUTPUT_FILE");
         } else {
-            std::cout << "TODO! Execute\n";
+            execute_gerber2pdf(*main_state);
         }
     }
     ImGui::EndChild();

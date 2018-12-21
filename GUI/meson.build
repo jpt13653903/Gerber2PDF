@@ -1,5 +1,14 @@
 project('Gerber2PdfGui', 'cpp', default_options : ['cpp_std=c++14'])
-incdirs = include_directories('imgui', 'imgui/examples', 'imgui/misc/cpp')
+incdirs = include_directories(
+    'imgui', 'imgui/examples', 'imgui/misc/cpp',
+    '../Source/', 
+    '../Source/Tools/Deflate/',
+    '../Source/Tools/File/',
+    '../Source/Tools/Gerber/',
+    '../Source/Tools/PDF/',
+    '../Source/Tools/String/', 
+)
+
 cxx = meson.get_compiler('cpp')
 engine = cxx.find_library('Engine', dirs: meson.current_source_dir()+'/../Source/obj')
 

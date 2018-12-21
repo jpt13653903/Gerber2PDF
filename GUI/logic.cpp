@@ -1,8 +1,8 @@
 #include "logic.hpp"
+#include "Engine.h"
+#include <boost/variant.hpp>
 #include <cstring>
 #include <sstream>
-
-// TODO: Provide an implementation for linux shell scripts.
 
 static void pretty_line(std::ostream &ostream, const char * line,
                         int indent_level, int line_max_len) {
@@ -17,6 +17,7 @@ static void pretty_line(std::ostream &ostream, const char * line,
     ostream << " ^\n";
 }
 
+// TODO: Provide an implementation for linux shell scripts.
 std::string generate_batch_script(const MainState &state) {
     static const int LINE_LEN = 80;
     std::stringstream out_string;
@@ -67,7 +68,6 @@ std::string generate_batch_script(const MainState &state) {
     return out_string.str();
 }
 
-
 const char * page_size_to_string(PageSize page_size) {
     switch(page_size) {
         case PageSize::TIGHT:
@@ -82,4 +82,55 @@ const char * page_size_to_string(PageSize page_size) {
             return "Extents";
     }
     return "Invalid Page Size";
+}
+
+void execute_gerber2pdf(const MainState &state) {
+    int num_pages = 1;
+    for(auto entry: state.gerber_list) {
+        if(boost::get<PageBreak>(&entry)) {
+            num_pages++;
+        }
+    }
+
+    auto engine = ENGINE(num_pages);
+    engine.Light.R = state.bg_color_rgba[0];
+    engine.Light.G = state.bg_color_rgba[1];
+    engine.Light.B = state.bg_color_rgba[2];
+    engine.Light.A = state.bg_color_rgba[3];
+    switch(static_cast<PageSize>(state.page_size)) {
+        case PageSize::A3:
+            engine.PageSize = engine.PS_A3;
+            break;
+        case PageSize::A4:
+            engine.PageSize = engine.PS_A4;
+            break;
+        case PageSize::LETTER:
+            engine.PageSize = engine.PS_Letter;
+            break;
+        case PageSize::EXTENTS:
+            engine.PageSize = engine.PS_Extents;
+            break;
+        case PageSize::TIGHT:
+            engine.PageSize = engine.PS_Tight;
+            break;
+    }
+
+    for(int i = 0; i<state.gerber_list.size(); i++) {
+        auto entry = state.gerber_list[i];
+        if(!boost::get<GerberFile>(&entry)) {
+            engine.Combine = false;
+            engine.NewPage = true;
+            continue;
+        }
+        auto page = boost::get<GerberFile>(&entry);
+        engine.Combine = true;
+        engine.NewPage = false;
+        engine.Dark.R = page->color_rgba[0];
+        engine.Dark.G = page->color_rgba[1];
+        engine.Dark.B = page->color_rgba[2];
+        engine.Dark.A = page->color_rgba[3];
+        engine.Mirror = page->is_mirrored;
+        engine.Run(page->file_uri.c_str(), page->file_name.c_str());
+    }
+    engine.Finish(state.output_file.c_str());
 }
