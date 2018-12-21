@@ -28,7 +28,7 @@ else
     ]
 endif
 
-executable('Gerber2PdfGui', 
+executable('Gerber2pdf_Gui', 
            'main.cpp', 
            'gui_main.cpp',
            'logic.cpp',
