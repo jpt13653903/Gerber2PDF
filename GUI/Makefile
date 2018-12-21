@@ -15,6 +15,12 @@ Boost = C:/TDM-GCC-64/lib/boost_1_68_0
 #-------------------------------------------------------------------------------
 
 Includes   = -Iimgui -Iimgui/examples -Iimgui/misc/cpp \
+             -I../Source/                              \
+             -I../Source/Tools/Deflate/                \
+             -I../Source/Tools/File/                   \
+             -I../Source/Tools/Gerber/                 \
+             -I../Source/Tools/PDF/                    \
+             -I../Source/Tools/String/                 \
              -I$(GLFW)/include                         \
              -I$(Boost)
 
@@ -30,7 +36,6 @@ Objects = build.win/obj/main.o                              \
           build.win/obj/gui_main.o                          \
           build.win/obj/logic.o                             \
           build.win/obj/gerber_list_box.o                   \
-          build.win/obj/file_chooser.o                      \
           build.win/obj/imgui/imgui.o                       \
           build.win/obj/imgui/misc/cpp/imgui_stdlib.o       \
           build.win/obj/imgui/examples/imgui_impl_glfw.o    \
