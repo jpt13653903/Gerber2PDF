@@ -10,20 +10,29 @@ Options = -Wall -fexceptions -O2 -std=c++14
 
 # User-specific paths
 
-GLFW  = C:/TDM-GCC-64/lib/glfw-3.2.1
-Boost = C:/TDM-GCC-64/lib/boost_1_68_0
+GLFW   = C:/TDM-GCC-64/lib/glfw-3.2.1
+Boost  = C:/TDM-GCC-64/lib/boost_1_68_0
+Engine = ../Source
 #-------------------------------------------------------------------------------
 
 Includes   = -Iimgui -Iimgui/examples -Iimgui/misc/cpp \
+             -I$(Engine)                               \
+             -I$(Engine)/Tools/Deflate                 \
+             -I$(Engine)/Tools/File                    \
+             -I$(Engine)/Tools/Gerber                  \
+             -I$(Engine)/Tools/PDF                     \
+             -I$(Engine)/Tools/String                  \
              -I$(GLFW)/include                         \
              -I$(Boost)
 
 Libraries  = -lopengl32 -lglfw3dll -lglfw3
 Libraries += -lboost_filesystem-mgw51-mt-x64-1_68
 Libraries += -lboost_system-mgw51-mt-x64-1_68 
+Libraries += -lEngine
 
 LibInclude = -L$(GLFW)/lib-mingw-w64 \
-             -L$(Boost)/stage/lib
+             -L$(Boost)/stage/lib    \
+	     -L$(Engine)/obj
 #-------------------------------------------------------------------------------
 
 Objects = build.win/obj/main.o                              \
@@ -44,7 +53,7 @@ Headers = *.hpp \
 DLLs = build.win/glfw3.dll
 #-------------------------------------------------------------------------------
 
-.PHONY: clean all
+.PHONY: clean all FORCE
 .SECONDARY:
 
 all: build.win/Gerber2pdf_GUI.exe $(DLLs)
@@ -52,11 +61,13 @@ all: build.win/Gerber2pdf_GUI.exe $(DLLs)
 clean:
 	rm -rf build
 	rm -rf build.win
+
+FORCE:
 #-------------------------------------------------------------------------------
 
 # Binaries
 
-build.win/Gerber2pdf_GUI.exe: $(Objects) $(DLLs)
+build.win/Gerber2pdf_GUI.exe: $(Objects) $(DLLs) $(Engine)/obj/libEngine.a
 	mkdir -p $(@D)
 	$(CC) $(Options) $(Includes) $(Objects) -s $(LibInclude) $(Libraries) -o $@
 #-------------------------------------------------------------------------------
@@ -66,6 +77,9 @@ build.win/Gerber2pdf_GUI.exe: $(Objects) $(DLLs)
 build.win/obj/%.o: %.cpp $(Headers)
 	mkdir -p $(@D)
 	$(CC) $(Options) -c $(Includes) $< -o $@
+
+$(Engine)/obj/libEngine.a: FORCE
+	make -C $(Engine)
 #-------------------------------------------------------------------------------
 
 # DLLs
