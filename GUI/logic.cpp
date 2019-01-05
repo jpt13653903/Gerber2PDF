@@ -93,14 +93,7 @@ const char * page_size_to_string(PageSize page_size) {
 }
 
 void execute_gerber2pdf(const MainState &state) {
-    int num_pages = 1;
-    for(auto entry: state.gerber_list) {
-        if(boost::get<PageBreak>(&entry)) {
-            num_pages++;
-        }
-    }
-
-    auto engine = ENGINE(num_pages);
+    auto engine = ENGINE();
     engine.Light.R = state.bg_color_rgba[0];
     engine.Light.G = state.bg_color_rgba[1];
     engine.Light.B = state.bg_color_rgba[2];
