@@ -145,10 +145,9 @@ static void render_main_action_btns(MainState *main_state, ImVec2 size) {
     ImGui::BeginChild("##MAIN_ACTIONS", ImVec2(0, 40));
     if(ImGui::Button("Save to batch file")) {
         if(main_state->output_file.empty()) {
-            ImGui::OpenPopup("##NO_OUTPUT_FILE");
-        } else {
-            ImGui::OpenPopup("##SAVE_BATCH_FILE");
-        }
+            main_state->output_file = std::string("output.pdf");
+        } 
+        ImGui::OpenPopup("##SAVE_BATCH_FILE");
     }
 
     static std::vector<fs::path> batch_file;
