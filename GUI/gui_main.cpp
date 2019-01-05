@@ -7,6 +7,7 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include <boost/variant.hpp>
+#include <boost/dll.hpp>
 #include <algorithm>
 #include <cstring>
 #include "custom_widgets.hpp"
@@ -47,9 +48,19 @@ static UIState ui_state;
 void gui_setup(int argc, char **argv) {
     ImGui::StyleColorsDark();
     ImGui::GetStyle().WindowRounding = 0.0f;
+
     auto io = ImGui::GetIO();
-    g_imgui_view.normal_font = io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 14.0f);
-    g_imgui_view.title_font = io.Fonts->AddFontFromFileTTF("fonts/FiraSans-Regular.ttf", 36.0f);
+    auto prog_path = boost::dll::program_location().parent_path();
+    auto font_path = prog_path / "fonts" / "FiraSans-Regular.ttf";
+    if(fs::exists(font_path)) {
+        auto font_path_str = fs::canonical(font_path).string();
+        g_imgui_view.normal_font = io.Fonts->AddFontFromFileTTF(font_path_str.c_str(), 14.0f);
+        g_imgui_view.title_font = io.Fonts->AddFontFromFileTTF(font_path_str.c_str(), 36.0f);
+    } else {
+        std::cout << "Warning: Couldn't load fonts. The UI may appear ugly. \n";
+        std::cout << "   " << font_path << " not found\n";
+    }
+
     ui_state.active_row_index = -1;
 }
 
