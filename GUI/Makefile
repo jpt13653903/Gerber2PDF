@@ -1,14 +1,15 @@
 #-------------------------------------------------------------------------------
+
 # OS Detection
 ifeq ($(OS),Windows_NT)
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-        DetectedOS = "Windows 64" 
+        DetectedOS = "Windows 64"
     else
         ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-            DetectedOS = "Windows 64" 
+            DetectedOS = "Windows 64"
         endif
         ifeq ($(PROCESSOR_ARCHITECTURE),x86)
-            DetectedOS = "Windows 32" 
+            DetectedOS = "Windows 32"
         endif
     endif
 else
@@ -23,8 +24,7 @@ endif
 # Please edit the following section if you are using a different toolchain
 
 ifeq ($(DetectedOS), "Windows 64")
-
-    CXX = x86_64-w64-mingw32-g++
+    CXX      = x86_64-w64-mingw32-g++
     BuildDir = build/win64
     DistDir  = dist/win64
     EXEName  = Gerber2pdf_GUI.exe
@@ -35,7 +35,7 @@ ifeq ($(DetectedOS), "Windows 64")
 
     GLFW            = C:/TDM-GCC-64/lib/glfw-3.2.1
     GLFWInclude     = $(GLFW)/include
-    GLFWLibInclude  = $(GLFW)/lib-ming-w64
+    GLFWLibInclude  = $(GLFW)/lib-mingw-w64
     GLFWLibrary     = glfw3dll glfw3
 
     Boost           = C:/TDM-GCC-64/lib/boost_1_68_0
@@ -46,7 +46,6 @@ ifeq ($(DetectedOS), "Windows 64")
     DLLsToCopy      = $(GLFW)/lib-mingw-w64/glfw3.dll
 
 else ifeq ($(DetectedOS), "Linux")
-
     BuildDir = build/linux
     DistDir  = dist/linux
     EXEName  = Gerber2pdf_GUI
@@ -76,28 +75,28 @@ else ifeq ($(DetectedOS), "Linux")
                           libboost_system-mt.dll libboost_filesystem-mt.dll
         DLLsToCopy      = $(patsubst %, $(_DLLsSrc)/%, $(_DLLsToCopy))
 
-    endif 
+    endif
 else
-    $(error Sorry, your operating system is not currently supported. Please open an issue)
+    $(error Sorry, your operating system ($(DetectedOS)) is not currently supported. Please open an issue)
 endif
 
 # Path to Engine headers: Please modify as required
 Engine = ../Source
 
 FontsToCopy  = ./fonts/FiraSans-Regular.ttf
-
 #-------------------------------------------------------------------------------
+
 # General configuration
 
-Options = -Wall -fexceptions -O2 -std=c++14
+Options  = -Wall -fexceptions -O2 -std=c++14
 
-Includes   = -Iimgui -Iimgui/examples -Iimgui/misc/cpp \
-             -I$(Engine)                               \
-             -I$(Engine)/Tools/Deflate                 \
-             -I$(Engine)/Tools/File                    \
-             -I$(Engine)/Tools/Gerber                  \
-             -I$(Engine)/Tools/PDF                     \
-             -I$(Engine)/Tools/String                  \
+Includes  = -Iimgui -Iimgui/examples -Iimgui/misc/cpp
+Includes += -I$(Engine)
+Includes += -I$(Engine)/Tools/Deflate
+Includes += -I$(Engine)/Tools/File
+Includes += -I$(Engine)/Tools/Gerber
+Includes += -I$(Engine)/Tools/PDF
+Includes += -I$(Engine)/Tools/String
 
 ifneq ($(GLFWInclude),)
     Includes += -I$(GLFWInclude)
@@ -120,9 +119,8 @@ ifneq ($(BoostLibInclude),)
     LibInclude += -L$(BoostLibInclude)
 endif
 
-DLLs = $(patsubst %, $(DistDir)/%, $(notdir DLLsToCopy))
+DLLs  = $(patsubst %, $(DistDir)/%, $(notdir DLLsToCopy))
 Fonts = $(patsubst %, $(DistDir)/fonts/%, $(notdir FontsToCopy))
-
 #-------------------------------------------------------------------------------
 
 Objects = $(BuildDir)/obj/main.o                              \
@@ -139,10 +137,9 @@ Objects = $(BuildDir)/obj/main.o                              \
 
 Headers = *.hpp \
           imgui/*.h imgui/examples/*.h imgui/misc/cpp/*.h
-
 #-------------------------------------------------------------------------------
 
-.PHONY: clean all
+.PHONY: clean all FORCE
 .SECONDARY:
 
 all: $(DistDir)/$(EXEName) $(DLLs)
@@ -150,11 +147,13 @@ all: $(DistDir)/$(EXEName) $(DLLs)
 clean:
 	rm -rf $(BuildDir)
 	rm -rf $(DistDir)
+
+FORCE:
 #-------------------------------------------------------------------------------
 
 # Binaries
 
-$(DistDir)/$(EXEName): $(Objects) $(DLLs) $(Fonts)
+$(DistDir)/$(EXEName): $(Objects) $(DLLs) $(Fonts) $(Engine)/obj/libEngine.a
 	mkdir -p $(@D)
 	$(CXX) $(Options) $(Includes) $(Objects) -s $(LibInclude) $(Libraries) -o $@
 #-------------------------------------------------------------------------------
@@ -164,6 +163,9 @@ $(DistDir)/$(EXEName): $(Objects) $(DLLs) $(Fonts)
 $(BuildDir)/obj/%.o: %.cpp $(Headers)
 	mkdir -p $(@D)
 	$(CXX) $(Options) -c $(Includes) $< -o $@
+
+$(Engine)/obj/libEngine.a: FORCE
+	make -C $(Engine)
 #-------------------------------------------------------------------------------
 
 # DLLs

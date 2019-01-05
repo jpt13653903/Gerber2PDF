@@ -1,9 +1,9 @@
-CC      = g++
-AR      = ar
+CC = g++
+AR = ar
 
 ifdef CROSS
-	# Run make as `make CROSS='TRUE'`
-	# for cross compiling from Linux to Windows
+    # Run make as `make CROSS='TRUE'`
+    # for cross compiling from Linux to Windows
     CC = i686-w64-mingw32-g++
     AR = i686-w64-mingw32-ar
 endif
