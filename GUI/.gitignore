@@ -1,7 +1,5 @@
 build/*
-build.win/*
-dist.win/*
-!dist.win/README.md
+dist/*
 .vscode
 *.code-workspace
 *#
