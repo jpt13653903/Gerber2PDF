@@ -222,7 +222,7 @@ static void render_page_options(MainState *main_state) {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     ImGui::Text("Page size "); ImGui::SameLine();
     ImGui::PushItemWidth(100);
-    ImGui::Combo("##PAGE_SIZE", &main_state->page_size, page_size_to_string_cb, NULL, 4);
+    ImGui::Combo("##PAGE_SIZE", &main_state->page_size, page_size_to_string_cb, NULL, 5);
     ImGui::PopItemWidth();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     ImGui::Checkbox(" Stroke to Fills", &main_state->is_stroke2fills);
