@@ -72,7 +72,7 @@ static bool StringStart(const char* String, const char* Start){
 //------------------------------------------------------------------------------
 
 int main(int argc, char** argv){
-  ENGINE Engine(argc);
+  ENGINE Engine;
 
   int j;
   int Result;
