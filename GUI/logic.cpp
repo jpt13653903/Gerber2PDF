@@ -5,8 +5,8 @@
 #include <sstream>
 
 static void pretty_line(std::ostream &ostream, const char * line,
-                        int indent_level, int line_max_len) {
-    for(int i = 0; i<=indent_level; i++) {
+                        int indent_level, int line_max_len, int newline=true) {
+    for(int i = 0; i<indent_level; i++) {
         ostream << "  ";
     }
     ostream << line;
@@ -14,7 +14,8 @@ static void pretty_line(std::ostream &ostream, const char * line,
     int pad_len = line_max_len - line_len - indent_level*2;
     for(int i = 0; i<pad_len; i++)
         ostream << " ";
-    ostream << " ^\n";
+    if(newline)
+        ostream << " ^\n";
 }
 
 // TODO: Provide an implementation for linux shell scripts.
@@ -57,8 +58,15 @@ std::string generate_batch_script(const MainState &state) {
                               << (int) (file_entry->color_rgba[2]*255) <<","
                               << (int) (file_entry->color_rgba[3]*255) <<" ";
 
-            line << file_entry->file_uri;
-            pretty_line(out_string, line.str().c_str(), 2, LINE_LEN);
+            line << '"' << file_entry->file_uri << '"';
+            pretty_line(
+                out_string,         // ostream
+                line.str().c_str(), // string to print
+                2,                  // indent level
+                LINE_LEN,           // length of a line to pad
+                // whether to append new line
+                &entry != &state.gerber_list.back()
+            );
         } else {
             // skip the last page break
             if(&entry != &state.gerber_list.back())
