@@ -53,7 +53,9 @@ void gui_setup(int argc, char **argv) {
     auto prog_path = boost::dll::program_location().parent_path();
     auto font_path = prog_path / "fonts" / "FiraSans-Regular.ttf";
     if(fs::exists(font_path)) {
-        auto font_path_str = fs::canonical(font_path).string();
+        // auto font_path_str = fs::canonical(font_path).string();
+        // Note on above: fs::canonical breaks on Windows directory junctions
+        auto font_path_str = font_path.string();
         g_imgui_view.normal_font = io.Fonts->AddFontFromFileTTF(font_path_str.c_str(), 14.0f);
         g_imgui_view.title_font = io.Fonts->AddFontFromFileTTF(font_path_str.c_str(), 36.0f);
     } else {
