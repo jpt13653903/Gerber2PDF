@@ -45,6 +45,7 @@ static ImGuiView g_imgui_view;
 static MainState main_state;
 static UIState ui_state;
 
+
 void gui_setup(int argc, char **argv) {
     ImGui::StyleColorsDark();
     ImGui::GetStyle().WindowRounding = 0.0f;
@@ -63,6 +64,7 @@ void gui_setup(int argc, char **argv) {
 
     ui_state.active_row_index = -1;
 }
+
 
 void gui_loop() {
     ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
@@ -91,11 +93,13 @@ void gui_loop() {
     ImGui::End();
 }
 
+
 static void render_title() {
     ImGui::PushFont(g_imgui_view.title_font);
     ImGui::Text("Gerber2PDF");
     ImGui::PopFont();
 }
+
 
 static void render_list_box_action_btns(MainState *main_state, UIState *ui_state, ImVec2 size) {
     ImGui::BeginChild("Actions", ImVec2(0, 40));
@@ -141,6 +145,7 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
     ImGui::EndChild();
 }
 
+
 static void render_main_action_btns(MainState *main_state, ImVec2 size) {
     ImGui::BeginChild("##MAIN_ACTIONS", ImVec2(0, 40));
     if(ImGui::Button("Save to batch file")) {
@@ -182,6 +187,7 @@ static void render_main_action_btns(MainState *main_state, ImVec2 size) {
 }
 
 
+
 static void render_output_file(MainState *main_state) {
     ImGui::Text("Output File: ");
     ImGui::SameLine();
@@ -200,10 +206,12 @@ static void render_output_file(MainState *main_state) {
     ImGui::NewLine();
 }
 
+
 static bool page_size_to_string_cb(void *data, int index, const char **text) {
     *text = page_size_to_string(static_cast<PageSize>(index));
     return true;
 }
+
 
 static void render_page_options(MainState *main_state) {
     ImVec2 COLOR_BTN_SIZE(40, 40);
