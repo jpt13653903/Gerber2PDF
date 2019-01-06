@@ -90,6 +90,26 @@ struct ENGINE{
      ~LAYER();
     };
     LAYER* Layers; // Stack of layer XObjects
+
+    // These stacks keep track of objects to be deleted at the end
+    struct PAGE{
+      pdfPage*     Page;
+      pdfContents* Contents;
+      PAGE*        Next;
+
+      PAGE(PAGE* Next);
+     ~PAGE();
+    };
+    PAGE* Page;
+
+    struct OUTLINE{
+      pdfOutlineItems* Item;
+      OUTLINE*         Next;
+      
+      OUTLINE(OUTLINE* Next);
+     ~OUTLINE();
+    };
+    OUTLINE* Outline;
 //------------------------------------------------------------------------------
 
   private: // Internal State
@@ -129,14 +149,8 @@ struct ENGINE{
     LEVEL_FORM* LevelStack;
     int         LevelCount;
 
-    pdfPage*         Page;        // Page for each gerber file
-    pdfPage*         ThePage;     // Page on which to combine outputs
-    pdfContents*     Contents;    // Contents for each page
-    pdfContents*     TheContents; // Contents of ThePage
-    pdfOutlineItems* Outline;     // Outline item for each page
-
-    int PageIndex;
-    int PageAllocationCount;
+    pdfPage*     ThePage;     // Page on which to combine outputs
+    pdfContents* TheContents; // Contents of ThePage
 //------------------------------------------------------------------------------
 
   private: // Functions
@@ -164,8 +178,7 @@ struct ENGINE{
 //------------------------------------------------------------------------------
 
   public: // Functions
-    // NumPages is an estimate -- set to the maximum anticipated count
-    ENGINE(int NumPages);
+    ENGINE();
    ~ENGINE();
 
     // Call Run for each Gerber file in the list, then call Finish once

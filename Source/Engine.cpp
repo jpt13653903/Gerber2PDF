@@ -67,7 +67,33 @@ ENGINE::LAYER::~LAYER(){
 }
 //------------------------------------------------------------------------------
 
-ENGINE::ENGINE(int NumPages){
+ENGINE::PAGE::PAGE(PAGE* Next){
+  this->Page     = new pdfPage;
+  this->Contents = new pdfContents;
+  this->Next     = Next;
+}
+//------------------------------------------------------------------------------
+
+ENGINE::PAGE::~PAGE(){
+  delete Page;
+  delete Contents;
+  if(Next) delete Next;
+}
+//------------------------------------------------------------------------------
+
+ENGINE::OUTLINE::OUTLINE(OUTLINE* Next){
+  this->Item = new pdfOutlineItems;
+  this->Next = Next;
+}
+//------------------------------------------------------------------------------
+
+ENGINE::OUTLINE::~OUTLINE(){
+  delete Item;
+  if(Next) delete Next;
+}
+//------------------------------------------------------------------------------
+
+ENGINE::ENGINE(){
   ConvertStrokesToFills = false;
 
   PageSize = PS_Tight;
@@ -114,12 +140,8 @@ ENGINE::ENGINE(int NumPages){
   ThePage     = 0;
   TheContents = 0;
 
-  Page     = new pdfPage        [NumPages];
-  Outline  = new pdfOutlineItems[NumPages];
-  Contents = new pdfContents    [NumPages];
-
-  PageAllocationCount = NumPages;
-  PageIndex           = -1;
+  Page     = 0;
+  Outline  = 0;
 
   Opaque->Opacity(1.0);
   pdf.AddIndirect(Opaque);
@@ -127,9 +149,8 @@ ENGINE::ENGINE(int NumPages){
 //------------------------------------------------------------------------------
 
 ENGINE::~ENGINE(){
-  delete[] Page;
-  delete[] Outline;
-  delete[] Contents;
+  if(Page   ) delete Page;
+  if(Outline) delete Outline;
 
   delete Opaque;
 
@@ -619,26 +640,21 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
   // Write the PDF
   if(!ThePage || NewPage || !Combine){
-    PageIndex++;
-
-    if(PageIndex >= PageAllocationCount){
-      printf("Error: not enough pages were allocated\n");
-      return -1;
-    }
-
-    ThePage     = Page+PageIndex;
+    Page        = new PAGE(Page);
+    ThePage     = Page->Page;
     ThePageUsed = false;
   }
   NewPage = false;
 
-  Outline[PageIndex].Title.Set  (Layer->Title.String);
-  Outline[PageIndex].DestFit    (ThePage);
-  pdf               .AddIndirect(Outline+PageIndex);
-  Outlines          .AddChild   (Outline+PageIndex);
+  Outline = new OUTLINE(Outline);
+  Outline->Item->Title.Set  (Layer->Title.String);
+  Outline->Item->DestFit    (ThePage);
+  pdf           .AddIndirect(Outline->Item);
+  Outlines      .AddChild   (Outline->Item);
 
   if(!ThePageUsed){
     if(TheContents) TheContents->Deflate();
-    TheContents = Contents+PageIndex;
+    TheContents = Page->Contents;
     ThePage->Contents   (TheContents);
     pdf     .AddIndirect(ThePage    );
     pdf     .AddIndirect(TheContents);
@@ -812,7 +828,7 @@ void ENGINE::Finish(const char* OutputFileName){
   if(TheContents) TheContents->Deflate();
 
   if(PageSize != PS_Tight){
-    int    page;
+    PAGE*  page;
     double Left   =  1e100;
     double Bottom =  1e100;
     double Right  = -1e100;
@@ -822,18 +838,20 @@ void ENGINE::Finish(const char* OutputFileName){
     double Delta;
 
     // Calculate the extents
-    for(page = 0; page < PageAllocationCount; page++){
-      if(Page[page].MediaBox.Left  .Value < Page[page].MediaBox.Right.Value &&
-         Page[page].MediaBox.Bottom.Value < Page[page].MediaBox.Top  .Value ){
-        if(Left   > Page[page].MediaBox.Left  .Value)
-           Left   = Page[page].MediaBox.Left  .Value;
-        if(Bottom > Page[page].MediaBox.Bottom.Value)
-           Bottom = Page[page].MediaBox.Bottom.Value;
-        if(Right  < Page[page].MediaBox.Right .Value)
-           Right  = Page[page].MediaBox.Right .Value;
-        if(Top    < Page[page].MediaBox.Top   .Value)
-           Top    = Page[page].MediaBox.Top   .Value;
+    page = Page;
+    while(page){
+      if(page->Page->MediaBox.Left  .Value < page->Page->MediaBox.Right.Value &&
+         page->Page->MediaBox.Bottom.Value < page->Page->MediaBox.Top  .Value ){
+        if(Left   > page->Page->MediaBox.Left  .Value)
+           Left   = page->Page->MediaBox.Left  .Value;
+        if(Bottom > page->Page->MediaBox.Bottom.Value)
+           Bottom = page->Page->MediaBox.Bottom.Value;
+        if(Right  < page->Page->MediaBox.Right .Value)
+           Right  = page->Page->MediaBox.Right .Value;
+        if(Top    < page->Page->MediaBox.Top   .Value)
+           Top    = page->Page->MediaBox.Top   .Value;
       }
+      page = page->Next;
     }
     Width  = Right - Left;
     Height = Top - Bottom;
@@ -873,8 +891,10 @@ void ENGINE::Finish(const char* OutputFileName){
     Bottom -= Delta;
     Top    += Delta;
 
-    for(page = 0; page < PageAllocationCount; page++){
-      Page[page].MediaBox.Set(Left, Bottom, Right, Top);
+    page = Page;
+    while(page){
+      page->Page->MediaBox.Set(Left, Bottom, Right, Top);
+      page = page->Next;
     }
   }
 
