@@ -58,6 +58,7 @@ else ifeq ($(DetectedOS), "Linux")
 
     # Library Configuration
 
+	Libraries += -ldl # dlsym
     Libraries += -lGL
     Libraries += -lglfw
     Libraries += -lboost_filesystem -lboost_system
@@ -151,9 +152,11 @@ $(BuildDir)/obj/%.o: %.cpp $(Headers)
 
 # Resources
 
-$(DLLs): $(DDLsToCopy)
+$(DLLs): $(DLLsToCopy)
 	mkdir -p $(@D)
-	cp -fv $(DLLsToCopy) $(@D)/
+	if [ -n "$(DLLsToCopy)" ]; then		\
+		cp -fv $(DLLsToCopy) $(@D)/;	\
+	fi
 
 $(Fonts): $(FontsToCopy)
 	mkdir -p $(@D)
