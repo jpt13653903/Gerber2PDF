@@ -1,6 +1,6 @@
 echo off
 
-"..\..\Source\bin\Gerber2pdf.exe"                                                                ^
+"..\..\Engine\bin\Gerber2pdf.exe"                                                                ^
   -nowarnings                                                                                    ^
   -silentexit                                                                                    ^
   -output=Output                                                                                 ^
