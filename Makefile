@@ -1,9 +1,15 @@
-.PHONY: clean all
+.PHONY: clean all Engine GUI
 
-all:
-	make -C Source all
+all: Engine GUI
+
+Engine:
+	make -C Engine all
+
+GUI:
+	make -C GUI    all
 
 clean:
-	make -C Source clean
+	make -C Engine clean
+	make -C GUI    clean
 #-------------------------------------------------------------------------------
 
