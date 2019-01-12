@@ -126,7 +126,7 @@ Objects += $(BuildDir)/obj/imgui/imgui_widgets.o
 Headers  = *.hpp imgui/*.h imgui/examples/*.h imgui/misc/cpp/*.h
 #-------------------------------------------------------------------------------
 
-.PHONY: clean all
+.PHONY: clean all FORCE
 .SECONDARY:
 
 all: $(DistDir)/$(EXEName) $(DLLs)
@@ -134,11 +134,13 @@ all: $(DistDir)/$(EXEName) $(DLLs)
 clean:
 	rm -rf $(BuildDir)
 	rm -rf $(DistDir)
+
+FORCE:
 #-------------------------------------------------------------------------------
 
 # Binaries
 
-$(DistDir)/$(EXEName): $(Objects) $(DLLs) $(Fonts)
+$(DistDir)/$(EXEName): $(Objects) $(DLLs) $(Fonts) FORCE
 	mkdir -p $(@D)
 	$(CXX) $(Options) $(Includes) $(Objects) -s $(LibInclude) $(Libraries) -o $@
 #-------------------------------------------------------------------------------

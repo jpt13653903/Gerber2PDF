@@ -1,16 +1,24 @@
 # GUI Concept Design
 
-![Second Draft](gui_draft_2.png)
+![Second Draft](gui_draft_3.png)
 
-## Details
+## Choosing a colour
 
-- The colored rectangle on the left, when clicked, will open a color chooser pop up.
+The standard [Dear ImGui](https://github.com/ocornut/imgui) colour selection box is used:
 
-## Ideas
+![Choosing a colour](ColourSelection.png)
 
-- There should be a way to "load" a previous configuration -- maybe from a previously exported batch script?
+## Strokes to Fills
 
-## Questions
+Note that the engine applies the same setting to all instances of that Gerber file.  The GUI must therefore ensure that the check-boxes are linked across instances.
 
-- Some users like to control the background colour...
+## Colour Palette
+
+The idea is that there is a standard grid size (make it 6x3, for argument sake) that the user can edit, and the GUI remembers between sessions.
+
+One could make it fancy and let the user add more colours, and delete existing ones, but I think that a fixed grid will be good enough for version 1.0...
+
+## Loading Previous Configuration
+
+When the user selects a shell script (`.bat` or `.sh`) in the file list, and said shell script has a valid previous configuration stored in its header comments, the "add to list" icon changes to a "load previous configuration" icon.
 
