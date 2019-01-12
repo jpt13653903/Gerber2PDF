@@ -1,6 +1,6 @@
 # GUI Concept Design
 
-![Second Draft](gui_draft_3.png)
+![Concept sketch](gui_draft_3.png)
 
 ## Choosing a colour
 
