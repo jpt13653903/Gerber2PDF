@@ -53,7 +53,7 @@ std::string generate_batch_script(const MainState &state) {
             } else {
                 line << "-nomirror ";
             }
-            line << "-color=" << (int) (file_entry->color_rgba[0]*255) <<","
+            line << "-colour=" << (int) (file_entry->color_rgba[0]*255) <<","
                               << (int) (file_entry->color_rgba[1]*255) <<","
                               << (int) (file_entry->color_rgba[2]*255) <<","
                               << (int) (file_entry->color_rgba[3]*255) <<" ";
