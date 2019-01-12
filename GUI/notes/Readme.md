@@ -2,7 +2,7 @@
 
 Various useful titbits of information.
 
-## LocalAppData
+## LocalAppData.cpp
 
 Used in Windows to obtain the path to the current user's local app-data folder.  Build with:
 
