@@ -80,6 +80,15 @@ namespace ImGuiExt {
             }
             index++;
         }
+
+        if(ImGui::IsMouseDragging() && *selected_index != SIZE_MAX && hovered_index != SIZE_MAX && *selected_index != hovered_index) {
+            auto temp = (*gerber_list)[*selected_index];
+            (*gerber_list)[*selected_index] = (*gerber_list)[hovered_index];
+            (*gerber_list)[hovered_index] = temp;
+            *selected_index = hovered_index;
+            ImGui::ResetMouseDragDelta();
+        }
+
         if(gerber_list->empty()) {
             ImGui::Indent(20.0);
             ImGui::NewLine();
