@@ -142,6 +142,8 @@ namespace ImGuiExt {
                ImGui::Text(entry->file_name.c_str());
                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
                ImGui::Checkbox("Mirrored", &entry->is_mirrored);
+               ImGui::SameLine();
+               ImGui::Checkbox("Strokes to Fills", &entry->strokes_to_fills);
             }
             ImGui::EndGroup();
 

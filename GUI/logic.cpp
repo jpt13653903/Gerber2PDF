@@ -53,6 +53,9 @@ std::string generate_batch_script(const MainState &state) {
             } else {
                 line << "-nomirror ";
             }
+            if(file_entry->strokes_to_fills) {
+                line << "-strokes2fills ";
+            }
             line << "-colour=" << (int) (file_entry->color_rgba[0]*255) <<","
                               << (int) (file_entry->color_rgba[1]*255) <<","
                               << (int) (file_entry->color_rgba[2]*255) <<","
@@ -132,6 +135,7 @@ void execute_gerber2pdf(const MainState &state) {
             engine.Combine = true;
             engine.NewPage = false;
         }
+        engine.ConvertStrokesToFills = page->strokes_to_fills;
         engine.Dark.R = page->color_rgba[0];
         engine.Dark.G = page->color_rgba[1];
         engine.Dark.B = page->color_rgba[2];

@@ -9,6 +9,7 @@ struct GerberFile {
     std::string file_name;
     std::string file_uri;
     bool is_mirrored;
+    bool strokes_to_fills;
     float color_rgba[4] = {0, 0, 0, 1};
 };
 
@@ -29,7 +30,6 @@ struct MainState {
     std::string output_file;
     float bg_color_rgba[4] = {255,255,255, 0};
     int page_size = static_cast<int>(PageSize::TIGHT);
-    bool is_stroke2fills = false;
 };
 
 std::string generate_batch_script(const MainState &state);

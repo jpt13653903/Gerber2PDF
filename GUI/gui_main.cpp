@@ -126,7 +126,7 @@ static void render_list_box_action_btns(MainState *main_state, UIState *ui_state
         for(auto file: files) {
             // Fix `C:/` forward slash in windows
             file.make_preferred();  
-            main_state->gerber_list.push_back(GerberFile{file.filename().string(), file.string(), false, {0, 0, 0, 1}});
+            main_state->gerber_list.push_back(GerberFile{file.filename().string(), file.string(), false, false, {0, 0, 0, 1}});
         }
         files.clear();
     }
@@ -257,7 +257,6 @@ static void render_page_options(MainState *main_state) {
     ImGui::Combo("##PAGE_SIZE", &main_state->page_size, page_size_to_string_cb, NULL, 5);
     ImGui::PopItemWidth();
     ImGuiExt::MoveCursor(0, 5);
-    ImGui::Checkbox(" Stroke to Fills", &main_state->is_stroke2fills);
     ImGui::EndGroup();
     ImGui::EndGroup();
 }
