@@ -29,9 +29,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="950.80916"
-     inkscape:cy="632.65365"
+     inkscape:zoom="2.0000001"
+     inkscape:cx="259.46919"
+     inkscape:cy="866.11531"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -2972,7 +2972,7 @@
        style="display:inline;opacity:1;fill:#3484da;fill-opacity:0.50196078;stroke:none;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
     <path
        style="display:inline;opacity:1;fill:#20324d;fill-opacity:1;stroke:none;stroke-width:0.23976435;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       d="m -81.818539,46.57202 76.7959359,0 v 5.15938 l -76.7959359,0 z"
+       d="m -81.818539,46.57202 85.837986,0 v 5.15938 l -85.837986,0 z"
        id="path1554"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
@@ -2987,13 +2987,6 @@
          x="-79.444252"
          id="tspan1556"
          sodipodi:role="line">C:\Projects\Gerber2pdf\Examples\USB PIC</tspan></text>
-    <rect
-       y="46.572021"
-       x="-5.0220017"
-       height="5.1593628"
-       width="9.0414486"
-       id="rect1560"
-       style="opacity:1;fill:#274972;fill-opacity:1;stroke:none;stroke-width:0.34542125;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.81314754px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;display:inline;fill:#f4f4f5;fill-opacity:1;stroke:none;stroke-width:0.35164344px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3601,31 +3594,6 @@
        id="path1287-1"
        d="m -1.1069607,209.27527 3.0280094,1.58659 -3.0280094,1.59251"
        style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#f8f8f8;stroke-width:0.575463;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
-    <g
-       id="g1974"
-       transform="translate(-214.73186)">
-      <circle
-         style="display:inline;opacity:1;fill:#f4f4f5;fill-opacity:1;stroke:none;stroke-width:0.17920083;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-         id="circle1562"
-         cx="216.55536"
-         cy="50.122253"
-         r="0.56233215"
-         transform="translate(97.865613,-2.4007365)" />
-      <circle
-         r="0.56233215"
-         cy="50.122253"
-         cx="214.4099"
-         id="circle1564"
-         style="display:inline;opacity:1;fill:#f4f4f5;fill-opacity:1;stroke:none;stroke-width:0.17920083;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-         transform="translate(97.865613,-2.4007365)" />
-      <circle
-         style="display:inline;opacity:1;fill:#f4f4f5;fill-opacity:1;stroke:none;stroke-width:0.17920083;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-         id="circle1566"
-         cx="212.22887"
-         cy="50.122253"
-         r="0.56233215"
-         transform="translate(97.865613,-2.4007365)" />
-    </g>
     <g
        id="g1979"
        transform="translate(1.868133,-20.39152)">
