@@ -1,4 +1,5 @@
 #include "custom_widgets.hpp"
+#include "imgui_utils.hpp"
 #include <iostream>
 #include <cstdio>
 #include <boost/variant.hpp>
@@ -7,6 +8,7 @@ static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return Im
 static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
 
 /* Colors */
+static ImU32 TITLE_BAR_BG = IM_COL32(26,101,161, 255);
 static ImU32 ROW_BG = IM_COL32(0,10,15, 255);
 static ImU32 ROW_BG_HOVERED = IM_COL32(0, 68, 102, 255);
 static ImU32 ROW_BG_ACTIVE = IM_COL32(0, 114, 171, 255);
@@ -33,7 +35,27 @@ namespace ImGuiExt {
         static size_t hovered_index = SIZE_MAX;
         size_t index = 0;
         ImGui::BeginChild("Gerber List", size, false);
+
+        auto draw_list = ImGui::GetWindowDrawList();
+        draw_list->ChannelsSplit(2);      // Split into two layers (channels)
+
+        // Draw title
+        {
+            auto start_cur = ImGui::GetCursorScreenPos();
+            ImGuiExt::MoveCursor(2, 2);
+            draw_list->ChannelsSetCurrent(1); // Switch to foreground channel
+            ImGui::TextUnformatted("Gerber List");
+            draw_list->ChannelsSetCurrent(0); // Switch to background channel
+            auto end_cur = ImVec2(start_cur.x+size.x, ImGui::GetCursorScreenPos().y);
+            draw_list->AddRectFilled(start_cur, end_cur, TITLE_BAR_BG);
+        }
+
+
+        // Draw list content
+        auto start_cur = ImGui::GetCursorScreenPos();
+        draw_list->ChannelsSetCurrent(1); // Switch to foreground channel
         if(!ImGui::IsWindowHovered()) hovered_index = SIZE_MAX;
+
         for(GerberListEntry &entry: *gerber_list) {
             RowAction action;
             RowEffect effect = RowEffect::None;
@@ -65,6 +87,11 @@ namespace ImGuiExt {
             ImGui::Text("Please use the buttons below to add files to the list.");
             ImGui::Unindent(20.0);
         }
+
+        draw_list->ChannelsSetCurrent(0); // Switch to BG Channel
+        draw_list->AddRectFilled(ImVec2(0, 0) + start_cur, size + start_cur, IM_COL32_BLACK);
+        draw_list->ChannelsMerge();
+
         ImGui::EndChild();
     }
     // ? Remove effect parameter by using multiple BeginGroup with Same ID?

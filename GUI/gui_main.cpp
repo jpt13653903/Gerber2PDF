@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cstring>
 #include "custom_widgets.hpp"
+#include "imgui_utils.hpp"
 
 namespace fs = boost::filesystem;
 
@@ -29,6 +30,7 @@ namespace fs = boost::filesystem;
 
 static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
+static inline ImVec2 operator/(const ImVec2& lhs, const float rhs)   { return ImVec2(lhs.x/rhs, lhs.y/rhs);         }
 
 
 struct UIState {
@@ -65,6 +67,15 @@ void gui_setup(int argc, char **argv) {
     }
 
     ui_state.active_row_index = -1;
+
+    // Dummy entries for testing
+    for(int i = 0; i<5; i++) {
+        auto gbr = GerberFile();
+        std::stringstream ss;
+        ss << "Test File " << i;
+        gbr.file_name = ss.str();
+        main_state.gerber_list.push_back(gbr);
+    }
 }
 
 
@@ -77,18 +88,19 @@ void gui_loop() {
                     ImGuiWindowFlags_NoCollapse|
                     ImGuiWindowFlags_NoMove);
 
-    ImGui::SetCursorPosX(ImGui::GetCursorPosX()+20);
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY()+20);
+    ImGuiExt::MoveCursor(20, 20);
     render_title();
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY()-20);
+    ImGuiExt::MoveCursor(0, -20);
     render_page_options(&main_state);
 
     static auto LISTBOX_ACTION_BTNS_SIZE = ImVec2(0.0, 40);
     static auto MAIN_ACTION_BTNS_SIZE = ImVec2(0.0, 40);
-    auto LISTBOX_SIZE = ImGui::GetWindowSize() - LISTBOX_ACTION_BTNS_SIZE - MAIN_ACTION_BTNS_SIZE - ImVec2(25.0, 200);
+    auto LISTBOX_SIZE_Y = ImGui::GetWindowSize().y - LISTBOX_ACTION_BTNS_SIZE.y - MAIN_ACTION_BTNS_SIZE.y - 200;
+    auto LISTBOX_SIZE_X = ImGui::GetWindowSize().x - LISTBOX_ACTION_BTNS_SIZE.x - MAIN_ACTION_BTNS_SIZE.x - 15;
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY()+20);
-    ImGuiExt::GerberListBox(&main_state.gerber_list, &ui_state.active_row_index, LISTBOX_SIZE);
+
+    ImGuiExt::MoveCursor(0, 20);
+    ImGuiExt::GerberListBox(&main_state.gerber_list, &ui_state.active_row_index, ImVec2(LISTBOX_SIZE_X, LISTBOX_SIZE_Y));
     render_list_box_action_btns(&main_state, &ui_state, LISTBOX_ACTION_BTNS_SIZE);
     render_output_file(&main_state);
     render_main_action_btns(&main_state, MAIN_ACTION_BTNS_SIZE);
@@ -221,7 +233,7 @@ static void render_page_options(MainState *main_state) {
     ImGui::SetCursorPosX(ImGui::GetWindowContentRegionWidth()-200);
     ImGui::BeginGroup();
     ImGui::Text("Background Layer");
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGuiExt::MoveCursor(0, 5);
     auto im_color = ImColor(main_state->bg_color_rgba[0],
                             main_state->bg_color_rgba[1], 
                             main_state->bg_color_rgba[2], 
@@ -234,17 +246,17 @@ static void render_page_options(MainState *main_state) {
     }
     ImGui::SameLine();
     ImGui::BeginGroup();
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+    ImGuiExt::MoveCursor(0, -5);
     if(ImGui::BeginPopup("Background Color")) {
         ImGui::ColorPicker4("Background Color", main_state->bg_color_rgba, ImGuiColorEditFlags_AlphaBar);
         ImGui::EndPopup();
     }
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGuiExt::MoveCursor(0, 5);
     ImGui::Text("Page size "); ImGui::SameLine();
     ImGui::PushItemWidth(100);
     ImGui::Combo("##PAGE_SIZE", &main_state->page_size, page_size_to_string_cb, NULL, 5);
     ImGui::PopItemWidth();
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGuiExt::MoveCursor(0, 5);
     ImGui::Checkbox(" Stroke to Fills", &main_state->is_stroke2fills);
     ImGui::EndGroup();
     ImGui::EndGroup();
