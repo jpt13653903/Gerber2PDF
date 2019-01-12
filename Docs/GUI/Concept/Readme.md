@@ -1,16 +1,10 @@
 # GUI Concept Design
 
-![Second Draft](gui_draft_2.png)
+![Second Draft](gui_draft_3.png)
 
-## Details
+## Choosing a colour
 
-- The colored rectangle on the left, when clicked, will open a color chooser pop up.
+The standard [Dear ImGui](https://github.com/ocornut/imgui) colour selection box is used:
 
-## Ideas
-
-- There should be a way to "load" a previous configuration -- maybe from a previously exported batch script?
-
-## Questions
-
-- Some users like to control the background colour...
+![Choosing a colour](ColourSelection.png)
 
