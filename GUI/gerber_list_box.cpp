@@ -79,17 +79,6 @@ namespace ImGuiExt {
                 hovered_index = SIZE_MAX;
             }
 
-            // synchronize strokes_to_fills option
-            if(hovered_index == index) {
-                auto page = boost::get<GerberFile>(&entry);
-                for(GerberListEntry &entry_j: *gerber_list) {
-                    GerberFile *page_j = boost::get<GerberFile>(&entry_j);
-                    if(page_j != NULL && page_j->file_uri == page->file_uri) {
-                        page_j->strokes_to_fills = page->strokes_to_fills;
-                    }
-                }
-            }
-
             index++;
         }
 
