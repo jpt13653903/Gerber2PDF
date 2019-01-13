@@ -1296,7 +1296,7 @@ bool GerberMacro::Circle(){
       Index++;
       b = (Item->Modifier[j++] = Modifier());
     }else{
-      break;
+      break; // It is legal to specify fewer modifiers than the maximum
     }
     WhiteSpace();
   }
