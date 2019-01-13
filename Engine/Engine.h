@@ -79,6 +79,7 @@ struct ENGINE{
 
     struct LAYER{
       char*    Filename;
+      bool     ConvertStrokesToFills;
       pdfForm* Form;
       LAYER*   Next;
 
@@ -173,8 +174,14 @@ struct ENGINE{
       pdfContents* Contents,
       GerberLevel* Level
     );
-    LAYER* NewLayer (const char* Filename);
-    LAYER* FindLayer(const char* Filename);
+    LAYER* NewLayer(
+      const char* Filename,
+      bool        ConvertStrokesToFills
+    );
+    LAYER* FindLayer(
+      const char* Filename,
+      bool        ConvertStrokesToFills
+    );
 //------------------------------------------------------------------------------
 
   public: // Functions
