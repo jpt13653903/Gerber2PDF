@@ -214,7 +214,7 @@ bool GerberMacro::RenderCircle(PRIMITIVE_ITEM* Primitive){
   int j;
   GerberRender* Render;
 
-  const int ModifierCount = 4;
+  const int ModifierCount = 5;
 
   double Modifier[ModifierCount];
 
@@ -234,11 +234,18 @@ bool GerberMacro::RenderCircle(PRIMITIVE_ITEM* Primitive){
     Exposure = !Exposure;
   }
 
+  double d = Modifier[1];
+  double x = Modifier[2];
+  double y = Modifier[3];
+  double a = Modifier[4] * pi/180.0;
+  double s = sin(a);
+  double c = cos(a);
+
   Render = new GerberRender;
   Render->Command = gcCircle; // Circles are rendered CCW
-  Render->X       = Get_mm(Modifier[2]);
-  Render->Y       = Get_mm(Modifier[3]);
-  Render->W       = Get_mm(Modifier[1]);
+  Render->X       = Get_mm(c*x - s*y);
+  Render->Y       = Get_mm(s*x + c*y);
+  Render->W       = Get_mm(d);
   Add(Render);
 
   Render = new GerberRender;
@@ -1166,20 +1173,63 @@ GerberMacro::OPERATOR_ITEM* GerberMacro::Term(){
 }
 //------------------------------------------------------------------------------
 
-// Float | Variable
+// ["+" | "-"] (("(" Modifier ")") | Variable | Float)
 GerberMacro::OPERATOR_ITEM* GerberMacro::Factor(){
+  bool           Negative = false;
   double         d;
   OPERATOR_ITEM* Item;
 
   WhiteSpace();
 
-  Item = Variable();
-  if(Item) return Item;
+  if(Index >= Length) return 0;
+  if(Buffer[Index] == '-'){
+    Negative = true;
+    Index++; WhiteSpace();
 
-  if(!Float(&d)) return 0;
-  Item = new OPERATOR_ITEM;
-  Item->Operator = opLiteral;
-  Item->Value    = d;
+  }else if(Buffer[Index] == '+'){
+    Index++; WhiteSpace();
+  }
+
+  if(Buffer[Index] == '('){
+    Index++;
+
+    Item = Modifier();
+    if(!Item){
+      printf("Error: Expression expected\n");
+      return 0;
+    }
+
+    WhiteSpace();
+
+    if(Buffer[Index] != ')'){
+      printf("Error: ')' expected\n");
+      delete Item;
+      return 0;
+    }
+    Index++;
+
+  }else{
+    Item = Variable();
+    if(!Item){
+      if(!Float(&d)){
+        printf("Error: Float expected\n");
+        return 0;
+      }
+      Item = new OPERATOR_ITEM;
+      Item->Operator = opLiteral;
+      Item->Value    = d;
+    }
+  }
+
+  if(Item && Negative){
+    OPERATOR_ITEM* Root  = new OPERATOR_ITEM;
+    Root->Operator       = opMultiply;
+    Root->Left           = new OPERATOR_ITEM;
+    Root->Left->Operator = opLiteral;
+    Root->Left->Value    = -1;
+    Root->Right          = Item;
+    Item = Root;
+  }
 
   return Item;
 }
@@ -1227,7 +1277,7 @@ bool GerberMacro::Circle(){
 
   WhiteSpace();
 
-  const int ModifierCount = 4;
+  const int ModifierCount = 5;
 
   Item = new PRIMITIVE_ITEM;
   Item->Primitive     = pCircle;
@@ -1246,7 +1296,7 @@ bool GerberMacro::Circle(){
       Index++;
       b = (Item->Modifier[j++] = Modifier());
     }else{
-      break;
+      break; // It is legal to specify fewer modifiers than the maximum
     }
     WhiteSpace();
   }
