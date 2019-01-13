@@ -37,7 +37,7 @@
 //  Assignment     = Variable "=" Modifier;
 //  Modifier       = Term   {("+" | "-"      ) Term};
 //  Term           = Factor {("x" | "X" | "/") Factor};
-//  Factor         = Float | Variable;
+//  Factor         = ["+" | "-"] (("(" Modifier ")") | Variable | Float);
 //  Variable       = "$" Integer;
 //------------------------------------------------------------------------------
 
