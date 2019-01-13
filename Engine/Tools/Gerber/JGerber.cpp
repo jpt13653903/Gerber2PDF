@@ -953,8 +953,11 @@ bool JGerber::ApertureMacro(){
   j = Index;
   while(Index < Length){
     if(Buffer[Index] == '%'){
-      Macro->LoadMacro(Buffer+j, Index-j, Units == guInches);
-      Add(Macro);
+      if(Macro->LoadMacro(Buffer+j, Index-j, Units == guInches)){
+        Add(Macro);
+      }else{
+        printf("Line %d - Error: Invalid aperture macro\n", LineNumber);
+      }
       return true;
     }
     Index++;

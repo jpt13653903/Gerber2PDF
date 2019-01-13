@@ -1173,20 +1173,63 @@ GerberMacro::OPERATOR_ITEM* GerberMacro::Term(){
 }
 //------------------------------------------------------------------------------
 
-// Float | Variable
+// ["+" | "-"] (("(" Modifier ")") | Variable | Float)
 GerberMacro::OPERATOR_ITEM* GerberMacro::Factor(){
+  bool           Negative = false;
   double         d;
   OPERATOR_ITEM* Item;
 
   WhiteSpace();
 
-  Item = Variable();
-  if(Item) return Item;
+  if(Index >= Length) return 0;
+  if(Buffer[Index] == '-'){
+    Negative = true;
+    Index++; WhiteSpace();
 
-  if(!Float(&d)) return 0;
-  Item = new OPERATOR_ITEM;
-  Item->Operator = opLiteral;
-  Item->Value    = d;
+  }else if(Buffer[Index] == '+'){
+    Index++; WhiteSpace();
+  }
+
+  if(Buffer[Index] == '('){
+    Index++;
+
+    Item = Modifier();
+    if(!Item){
+      printf("Error: Expression expected\n");
+      return 0;
+    }
+
+    WhiteSpace();
+
+    if(Buffer[Index] != ')'){
+      printf("Error: ')' expected\n");
+      delete Item;
+      return 0;
+    }
+    Index++;
+
+  }else{
+    Item = Variable();
+    if(!Item){
+      if(!Float(&d)){
+        printf("Error: Float expected\n");
+        return 0;
+      }
+      Item = new OPERATOR_ITEM;
+      Item->Operator = opLiteral;
+      Item->Value    = d;
+    }
+  }
+
+  if(Item && Negative){
+    OPERATOR_ITEM* Root  = new OPERATOR_ITEM;
+    Root->Operator       = opMultiply;
+    Root->Left           = new OPERATOR_ITEM;
+    Root->Left->Operator = opLiteral;
+    Root->Left->Value    = -1;
+    Root->Right          = Item;
+    Item = Root;
+  }
 
   return Item;
 }
