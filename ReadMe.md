@@ -20,6 +20,11 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw
 
 ## Changes:
 
+#### 2019-01-13
+
+- Version-bump to 1.5
+- Removed the limitation where `-strokes2fills` applies to all instances of the Gerber file
+
 #### 2018-11-20
 
 - Version-bump to 1.4
