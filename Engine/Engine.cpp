@@ -54,9 +54,10 @@ ENGINE::LEVEL_FORM::~LEVEL_FORM(){
 //------------------------------------------------------------------------------
 
 ENGINE::LAYER::LAYER(){
-  Filename  = 0;
-  Form      = 0;
-  Next      = 0;
+  Filename              = 0;
+  ConvertStrokesToFills = false;
+  Form                  = 0;
+  Next                  = 0;
 }
 //------------------------------------------------------------------------------
 
@@ -537,7 +538,10 @@ int ENGINE::RenderLayer(
 }
 //------------------------------------------------------------------------------
 
-ENGINE::LAYER* ENGINE::NewLayer(const char* Filename){
+ENGINE::LAYER* ENGINE::NewLayer(
+  const char* Filename,
+  bool        ConvertStrokesToFills
+){
   static int GerberCount = 0;
 
   LAYER* Layer = new LAYER;
@@ -547,6 +551,8 @@ ENGINE::LAYER* ENGINE::NewLayer(const char* Filename){
   Layer->Filename = new char[j+1];
   for(j = 0; Filename[j]; j++) Layer->Filename[j] = Filename[j];
   Layer->Filename[j] = 0;
+
+  Layer->ConvertStrokesToFills = ConvertStrokesToFills;
 
   JString FormName;
   FormName.Set('G');
@@ -573,10 +579,16 @@ static bool StringsEqual(const char* s1, const char* s2){
 }
 //------------------------------------------------------------------------------
 
-ENGINE::LAYER* ENGINE::FindLayer(const char* Filename){
+ENGINE::LAYER* ENGINE::FindLayer(
+  const char* Filename,
+  bool        ConvertStrokesToFills
+){
   LAYER* Layer = Layers;
   while(Layer){
-    if(StringsEqual(Layer->Filename, Filename)) return Layer;
+    if(
+      StringsEqual(Layer->Filename, Filename) &&
+      Layer->ConvertStrokesToFills == ConvertStrokesToFills
+    ) return Layer;
     Layer = Layer->Next;
   }
   return 0;
@@ -597,13 +609,13 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
   LEVEL_FORM* TempLevelStack;
 
-  Layer = FindLayer(FileName);
+  Layer = FindLayer(FileName, ConvertStrokesToFills);
   if(Layer){
     printf("\nInfo: Using previous conversion of %s\n", FileName);
     Reusing = true;
 
   }else{
-    Layer = NewLayer(FileName);
+    Layer = NewLayer(FileName, ConvertStrokesToFills);
     Layer->Title.Set(Title);
 
     printf("\nInfo: Converting %s\n", FileName);

@@ -34,10 +34,8 @@ background colour.  To work around this limitation, use separate Gerber
 files for every different background colour.
 
 The -strokes2fills option converts all strokes to fills for the next
-file, thereby converting outlines to areas.  This option has to be
-applied to the first instance of that file, and applies to all other
-instances.  To work around this limitation,
-make a copy of the file in question.
+file, thereby converting outlines to areas.  It resets to default
+after that file.
 
 The -page_size option takes global effect and can have one of 4 values:
   "extents", "A3", "A4" or "letter"
