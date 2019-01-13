@@ -137,10 +137,8 @@ int main(int argc, char** argv){
       "files for every different background colour.\n"
       "\n"
       "The -strokes2fills option converts all strokes to fills for the next\n"
-      "file, thereby converting outlines to areas.  This option has to be\n"
-      "applied to the first instance of that file, and applies to all other\n"
-      "instances.  To work around this limitation,\n"
-      "make a copy of the file in question.\n"
+      "file, thereby converting outlines to areas.  It resets to default\n"
+      "after that file.\n"
       "\n"
       "The -page_size option takes global effect and can have one of 4 values:\n"
       "  \"extents\", \"A3\", \"A4\" or \"letter\"\n",
