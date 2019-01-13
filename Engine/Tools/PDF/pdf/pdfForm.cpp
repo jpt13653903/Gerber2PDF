@@ -40,7 +40,6 @@ void pdfForm::Update(){
   Dictionary.Clear();
   Dictionary.AddEntry("Type"   , &Type);
   Dictionary.AddEntry("Subtype", &SubType);
-  Dictionary.AddEntry("Name"   , &Name);
   Dictionary.AddEntry("BBox"   , &BBox);
   Dictionary.AddEntry("Group"  , &Group);
   Dictionary.AddEntry("Length" , &Length);
