@@ -108,7 +108,8 @@ bool pdfName::Empty(){
 //------------------------------------------------------------------------------
 
 bool pdfName::Equal(const char* String){
-  if(!Value) return 0;
+  if(!Value ) return false;
+  if(!String) return false;
 
   int j;
 
@@ -118,6 +119,16 @@ bool pdfName::Equal(const char* String){
   if(String[j] != Value[j]) return false;
 
   return true;
+}
+//------------------------------------------------------------------------------
+
+bool pdfName::Equivalent(const char* String){
+  if(!Value ) return false;
+  if(!String) return false;
+
+  pdfName Sanitised;
+  Sanitised.Set(String);
+  return Equal(Sanitised.Get());
 }
 //------------------------------------------------------------------------------
 

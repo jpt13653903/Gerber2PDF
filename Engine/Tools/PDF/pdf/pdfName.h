@@ -26,21 +26,22 @@
 //------------------------------------------------------------------------------
 
 class pdfName : public pdfObject{
-private:
-  unsigned char* Value;
-public:
+  private:
+    unsigned char* Value;
 
-  pdfName();
- ~pdfName();
+  public:
+    pdfName();
+   ~pdfName();
 
-  void  Set(const char* Value);
-  char* Get();
+    void  Set(const char* Value); // Sanitises the string before assignment
+    char* Get();                  // Returns the sanitised string
 
-  bool Empty();
-  bool Equal(const char* String);
+    bool Empty();
+    bool Equal     (const char* String); // Compares directly (no sanitisation)
+    bool Equivalent(const char* String); // Compares with sanitisation
 
-  int GetLength();
-  int GetOutput(char* Buffer);
+    int GetLength();
+    int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 
