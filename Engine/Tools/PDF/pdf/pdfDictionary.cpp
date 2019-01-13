@@ -46,17 +46,25 @@ void pdfDictionary::Clear(){
 //------------------------------------------------------------------------------
 
 void pdfDictionary::AddEntry(const char* Property, pdfObject* Value){
-  Element* Temp = new Element;
+  // Search for duplicates
+  Element* Temp = First;
+  while(Temp){
+    if(Temp->Property.Equivalent(Property)){
+      Temp->Value = Value;
+      return;
+    }
+    Temp = Temp->Next;
+  }
+
+  // Otherwise, add new entry
+  Temp = new Element;
 
   Temp->Property.Set(Property);
   Temp->Value = Value;
   Temp->Next  = 0;
 
-  if(First){
-    Last->Next = Temp;
-  }else{
-    First = Temp;
-  }
+  if(Last) Last->Next = Temp;
+  else     First      = Temp;
   Last = Temp;
 
   Count++;
