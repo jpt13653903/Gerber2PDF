@@ -1,0 +1,93 @@
+G04 FreePCB version 1.359*
+G04 W:\Projects\14\1417 - USB PIC\FreePCB\CAM\board_outline.grb*
+G04 board outline layer *
+G04 Scale: 100 percent, Rotated: No, Reflected: No *
+%FSLAX24Y24*%
+%MOIN*%
+%LN board outline *%
+G04 Rounded Rectangle Macro, params: W/2, H/2, R *
+%AMRNDREC*
+21,1,$1+$1,$2+$2-$3-$3,0,0,0*
+21,1,$1+$1-$3-$3,$2+$2,0,0,0*
+1,1,$3+$3,$1-$3,$2-$3*
+1,1,$3+$3,$3-$1,$2-$3*
+1,1,$3+$3,$1-$3,$3-$2*
+1,1,$3+$3,$3-$1,$3-$2*%
+G04 Rectangular Thermal Macro, params: W/2, H/2, T/2 *
+%AMRECTHERM*
+$4=$3/2*
+21,1,$1-$3,$2-$3,0-$1/2-$4,0-$2/2-$4,0*
+21,1,$1-$3,$2-$3,0-$1/2-$4,$2/2+$4,0*
+21,1,$1-$3,$2-$3,$1/2+$4,0-$2/2-$4,0*
+21,1,$1-$3,$2-$3,$1/2+$4,$2/2+$4,0*%
+%ADD10C,0.005000*%
+G90*
+G70D02*
+
+G04 Step and Repeat for panelization *
+
+G04 ----------------------- Draw board outline (positive)*
+%LPD*%
+G54D10*
+G01X0Y0D02*
+G01X15354Y0D01*
+G04 end of side 1*
+G01X15354Y23228D01*
+G04 end of side 2*
+G01X0Y23228D01*
+G04 end of side 3*
+G01X0Y0D01*
+
+G04 -------------- Draw Parts, Pads, Traces, Vias and Text (positive)*
+%LPD*%
+G04 Draw part U2*
+G04 Draw part C3*
+G04 Draw part R2*
+G04 Draw part C4*
+G04 Draw part R3*
+G04 Draw part C2*
+G04 Draw part C6*
+G04 Draw part C5*
+G04 Draw part R1*
+G04 Draw part J3*
+G04 Draw part C1*
+G04 Draw part R6*
+G04 Draw part R7*
+G04 Draw part R9*
+G04 Draw part R11*
+G04 Draw part R13*
+G04 Draw part R15*
+G04 Draw part R17*
+G04 Draw part R19*
+G04 Draw part R21*
+G04 Draw part R23*
+G04 Draw part R25*
+G04 Draw part R27*
+G04 Draw part R29*
+G04 Draw part J2*
+G04 Draw part R4*
+G04 Draw part R5*
+G04 Draw part R8*
+G04 Draw part R10*
+G04 Draw part R12*
+G04 Draw part R14*
+G04 Draw part R16*
+G04 Draw part R18*
+G04 Draw part R20*
+G04 Draw part R22*
+G04 Draw part R24*
+G04 Draw part R26*
+G04 Draw part R28*
+G04 Draw part U1*
+G04 Draw part J1*
+G04 Draw part J4*
+G04 Draw part J5*
+G04 Draw part J6*
+G04 Draw part J7*
+G04 Draw part D1*
+
+G04 Draw traces*
+
+G04 Draw Text*
+M00*
+M02*

@@ -1,9 +1,11 @@
-.PHONY: clean all
+.PHONY: clean all Engine
 
-all:
-	make -C Source all
+all: Engine
+
+Engine:
+	make -C Engine all
 
 clean:
-	make -C Source clean
+	make -C Engine clean
 #-------------------------------------------------------------------------------
 

@@ -5,7 +5,7 @@ about: Suggest an idea for this project
 ---
 
 **Label**
-Ideas and feature requests should carry the _idea_ label.
+Ideas and feature requests should carry the _enhancement_ label.
 
 **Alternative Request List**
 Please consult the [SourceForge Discussion](https://sourceforge.net/p/gerber2pdf/discussion) page before requesting a feature here.

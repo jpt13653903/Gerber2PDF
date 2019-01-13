@@ -1,0 +1,333 @@
+//==============================================================================
+// Copyright (C) John-Philip Taylor
+// jpt13653903@gmail.com
+//
+// This file is part of Gerber2PDF
+//
+// This file is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>
+//==============================================================================
+
+#include "main.h"
+//------------------------------------------------------------------------------
+
+bool SilentExit = false;
+//------------------------------------------------------------------------------
+
+static void Pause(){
+  if(SilentExit) return;
+  printf("\nPress Enter to continue\n");
+  char c;
+  scanf("%c", &c);
+}
+//------------------------------------------------------------------------------
+
+static bool GetInt(const char* Buffer, int* Index, int* Result){
+  *Result = 0;
+  while(Buffer[*Index]){
+    if(Buffer[*Index] >= '0' && Buffer[*Index] <= '9'){
+      *Result = 10*(*Result) + Buffer[*Index] - '0';
+
+    }else if(Buffer[*Index] == ','){
+      (*Index)++;
+      return true;
+
+    }else{
+      return false;
+    }
+    (*Index)++;
+  }
+  return true;
+}
+//------------------------------------------------------------------------------
+
+static bool StringStart(const char* String, const char* Start){
+  int j;
+  for(j = 0; String[j] && Start[j]; j++){
+    if(String[j] != Start[j]) return false;
+  }
+  return !Start[j];
+}
+//------------------------------------------------------------------------------
+
+#ifdef __linux__
+  static unsigned long GetCurrentDirectory(
+    unsigned long BufferLength,
+    char*         Buffer
+  ){
+    if(!getcwd(Buffer, BufferLength)) return 0;
+    return strlen(Buffer);
+  }
+#endif
+//------------------------------------------------------------------------------
+
+int main(int argc, char** argv){
+  ENGINE Engine;
+
+  int j;
+  int Result;
+
+  JString OutputFileName;
+  JString FileName;
+
+  int arg;
+
+  if(argc < 2){
+    printf(
+      "Gerber2PDF, Version %d.%d.Bortolo\n"
+      "Built on "__DATE__" at "__TIME__"\n"
+      "\n"
+      "Copyright (C) John-Philip Taylor\n"
+      "jpt13653903@gmail.com\n"
+      "\n"
+      "This program is free software: you can redistribute it and/or modify\n"
+      "it under the terms of the GNU General Public License as published by\n"
+      "the Free Software Foundation, either version 3 of the License, or\n"
+      "(at your option) any later version.\n"
+      "\n"
+      "This program is distributed in the hope that it will be useful,\n"
+      "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+      "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+      "GNU General Public License for more details.\n"
+      "\n"
+      "You should have received a copy of the GNU General Public License\n"
+      "along with this program.  If not, see <http://www.gnu.org/licenses/>\n"
+      "\n"
+      "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name] ...\n"
+      "       [-background=R,G,B[,A]] [-strokes2fills] ...\n"
+      "       [-page_size=extents|A3|A4|letter] ...\n"
+      "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...\n"
+      "       [-nomirror] [-nocombine] ... file_N\n"
+      "       [-header=Size,Space,Text] [-footer=Size,Space,Text] \n"
+      "       [-noheader] [-nofooter] \n"
+      "\n"
+      "Example: Gerber2pdf -output=My_Project\n"
+      "         top_silk.grb bottom_silk.grb\n"
+      "         top_copper.grb inner_copper_1.grb\n"
+      "         inner_copper_2.grb bottom_copper.grb\n"
+      "         bottom_solder_mask.grb top_solder_mask.grb\n"
+      "         board_outline.grb\n"
+      "         -combine -mirror\n"
+      "           -colour=255,0,0     bottom_copper.grb\n"
+      "           -colour=0,128,0,200 bottom_solder_mask.grb\n"
+      "           -colour=0,0,255     board_outline.grb\n"
+      "         -combine -nomirror\n"
+      "           -colour=255,0,0     top_copper.grb\n"
+      "           -colour=0,128,0,200 top_solder_mask.grb\n"
+      "           -colour=0,0,255     board_outline.grb\n"
+      "         -header=10,5,HeaderText\n"
+      "         -footer=10,5,FooterText\n"
+      "\n"
+      "The -silentexit option disables the pause on exit.\n"
+      "The -nowarnings option disables deprecated feature warnings.\n"
+      "\n"
+      "The optional -background colour is either transparent or opaque.  The\n"
+      "threshold is A=128.  Set it just before the target page is created.  Take\n"
+      "care when using this option, because this background colour is used to\n"
+      "draw the copper pour cut-outs.  That same colour will therefore apply\n"
+      "for every subsequent use of that layer, irrespective of the \"current\"\n"
+      "background colour.  To work around this limitation, use separate Gerber\n"
+      "files for every different background colour.\n"
+      "\n"
+      "The -strokes2fills option converts all strokes to fills for the next\n"
+      "file, thereby converting outlines to areas.  It resets to default\n"
+      "after that file.\n"
+      "\n"
+      "The -page_size option takes global effect and can have one of 4 values:\n"
+      "  \"extents\", \"A3\", \"A4\" or \"letter\"\n"
+      "\n"
+      "The -header and -footer options apply when creating a new page,\n"
+      "so these must be specified after the Gerber file, not before it.\n"
+      "Similarly, the -noheader and -nofooter options must be specified\n"
+      "after the first file that must not have a header and / or footer.\n",
+      MAJOR_VERSION, MINOR_VERSION // These are defined in the Makefile
+    );
+    Pause();
+    return 0;
+  }
+
+  char Path[0x100];
+  GetCurrentDirectory(0x100, Path);
+  for(j = 0; Path[j]; j++);
+  #if defined(WINVER)
+    if(Path[j-1] != '\\'){
+      Path[j++] = '\\';
+      Path[j  ] = 0;
+    }
+  #elif defined(__linux__)
+    if(Path[j-1] != '/'){
+      Path[j++] = '/';
+      Path[j  ] = 0;
+    }
+  #endif
+
+  // For each argument...
+  for(arg = 1; arg < argc; arg++){
+    // Check for options
+    if(argv[arg][0] == '-'){
+      if(StringStart(argv[arg]+1, "output=")){
+        OutputFileName.Set(argv[arg]+8);
+
+      }else if(StringStart(argv[arg]+1, "colour=")){
+        int i = 8;
+        int R, G, B, A;
+        if(!GetInt(argv[arg], &i, &R)) continue;
+        if(!GetInt(argv[arg], &i, &G)) continue;
+        if(!GetInt(argv[arg], &i, &B)) continue;
+        if(argv[arg][i]){
+          if(!GetInt(argv[arg], &i, &A)) continue;
+        }else{
+          A = 255;
+        }
+        if(R < 0 || R > 255) continue;
+        if(G < 0 || G > 255) continue;
+        if(B < 0 || B > 255) continue;
+        if(A < 0 || A > 255) continue;
+        Engine.Dark.R = R/255.0;
+        Engine.Dark.G = G/255.0;
+        Engine.Dark.B = B/255.0;
+        Engine.Dark.A = A/255.0;
+
+      }else if(StringStart(argv[arg]+1, "background=")){
+        int i = 12;
+        int R, G, B, A;
+        if(!GetInt(argv[arg], &i, &R)) continue;
+        if(!GetInt(argv[arg], &i, &G)) continue;
+        if(!GetInt(argv[arg], &i, &B)) continue;
+        if(argv[arg][i]){
+          if(!GetInt(argv[arg], &i, &A)) continue;
+        }else{
+          A = 255;
+        }
+        if(R < 0 || R > 255) continue;
+        if(G < 0 || G > 255) continue;
+        if(B < 0 || B > 255) continue;
+        if(A < 0 || A > 255) continue;
+        if(A < 128){
+          Engine.Light.R = 1.0;
+          Engine.Light.G = 1.0;
+          Engine.Light.B = 1.0;
+          Engine.Light.A = 0.0;
+        }else{
+          Engine.Light.R = R/255.0;
+          Engine.Light.G = G/255.0;
+          Engine.Light.B = B/255.0;
+          Engine.Light.A =     1.0;
+        }
+
+      }else if(StringStart(argv[arg]+1, "combine")){
+        Engine.Combine = true;
+        Engine.NewPage = true;
+
+      }else if(StringStart(argv[arg]+1, "nocombine")){
+        Engine.Combine = false;
+
+      }else if(StringStart(argv[arg]+1, "mirror")){
+        Engine.Mirror = true;
+
+      }else if(StringStart(argv[arg]+1, "nomirror")){
+        Engine.Mirror = false;
+
+      }else if(StringStart(argv[arg]+1, "nowarnings")){
+        GerberWarnings = false; // Defined in JGerber.h
+
+      }else if(StringStart(argv[arg]+1, "silentexit")){
+        SilentExit = true;
+
+      }else if(StringStart(argv[arg]+1, "header=")){
+        Engine.HaveHeader = false;
+        int i = 8, s;
+        if(!GetInt(argv[arg], &i, &s)) continue;
+        Engine.Header.Size = s*25.4/72.0;
+        if(!GetInt(argv[arg], &i, &s)) continue;
+        Engine.Header.Space = s*25.4/72.0;
+        Engine.Header.Text.Set(argv[arg]+i);
+        Engine.Header.Colour = Engine.Dark;
+        Engine.HaveHeader = true;
+
+      }else if(StringStart(argv[arg]+1, "noheader")){
+        Engine.HaveHeader = false;
+
+      }else if(StringStart(argv[arg]+1, "footer=")){
+        Engine.HaveFooter = false;
+        int i = 8, s;
+        if(!GetInt(argv[arg], &i, &s)) continue;
+        Engine.Footer.Size = s*25.4/72.0;
+        if(!GetInt(argv[arg], &i, &s)) continue;
+        Engine.Footer.Space = s*25.4/72.0;
+        Engine.Footer.Text.Set(argv[arg]+i);
+        Engine.Footer.Colour = Engine.Dark;
+        Engine.HaveFooter = true;
+
+      }else if(StringStart(argv[arg]+1, "nofooter")){
+        Engine.HaveFooter = false;
+
+      }else if(StringStart(argv[arg]+1, "strokes2fills")){
+        Engine.ConvertStrokesToFills = true;
+
+      }else if(StringStart(argv[arg]+1, "page_size")){
+        if     (!strcmp(argv[arg]+10, "=extents")) Engine.PageSize = ENGINE::PS_Extents;
+        else if(!strcmp(argv[arg]+10, "=A3"     )) Engine.PageSize = ENGINE::PS_A3;
+        else if(!strcmp(argv[arg]+10, "=A4"     )) Engine.PageSize = ENGINE::PS_A4;
+        else if(!strcmp(argv[arg]+10, "=letter" )) Engine.PageSize = ENGINE::PS_Letter;
+        else printf("Error: Only \"extents\", \"A3\", \"A4\" and \"letter\"\n"
+                    "       page sizes are supported\n");
+      }
+      continue; // handle the next argument
+    }
+
+    // Read the gerber
+    FileName.Set(argv[arg]);
+    if(FileName.GetLength() < 2){
+      Engine.ConvertStrokesToFills = false;
+      continue;
+    }
+    #if defined(WINVER)
+      if(FileName.String[1] != '\\' && FileName.String[1] != ':'){
+        FileName.Prefix(Path);
+      }
+    #elif defined(__linux__)
+      if(FileName.String[0] != '/'){
+        FileName.Prefix(Path);
+      }
+    #endif
+
+    Result = Engine.Run(FileName.String, argv[arg]);
+    if(Result){
+      Pause();
+      return Result;
+    }
+  }
+
+  if(!OutputFileName.GetLength()){
+    OutputFileName.Set(FileName.String);
+  }else{
+    #if defined(WINVER)
+      if(OutputFileName.String[1] != '\\' && OutputFileName.String[1] != ':'){
+        OutputFileName.Prefix(Path);
+      }
+    #elif defined(__linux__)
+      if(OutputFileName.String[0] != '/'){
+        OutputFileName.Prefix(Path);
+      }
+    #endif
+  }
+  OutputFileName.Append(".pdf");
+
+  Engine.Finish(OutputFileName.String);
+
+  Pause();
+  return 0;
+}
+//------------------------------------------------------------------------------
+
