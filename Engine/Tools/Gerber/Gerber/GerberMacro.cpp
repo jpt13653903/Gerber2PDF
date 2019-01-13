@@ -214,7 +214,7 @@ bool GerberMacro::RenderCircle(PRIMITIVE_ITEM* Primitive){
   int j;
   GerberRender* Render;
 
-  const int ModifierCount = 4;
+  const int ModifierCount = 5;
 
   double Modifier[ModifierCount];
 
@@ -234,11 +234,18 @@ bool GerberMacro::RenderCircle(PRIMITIVE_ITEM* Primitive){
     Exposure = !Exposure;
   }
 
+  double d = Modifier[1];
+  double x = Modifier[2];
+  double y = Modifier[3];
+  double a = Modifier[4] * pi/180.0;
+  double s = sin(a);
+  double c = cos(a);
+
   Render = new GerberRender;
   Render->Command = gcCircle; // Circles are rendered CCW
-  Render->X       = Get_mm(Modifier[2]);
-  Render->Y       = Get_mm(Modifier[3]);
-  Render->W       = Get_mm(Modifier[1]);
+  Render->X       = Get_mm(c*x - s*y);
+  Render->Y       = Get_mm(s*x + c*y);
+  Render->W       = Get_mm(d);
   Add(Render);
 
   Render = new GerberRender;
@@ -1227,7 +1234,7 @@ bool GerberMacro::Circle(){
 
   WhiteSpace();
 
-  const int ModifierCount = 4;
+  const int ModifierCount = 5;
 
   Item = new PRIMITIVE_ITEM;
   Item->Primitive     = pCircle;

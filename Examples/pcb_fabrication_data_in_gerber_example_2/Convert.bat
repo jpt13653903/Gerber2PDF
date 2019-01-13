@@ -3,6 +3,7 @@ echo off
 "..\..\Engine\bin\Gerber2pdf.exe"                                                                ^
   -nowarnings                                                                                    ^
   -silentexit                                                                                    ^
+  -page_size=extents                                                                             ^
   -output=Output                                                                                 ^
     PCB_Fabrication_Data_in_Gerber_Example_2_Legend$Top.gbr                                      ^
     PCB_Fabrication_Data_in_Gerber_Example_2_Legend$Bot.gbr                                      ^
