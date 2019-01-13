@@ -65,6 +65,7 @@ struct ENGINE{
     OPAQUE_STACK* OpaqueStack;
 
     struct APERTURE{
+      int       Index;
       pdfForm*  Aperture;
       APERTURE* Next;
     };
@@ -117,11 +118,10 @@ struct ENGINE{
     JPDF pdf;
 
     APERTURE* ApertureStack;
-    APERTURE* TempApertureStack;
-
-    int      ApertureCount;
-    pdfForm* Apertures[1000];
-    pdfForm* CurrentAperture;
+    int       ApertureCount;
+    // TODO: Turn into a dictionary / linked list -- pdfForm*  Apertures[1000];
+    //       The standard allows for any index from 10 to 2^31-1
+    pdfForm*  CurrentAperture;
 
     pdfOpaque* Opaque;
 

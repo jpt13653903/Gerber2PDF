@@ -155,6 +155,8 @@ ENGINE::~ENGINE(){
 
   delete Opaque;
 
+  APERTURE* TempApertureStack;
+
   while(ApertureStack){
     TempApertureStack = ApertureStack;
     ApertureStack     = ApertureStack->Next;
@@ -356,7 +358,8 @@ int ENGINE::RenderLayer(
   GerberRender*   Render   = 0;
   GerberAperture* Aperture = 0;
 
-  JString String;
+  JString   String;
+  APERTURE* TempApertureStack;
 
   Render = Level->Render();
 
