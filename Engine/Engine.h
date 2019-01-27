@@ -27,6 +27,9 @@
 #endif
 //------------------------------------------------------------------------------
 
+#include <map>
+//------------------------------------------------------------------------------
+
 #include "JPDF.h"
 #include "JGerber.h"
 //------------------------------------------------------------------------------
@@ -117,11 +120,13 @@ struct ENGINE{
   private: // Internal State
     JPDF pdf;
 
-    APERTURE* ApertureStack;
-    int       ApertureCount;
-    // TODO: Turn into a dictionary / linked list -- pdfForm*  Apertures[1000];
-    //       The standard allows for any index from 10 to 2^31-1
-    pdfForm*  CurrentAperture;
+    // Use an associative array because the Gerber apertures need not be contiguous
+    typedef std::map<int, pdfForm*> pdfFormArray;
+
+    APERTURE*    ApertureStack;
+    int          ApertureCount;
+    pdfFormArray Apertures;
+    pdfForm*     CurrentAperture;
 
     pdfOpaque* Opaque;
 

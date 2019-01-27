@@ -21,6 +21,9 @@
 #include "Engine.h"
 //------------------------------------------------------------------------------
 
+using namespace std;
+//------------------------------------------------------------------------------
+
 ENGINE::COLOUR::COLOUR(){
   R = G = B = A = 0;
 }
@@ -494,8 +497,9 @@ int ENGINE::RenderLayer(
           RectW          = Aperture->Right - Aperture->Left;
           RectH          = Aperture->Top   - Aperture->Bottom;
 
-          if(Apertures[Aperture->Code]){
-            CurrentAperture = Apertures[Aperture->Code];
+          pdfFormArray::iterator ApertureForm = Apertures.find(Aperture->Code);
+          if(ApertureForm != Apertures.end()){
+            CurrentAperture = ApertureForm->second;
           }else{
             String.Set   ('D');
             String.Append(++ApertureCount);
@@ -747,7 +751,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
   }
 
   if(!Reusing){
-    for(j = 0; j < 1000; j++) Apertures[j] = 0;
+    Apertures.clear();
 
     Negative = Layer->Negative;
 
@@ -775,7 +779,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
         );
 
         LevelStack->Level->Resources.AddOpaque(Opaque);
-        for(j = 0; j < 1000; j++) Apertures[j] = 0;
+        Apertures.clear();
         Result = RenderLayer(LevelStack->Level, LevelStack->Level, Level);
         if(Result) return Result;
 
