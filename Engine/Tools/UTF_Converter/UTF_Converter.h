@@ -28,26 +28,30 @@
 
 class UTF_CONVERTER{
   private:
-    char32_t GetUTF_32(const char* UTF8, int* CodeLength);
+    std::u32string UTF_32;
+    std::u16string UTF_16;
+    std::string    UTF_8;
+
+    char32_t GetUTF_32(const char* UTF_8, int* CodeLength);
 
   public:
     UTF_CONVERTER();
    ~UTF_CONVERTER();
 
-    std::u32string& UTF32(const char*           UTF8 );
-    std::u32string& UTF32(const char16_t*       UTF16);
-    std::u32string& UTF32(const std::string&    UTF8 );
-    std::u32string& UTF32(const std::u16string& UTF16);
+    std::u32string& UTF32(const char*           UTF_8 );
+    std::u32string& UTF32(const char16_t*       UTF_16);
+    std::u32string& UTF32(const std::string&    UTF_8 );
+    std::u32string& UTF32(const std::u16string& UTF_16);
 
-    std::u16string& UTF16(const char*           UTF8 );
-    std::u16string& UTF16(const char32_t*       UTF32);
-    std::u16string& UTF16(const std::string&    UTF8 );
-    std::u16string& UTF16(const std::u32string& UTF32);
+    std::u16string& UTF16(const char*           UTF_8 );
+    std::u16string& UTF16(const char32_t*       UTF_32);
+    std::u16string& UTF16(const std::string&    UTF_8 );
+    std::u16string& UTF16(const std::u32string& UTF_32);
 
-    std::string&    UTF8 (const char16_t*       UTF16);
-    std::string&    UTF8 (const char32_t*       UTF32);
-    std::string&    UTF8 (const std::u16string& UTF16);
-    std::string&    UTF8 (const std::u32string& UTF32);
+    std::string&    UTF8 (const char16_t*       UTF_16);
+    std::string&    UTF8 (const char32_t*       UTF_32);
+    std::string&    UTF8 (const std::u16string& UTF_16);
+    std::string&    UTF8 (const std::u32string& UTF_32);
 };
 //------------------------------------------------------------------------------
 
