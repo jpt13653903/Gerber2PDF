@@ -1,9 +1,10 @@
 CC      = g++
-Options = -std=c++11 -Wall -fexceptions -O2
+Options = -std=c++11 -Wall -fexceptions -O2 -municode
 #-------------------------------------------------------------------------------
 
 Includes   = -ITools/Deflate
 Includes  += -ITools/File
+Includes  += -ITools/UTF_Converter
 Includes  += -ITools/Gerber
 Includes  += -ITools/Gerber/Gerber
 Includes  += -ITools/PDF
@@ -18,6 +19,7 @@ Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=5
 
 Objects  = obj/Tools/Deflate/JDeflate.o
 Objects += obj/Tools/File/JFile.o
+Objects += obj/Tools/UTF_Converter/UTF_Converter.o
 Objects += obj/Tools/Gerber/JGerber.o
 Objects += obj/Tools/Gerber/Gerber/GerberAperture.o
 Objects += obj/Tools/Gerber/Gerber/GerberLevel.o
@@ -65,6 +67,7 @@ endif
 
 Headers  = Tools/Deflate/*.h
 Headers += Tools/File/*.h
+Headers += Tools/UTF_Converter/*.h
 Headers += Tools/Gerber/*.h
 Headers += Tools/Gerber/Gerber/*.h
 Headers += Tools/PDF/*.h

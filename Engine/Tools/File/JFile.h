@@ -22,7 +22,30 @@
 #define JFile_H
 //---------------------------------------------------------------------------
 
-#if defined(__WIN64__) || defined(__WIN32__)
+#if (defined __WIN32__ ) || \
+    (defined __WIN64__ ) || \
+    (defined __WIN32   ) || \
+    (defined __WIN64   ) || \
+    (defined _WIN32    ) || \
+    (defined _WIN64    ) || \
+    (defined _MSC_VER  )
+
+  #ifndef WINVER
+    #define  WINVER        0x0601 // Windows 7
+  #endif
+  #ifndef NTDDI_VERSION
+    #define  NTDDI_VERSION 0x06010000
+  #endif
+  #ifndef _WIN32_IE
+    #define  _WIN32_IE     WINVER
+  #endif
+  #ifndef _WIN32_WINNT
+    #define  _WIN32_WINNT  WINVER
+  #endif
+  #ifndef UNICODE
+    #define UNICODE
+  #endif
+
   #include <windows.h>
 
 #elif defined(__linux__)
@@ -38,6 +61,7 @@
 //---------------------------------------------------------------------------
 
 #include <string>
+#include "UTF_Converter.h"
 //---------------------------------------------------------------------------
 
 class JFile{

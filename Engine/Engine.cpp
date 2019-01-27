@@ -666,10 +666,10 @@ int ENGINE::Run(const char* FileName, const char* Title){
   NewPage = false;
 
   Outline = new OUTLINE(Outline);
-  Outline->Item->Title.Set  (Layer->Title.c_str());
-  Outline->Item->DestFit    (ThePage);
-  pdf           .AddIndirect(Outline->Item);
-  Outlines      .AddChild   (Outline->Item);
+  Outline->Item->Title.SetUnicode(Layer->Title.c_str());
+  Outline->Item->DestFit         (ThePage);
+  pdf           .AddIndirect     (Outline->Item);
+  Outlines      .AddChild        (Outline->Item);
 
   if(!ThePageUsed){
     if(TheContents) TheContents->Deflate();

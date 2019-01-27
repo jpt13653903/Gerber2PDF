@@ -18,40 +18,40 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>
 //==============================================================================
 
-// A variable length array that manages its own memory
-
-#ifndef PDFSTRING_H
-#define PDFSTRING_H
+#ifndef UTF_Converter_H
+#define UTF_Converter_H
 //------------------------------------------------------------------------------
 
-#include "pdfObject.h"
-#include "UTF_Converter.h"
+#include <stdint.h>
+#include <string>
 //------------------------------------------------------------------------------
 
-class pdfString : public pdfObject{
+class UTF_CONVERTER{
   private:
-    std::string Value;
+    char32_t GetUTF_32(const char* UTF8, int* CodeLength);
 
   public:
-    void Set(const char* String); // null-terminated
-    void Set(const char* String, unsigned Length);
-    void Set(
-      int Year      ,
-      int Month  = 0,
-      int Day    = 0,
-      int Hour   = 0,
-      int Minute = 0,
-      int Second = 0
-    );
-    void SetUnicode(const char* String); // UTF-8
+    UTF_CONVERTER();
+   ~UTF_CONVERTER();
 
-    pdfString(); // Initialise the memory to a 1-length array with null value
-   ~pdfString(); // Delete the memory
+    std::u32string& UTF32(const char*           UTF8 );
+    std::u32string& UTF32(const char16_t*       UTF16);
+    std::u32string& UTF32(const std::string&    UTF8 );
+    std::u32string& UTF32(const std::u16string& UTF16);
 
-    bool Empty();
-    int  GetLength();
-    int  GetOutput(char* Buffer);
+    std::u16string& UTF16(const char*           UTF8 );
+    std::u16string& UTF16(const char32_t*       UTF32);
+    std::u16string& UTF16(const std::string&    UTF8 );
+    std::u16string& UTF16(const std::u32string& UTF32);
+
+    std::string&    UTF8 (const char16_t*       UTF16);
+    std::string&    UTF8 (const char32_t*       UTF32);
+    std::string&    UTF8 (const std::u16string& UTF16);
+    std::string&    UTF8 (const std::u32string& UTF32);
 };
+//------------------------------------------------------------------------------
+
+extern UTF_CONVERTER UTF_Converter;
 //------------------------------------------------------------------------------
 
 #endif

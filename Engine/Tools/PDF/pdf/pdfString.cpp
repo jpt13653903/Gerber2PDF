@@ -21,13 +21,14 @@
 #include "pdfString.h"
 //------------------------------------------------------------------------------
 
+using namespace std;
+//------------------------------------------------------------------------------
+
 pdfString::pdfString(){
-  Value = 0;
 }
 //------------------------------------------------------------------------------
 
 pdfString::~pdfString(){
-  if(Value) delete[] Value;
 }
 //------------------------------------------------------------------------------
 
@@ -39,45 +40,25 @@ void pdfString::Set(const char* String){
 //------------------------------------------------------------------------------
 
 void pdfString::Set(const char* String, unsigned Length){
-  unsigned      j, q;
-  unsigned char c;
+  unsigned n;
+  uint8_t  c;
 
-  j = q = 0;
-  while(j < Length){
-    c = String[j];
-    q++;
-    if     (c == '(' || c == ')' || c == '\\') q++;
-    else if(c  < ' ' || c  > '~') q += 3; // 0x20 and 0x7E
-    j++;
-  }
+  Value.clear();
 
-  if(Value) delete[] Value;
-  Value = new char[q+1];
-
-  j = q = 0;
-  while(j < Length){
-    c = String[j];
-    if(c == '(' || c == ')' || c == '\\'){
-      Value[q++] = '\\';
-      Value[q++] = c;
-
-    }else if(c  < ' ' || c  > '~'){
-      Value[q++] = '\\';
-      c = c;
-      Value[q+2] = (c % 8) + '0';
-      c /= 8;
-      Value[q+1] = (c % 8) + '0';
-      c /= 8;
-      Value[q  ] = (c    ) + '0';
-      q += 3;
-
-    }else{
-      Value[q++] = c;
+  for(n = 0; n < Length; n++){
+    c = String[n];
+    switch(c){
+      case '(' : Value.append("\\("     ); break;
+      case ')' : Value.append("\\)"     ); break;
+      case '\\': Value.append("\\\\"    ); break;
+      case '\n': Value.append("\\n"     ); break;
+      case '\r': Value.append("\\r"     ); break;
+      case '\t': Value.append("\\t"     ); break;
+      case '\b': Value.append("\\b"     ); break;
+      case '\f': Value.append("\\f"     ); break;
+      default  : Value.append(1, (char)c); break;
     }
-    j++;
   }
-
-  Value[q] = 0;
 }
 //------------------------------------------------------------------------------
 
@@ -89,67 +70,73 @@ void pdfString::Set(
   int Minute,
   int Second
 ){
-  if(Value) delete[] Value;
-  Value = new char[17];
+  Value.clear();
 
-  Value[ 0] = 'D';
-  Value[ 1] = ':';
+  Value.append(1, 'D');
+  Value.append(1, ':');
 
-  Value[ 5] = Year % 10; Year /= 10;
-  Value[ 4] = Year % 10; Year /= 10;
-  Value[ 3] = Year % 10; Year /= 10;
-  Value[ 2] = Year % 10;
+  Value.append(1, Year % 10); Year /= 10;
+  Value.append(1, Year % 10); Year /= 10;
+  Value.append(1, Year % 10); Year /= 10;
+  Value.append(1, Year % 10);
 
-  Value[ 7] = Month % 10; Month /= 10;
-  Value[ 6] = Month % 10;
+  Value.append(1, Month % 10); Month /= 10;
+  Value.append(1, Month % 10);
 
-  Value[ 9] = Day % 10; Day /= 10;
-  Value[ 8] = Day % 10;
+  Value.append(1, Day % 10); Day /= 10;
+  Value.append(1, Day % 10);
 
-  Value[11] = Hour % 10; Hour /= 10;
-  Value[10] = Hour % 10;
+  Value.append(1, Hour % 10); Hour /= 10;
+  Value.append(1, Hour % 10);
 
-  Value[13] = Minute % 10; Minute /= 10;
-  Value[12] = Minute % 10;
+  Value.append(1, Minute % 10); Minute /= 10;
+  Value.append(1, Minute % 10);
 
-  Value[15] = Second % 10; Second /= 10;
-  Value[14] = Second % 10;
+  Value.append(1, Second % 10); Second /= 10;
+  Value.append(1, Second % 10);
+}
+//------------------------------------------------------------------------------
 
-  Value[16] = 0;
+void pdfString::SetUnicode(const char* String){
+  bool HasUnicode = false;
+
+  u16string UTF16 = UTF_Converter.UTF16(String);
+
+  string UTF16_BE;
+
+  UTF16_BE.append(1, (char)((uint8_t)254));
+  UTF16_BE.append(1, (char)((uint8_t)255));
+
+  for(int n = 0; UTF16[n]; n++){
+    if(UTF16[n] >= 0x80) HasUnicode = true;
+    UTF16_BE.append(1, (char)((uint8_t)(UTF16[n] >> 8   )));
+    UTF16_BE.append(1, (char)((uint8_t)(UTF16[n] &  0xFF)));
+  }
+
+  if(HasUnicode) Set(UTF16_BE.c_str(), UTF16_BE.length());
+  else           Set(String);
 }
 //------------------------------------------------------------------------------
 
 bool pdfString::Empty(){
-  if(!Value   ) return true;
-  if( Value[0]) return false;
-  return true;
+  return Value.empty();
 }
 //------------------------------------------------------------------------------
 
 
 int pdfString::GetLength(){
-  if(!Value) return 0;
-
-  int r = 0;
-  while(Value[r]) r++;
-  return r+2;
+  return Value.length() + 2;
 }
 //------------------------------------------------------------------------------
 
 int pdfString::GetOutput(char* Buffer){
-  if(!Value) return 0;
-
-  int i = 0;
+  unsigned n;
 
   Buffer[0] = '(';
-  while(Value[i]){
-    Buffer[i+1] = Value[i];
-    i++;
-  }
-  i++;
-  Buffer[i++] = ')';
+  for(n = 0; n < Value.length(); n++) Buffer[n+1] = Value[n];
+  Buffer[n+1] = ')';
 
-  return i;
+  return n+2;
 }
 //------------------------------------------------------------------------------
 

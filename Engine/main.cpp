@@ -74,7 +74,64 @@ static bool StringStart(const char* String, const char* Start){
 #endif
 //------------------------------------------------------------------------------
 
-int main(int argc, char** argv){
+void SetupTerminal(){
+  #ifdef WINVER
+    #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING 
+      #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+    #endif
+
+    HANDLE TerminalHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    if(TerminalHandle == INVALID_HANDLE_VALUE){
+      printf("Error: Invalid terminal handle");
+      return;
+    }
+
+    // Set output mode to handle ANSI terminal sequences
+    DWORD dwMode = 0;
+    if(!GetConsoleMode(TerminalHandle, &dwMode)){
+      // This is OK, because the terminal in question is
+      // probably a MinTTY (or similar)
+      return;
+    }
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if(!SetConsoleMode(TerminalHandle, dwMode)){
+      printf("Error: Unable to set terminal mode");
+      return;
+    }
+
+    // Set the console encoding to UTF-8
+    if(!SetConsoleOutputCP(CP_UTF8)){
+      printf("Error: Unable to set terminal to UTF-8");
+      return;
+    }
+
+    // Make the console buffer as many lines as the system will allow
+    CONSOLE_SCREEN_BUFFER_INFO Info;
+    GetConsoleScreenBufferInfo(TerminalHandle, &Info);
+    Info.dwSize.Y = 0x7FFF;
+    while(!SetConsoleScreenBufferSize(TerminalHandle, Info.dwSize) &&
+          GetLastError() == ERROR_INVALID_PARAMETER){
+      Info.dwSize.Y--;
+    }
+  #endif
+}
+//------------------------------------------------------------------------------
+
+#ifdef WINVER
+  int wmain(int argc, const wchar_t** wargv){
+    if(argc > 0x1000) argc = 0x1000;
+    string argv_string[0x1000];
+    const char* argv[0x1000];
+    for(int n = 0; n < argc; n++){
+      argv_string[n] = UTF_Converter.UTF8((const char16_t*)wargv[n]);
+      argv       [n] = argv_string[n].c_str();
+    }
+#else
+  int main(int argc, const char** argv){
+#endif
+
+  SetupTerminal();
+
   ENGINE Engine;
 
   int j;
@@ -151,15 +208,20 @@ int main(int argc, char** argv){
     return 0;
   }
 
-  char Path[0x100];
-  GetCurrentDirectory(0x100, Path);
-  for(j = 0; Path[j]; j++);
   #if defined(WINVER)
-    if(Path[j-1] != '\\'){
-      Path[j++] = '\\';
+    wchar_t Path[0x100];
+    GetCurrentDirectory(0x100, Path);
+    for(j = 0; Path[j]; j++);
+
+    if(Path[j-1] != L'\\'){
+      Path[j++] = L'\\';
       Path[j  ] = 0;
     }
   #elif defined(__linux__)
+    char Path[0x100];
+    GetCurrentDirectory(0x100, Path);
+    for(j = 0; Path[j]; j++);
+
     if(Path[j-1] != '/'){
       Path[j++] = '/';
       Path[j  ] = 0;
@@ -261,7 +323,7 @@ int main(int argc, char** argv){
     }
     #if defined(WINVER)
       if(FileName[1] != '\\' && FileName[1] != ':'){
-        FileName.insert(0, Path);
+        FileName.insert(0, UTF_Converter.UTF8((const char16_t*)Path));
       }
     #elif defined(__linux__)
       if(FileName[0] != '/'){
@@ -281,7 +343,7 @@ int main(int argc, char** argv){
   }else{
     #if defined(WINVER)
       if(OutputFileName[1] != '\\' && OutputFileName[1] != ':'){
-        OutputFileName.insert(0, Path);
+        OutputFileName.insert(0, UTF_Converter.UTF8((const char16_t*)Path));
       }
     #elif defined(__linux__)
       if(OutputFileName[0] != '/'){

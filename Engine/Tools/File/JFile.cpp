@@ -113,10 +113,12 @@ bool JFile::Open(ACCESS Access){
   Close();
 
   #if defined(WINVER)
+    wstring wFilename = (const wchar_t*)UTF_Converter.UTF16(Filename).c_str();
+    
     switch(Access){
       case Read:
         Handle = CreateFile(
-          Filename.c_str(),
+          wFilename.c_str(),
           GENERIC_READ,
           FILE_SHARE_READ,
           0,
@@ -132,7 +134,7 @@ bool JFile::Open(ACCESS Access){
         break;
       case Write:
         Handle = CreateFile(
-          Filename.c_str(),
+          wFilename.c_str(),
           GENERIC_WRITE,
           FILE_SHARE_READ,
           0,
@@ -148,7 +150,7 @@ bool JFile::Open(ACCESS Access){
         break;
       case Create:
         Handle = CreateFile(
-          Filename.c_str(),
+          wFilename.c_str(),
           GENERIC_WRITE,
           FILE_SHARE_READ,
           0,
@@ -164,7 +166,7 @@ bool JFile::Open(ACCESS Access){
         break;
       case WriteDevice:
         Handle = CreateFile(
-          Filename.c_str(),
+          wFilename.c_str(),
           GENERIC_WRITE,
           FILE_SHARE_READ | FILE_SHARE_WRITE,
           0,
@@ -216,19 +218,19 @@ bool JFile::Open(ACCESS Access){
 
 int JFile::FormatLastError(string* Error){
   #if defined(WINVER)
-    char Buffer[0x100];
+    wchar_t Buffer[0x100];
     int Err = GetLastError();
-  
+
     FormatMessage((unsigned long)FORMAT_MESSAGE_FROM_SYSTEM,
                   (const void*)FORMAT_MESSAGE_FROM_HMODULE,
                   (unsigned long)Err,
                   (unsigned long)0,
-                  (char*)Buffer,
+                  (wchar_t*)Buffer,
                   (unsigned long)0x100,
   		0);
     Error->assign(to_string(Err));
     Error->append(": ");
-    Error->append(Buffer);
+    Error->append(UTF_Converter.UTF8((const char16_t*)Buffer));
   
     return Err;
   
@@ -251,19 +253,20 @@ void JFile::ShowLastError(){
   #if defined(WINVER)
     s.insert(0, ":\r\n");
     s.insert(0, Filename);
+    wstring ws = (const wchar_t*)UTF_Converter.UTF16(s).c_str();
   
     if(Err){
       MessageBox(
         0,
-        s.c_str(),
-        "Error",
+        ws.c_str(),
+        L"Error",
         MB_ICONERROR
       );
     }else{
       MessageBox(
         0,
-        s.c_str(),
-        "Info",
+        ws.c_str(),
+        L"Info",
         MB_ICONINFORMATION
       );
     }
@@ -295,7 +298,12 @@ void JFile::SetFilename(const char* Value){
       t.assign("Invalid path and filename: ");
       t.append(Value);
       t.append(1, '.');
-      MessageBox(0, t.c_str(), "Error", MB_ICONERROR);
+      MessageBox(
+        0,
+        (const wchar_t*)UTF_Converter.UTF16(t).c_str(),
+        L"Error",
+        MB_ICONERROR
+      );
       Filename.clear();
       return;
     }
