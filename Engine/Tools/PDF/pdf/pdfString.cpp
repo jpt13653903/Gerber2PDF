@@ -70,30 +70,20 @@ void pdfString::Set(
   int Minute,
   int Second
 ){
-  Value.clear();
+  char s[0x100];
 
-  Value.append(1, 'D');
-  Value.append(1, ':');
+  if(Month > 0){
+    if(Day > 0){
+      sprintf(s, "D:%04d%02d%02d%02d%02d%02d",
+              Year, Month, Day, Hour, Minute, Second);
+    }else{
+      sprintf(s, "D:%04d%02d", Year, Month);
+    }
+  }else{
+    sprintf(s, "D:%04d", Year);
+  }
 
-  Value.append(1, Year % 10); Year /= 10;
-  Value.append(1, Year % 10); Year /= 10;
-  Value.append(1, Year % 10); Year /= 10;
-  Value.append(1, Year % 10);
-
-  Value.append(1, Month % 10); Month /= 10;
-  Value.append(1, Month % 10);
-
-  Value.append(1, Day % 10); Day /= 10;
-  Value.append(1, Day % 10);
-
-  Value.append(1, Hour % 10); Hour /= 10;
-  Value.append(1, Hour % 10);
-
-  Value.append(1, Minute % 10); Minute /= 10;
-  Value.append(1, Minute % 10);
-
-  Value.append(1, Second % 10); Second /= 10;
-  Value.append(1, Second % 10);
+  Value.assign(s);
 }
 //------------------------------------------------------------------------------
 
