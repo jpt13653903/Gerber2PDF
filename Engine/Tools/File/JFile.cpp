@@ -21,8 +21,10 @@
 #include "JFile.h"
 //---------------------------------------------------------------------------
 
+using namespace std;
+//---------------------------------------------------------------------------
+
 JFile::JFile(){
-  Filename.Set("");
   Handle        = 0;
   CurrentAccess = Read;
 }
@@ -63,23 +65,23 @@ JFile::JFile(){
 #endif
 //---------------------------------------------------------------------------
 
-bool JFile::LineInput(JString* s){
+bool JFile::LineInput(string* s){
   unsigned long X;
   char          x[2];
-  s->Set("");
+  s->clear();
   if (!ReadFile(Handle, x, 1, &X, 0)) return false;
   if (X <= 0) return false;
   x[1] = x[0];
   while(true){
     if (!ReadFile(Handle, x, 1, &X, 0)) return true;
     if (X <= 0){
-      s->Append(x[1]);
+      s->append(1, x[1]);
       return true;
     }
     if (((int)x[1] == 13 && (int)x[0] == 10) ||  // return + line feed
          (int)x[1] == 10 ||                      // line feed
          (int)x[1] == 26) return true;           // end of file
-    s->Append(x[1]);
+    s->append(1, x[1]);
     x[1] = x[0];
   }
 }
@@ -87,10 +89,10 @@ bool JFile::LineInput(JString* s){
 
 bool JFile::LinePrint(const char* s){
   unsigned long X;
-  JString       x;
-  x.Set(s);
-  x.Append("\r\n");
-  return WriteFile(Handle, x.String, x.GetLength(), &X, 0);
+  string        x;
+  x.assign(s);
+  x.append("\r\n");
+  return WriteFile(Handle, x.c_str(), x.length(), &X, 0);
 }
 //---------------------------------------------------------------------------
 
@@ -114,7 +116,7 @@ bool JFile::Open(ACCESS Access){
     switch(Access){
       case Read:
         Handle = CreateFile(
-          Filename.String,
+          Filename.c_str(),
           GENERIC_READ,
           FILE_SHARE_READ,
           0,
@@ -130,7 +132,7 @@ bool JFile::Open(ACCESS Access){
         break;
       case Write:
         Handle = CreateFile(
-          Filename.String,
+          Filename.c_str(),
           GENERIC_WRITE,
           FILE_SHARE_READ,
           0,
@@ -146,7 +148,7 @@ bool JFile::Open(ACCESS Access){
         break;
       case Create:
         Handle = CreateFile(
-          Filename.String,
+          Filename.c_str(),
           GENERIC_WRITE,
           FILE_SHARE_READ,
           0,
@@ -162,7 +164,7 @@ bool JFile::Open(ACCESS Access){
         break;
       case WriteDevice:
         Handle = CreateFile(
-          Filename.String,
+          Filename.c_str(),
           GENERIC_WRITE,
           FILE_SHARE_READ | FILE_SHARE_WRITE,
           0,
@@ -182,19 +184,19 @@ bool JFile::Open(ACCESS Access){
   #elif defined(__linux__)
     switch(Access){
       case Read:
-        Handle = fopen(Filename.String, "rb");
+        Handle = fopen(Filename.c_str(), "rb");
         if(!Handle) return false;
         CurrentAccess = Read;
         break;
 
       case Write:
-        Handle = fopen(Filename.String, "wb");
+        Handle = fopen(Filename.c_str(), "wb");
         if(!Handle) return false;
         CurrentAccess = Write;
         break;
 
       case Create:
-        Handle = fopen(Filename.String, "wb");
+        Handle = fopen(Filename.c_str(), "wb");
         if(!Handle) return false;
         CurrentAccess = Create;
         break;
@@ -212,7 +214,7 @@ bool JFile::Open(ACCESS Access){
 }
 //---------------------------------------------------------------------------
 
-int JFile::FormatLastError(JString* Error){
+int JFile::FormatLastError(string* Error){
   #if defined(WINVER)
     char Buffer[0x100];
     int Err = GetLastError();
@@ -224,16 +226,16 @@ int JFile::FormatLastError(JString* Error){
                   (char*)Buffer,
                   (unsigned long)0x100,
   		0);
-    Error->Set(Err);
-    Error->Append(": ");
-    Error->Append(Buffer);
+    Error->assign(to_string(Err));
+    Error->append(": ");
+    Error->append(Buffer);
   
     return Err;
   
   #elif defined(__linux__)
-    Error->Set(errno);
-    Error->Append(": ");
-    Error->Append(strerror(errno));
+    Error->assign(errno);
+    Error->append(": ");
+    Error->append(strerror(errno));
 
     return errno;
   #endif
@@ -241,75 +243,75 @@ int JFile::FormatLastError(JString* Error){
 //------------------------------------------------------------------------------
 
 void JFile::ShowLastError(){
-  int Err;
-  JString s;
+  int    Err;
+  string s;
 
   Err = FormatLastError(&s);
 
   #if defined(WINVER)
-    s.Prefix(":\r\n");
-    s.Prefix(Filename.String);
+    s.insert(0, ":\r\n");
+    s.insert(0, Filename);
   
     if(Err){
       MessageBox(
         0,
-        s.String,
+        s.c_str(),
         "Error",
         MB_ICONERROR
       );
     }else{
       MessageBox(
         0,
-        s.String,
+        s.c_str(),
         "Info",
         MB_ICONINFORMATION
       );
     }
   #elif defined(__linux__)
-    if(Err) printf("Error:\n  %s\n  %s", s.String, Filename.String);
-    else    printf("Info:\n  %s\n  %s" , s.String, Filename.String);
+    if(Err) printf("Error:\n  %s\n  %s", s.c_str(), Filename.c_str());
+    else    printf("Info:\n  %s\n  %s" , s.c_str(), Filename.c_str());
   #endif
 }
 //---------------------------------------------------------------------------
 
-char* JFile::GetFilename(){
-  return Filename.String;
+const char* JFile::GetFilename(){
+  return Filename.c_str();
 }
 //---------------------------------------------------------------------------
 
 void JFile::SetFilename(const char* Value){
   Close();
 
-  Filename.Set(Value);
+  Filename.assign(Value);
 
   #if defined(WINVER)
-    if(Filename.GetLength() < 3){
-      Filename.Set("");
+    if(Filename.length() < 3){
+      Filename.clear();
       return;
     }
     if((Value[2] != ':'  || Value[3] != '\\') &&
        (Value[1] != '\\' && Value[2] != '\\')){
-      JString t;
-      t.Set("Invalid path and filename: ");
-      t.Append(Value);
-      t.Append('.');
-      MessageBox(0, t.String, "Error", MB_ICONERROR);
-      Filename.Set("");
+      string t;
+      t.assign("Invalid path and filename: ");
+      t.append(Value);
+      t.append(1, '.');
+      MessageBox(0, t.c_str(), "Error", MB_ICONERROR);
+      Filename.clear();
       return;
     }
   #endif
 }
 //---------------------------------------------------------------------------
 
-bool JFile::ReadLine(JString* Line){
+bool JFile::ReadLine(string* Line){
   if(!Handle){
-    Line->Set("");
+    Line->clear();
     return false;
   }
   if(!CurrentAccess){
     return LineInput(Line);
   }else{
-    Line->Set("");
+    Line->clear();
     return false;
   }
 }

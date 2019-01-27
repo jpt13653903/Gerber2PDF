@@ -37,7 +37,7 @@
 #endif
 //---------------------------------------------------------------------------
 
-#include "JString.h"
+#include <string>
 //---------------------------------------------------------------------------
 
 class JFile{
@@ -56,23 +56,23 @@ class JFile{
     #elif defined(__linux__)
       FILE*  Handle;
     #endif
-    ACCESS  CurrentAccess;
-    JString Filename;
+    ACCESS      CurrentAccess;
+    std::string Filename;
 //---------------------------------------------------------------------------
 
-    bool LineInput(JString*    s);
-    bool LinePrint(const char* s);
+    bool LineInput(std::string* s);
+    bool LinePrint(const char*  s);
 //---------------------------------------------------------------------------
 
   public:
     JFile();
    ~JFile();
 
-    int  FormatLastError(JString*    Error);
+    int  FormatLastError(std::string* Error);
     void ShowLastError  ();
-    bool Open           (ACCESS      Access);
-    bool ReadLine       (JString*    Line);
-    bool WriteLine      (const char* Value);
+    bool Open           (ACCESS       Access);
+    bool ReadLine       (std::string* Line);
+    bool WriteLine      (const char*  Value);
 
     unsigned long ReadBuffer(
       char*         Buffer,
@@ -88,7 +88,7 @@ class JFile{
     void Close();
 //---------------------------------------------------------------------------
 
-    char*       GetFilename  ();
+    const char* GetFilename  ();
     void        SetFilename  (const char* Value);
     long double GetSize      ();
 };

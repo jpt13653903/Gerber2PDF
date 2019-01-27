@@ -21,6 +21,9 @@
 #include "main.h"
 //------------------------------------------------------------------------------
 
+using namespace std;
+//------------------------------------------------------------------------------
+
 bool SilentExit = false;
 //------------------------------------------------------------------------------
 
@@ -77,15 +80,15 @@ int main(int argc, char** argv){
   int j;
   int Result;
 
-  JString OutputFileName;
-  JString FileName;
+  string OutputFileName;
+  string FileName;
 
   int arg;
 
   if(argc < 2){
     printf(
       "Gerber2PDF, Version %d.%d\n"
-      "Built on "__DATE__" at "__TIME__"\n"
+      "Built on " __DATE__ " at " __TIME__ "\n"
       "\n"
       "Copyright (C) John-Philip Taylor\n"
       "jpt13653903@gmail.com\n"
@@ -168,7 +171,7 @@ int main(int argc, char** argv){
     // Check for options
     if(argv[arg][0] == '-'){
       if(StringStart(argv[arg]+1, "output=")){
-        OutputFileName.Set(argv[arg]+8);
+        OutputFileName.assign(argv[arg]+8);
 
       }else if(StringStart(argv[arg]+1, "colour=")){
         int i = 8;
@@ -251,44 +254,44 @@ int main(int argc, char** argv){
     }
 
     // Read the gerber
-    FileName.Set(argv[arg]);
-    if(FileName.GetLength() < 2){
+    FileName.assign(argv[arg]);
+    if(FileName.length() < 2){
       Engine.ConvertStrokesToFills = false;
       continue;
     }
     #if defined(WINVER)
-      if(FileName.String[1] != '\\' && FileName.String[1] != ':'){
-        FileName.Prefix(Path);
+      if(FileName[1] != '\\' && FileName[1] != ':'){
+        FileName.insert(0, Path);
       }
     #elif defined(__linux__)
-      if(FileName.String[0] != '/'){
-        FileName.Prefix(Path);
+      if(FileName[0] != '/'){
+        FileName.insert(0, Path);
       }
     #endif
 
-    Result = Engine.Run(FileName.String, argv[arg]);
+    Result = Engine.Run(FileName.c_str(), argv[arg]);
     if(Result){
       Pause();
       return Result;
     }
   }
 
-  if(!OutputFileName.GetLength()){
-    OutputFileName.Set(FileName.String);
+  if(!OutputFileName.length()){
+    OutputFileName.assign(FileName.c_str());
   }else{
     #if defined(WINVER)
-      if(OutputFileName.String[1] != '\\' && OutputFileName.String[1] != ':'){
-        OutputFileName.Prefix(Path);
+      if(OutputFileName[1] != '\\' && OutputFileName[1] != ':'){
+        OutputFileName.insert(0, Path);
       }
     #elif defined(__linux__)
-      if(OutputFileName.String[0] != '/'){
-        OutputFileName.Prefix(Path);
+      if(OutputFileName[0] != '/'){
+        OutputFileName.insert(0, Path);
       }
     #endif
   }
-  OutputFileName.Append(".pdf");
+  OutputFileName.append(".pdf");
 
-  Engine.Finish(OutputFileName.String);
+  Engine.Finish(OutputFileName.c_str());
 
   Pause();
   return 0;

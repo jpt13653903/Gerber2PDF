@@ -28,6 +28,7 @@
 //------------------------------------------------------------------------------
 
 #include <map>
+#include <string>
 //------------------------------------------------------------------------------
 
 #include "JPDF.h"
@@ -68,7 +69,6 @@ struct ENGINE{
     OPAQUE_STACK* OpaqueStack;
 
     struct APERTURE{
-      int       Index;
       pdfForm*  Aperture;
       APERTURE* Next;
     };
@@ -87,9 +87,9 @@ struct ENGINE{
       pdfForm* Form;
       LAYER*   Next;
 
-      bool    Negative;
-      double  Left, Bottom, Right, Top;
-      JString Title;
+      bool        Negative;
+      double      Left, Bottom, Right, Top;
+      std::string Title;
 
       LAYER();
      ~LAYER();
