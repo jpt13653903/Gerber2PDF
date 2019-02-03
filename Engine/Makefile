@@ -4,12 +4,12 @@ Options = -std=c++11 -Wall -fexceptions -O2 -municode
 
 Includes   = -ITools/Deflate
 Includes  += -ITools/File
-Includes  += -ITools/UTF_Converter
 Includes  += -ITools/Gerber
 Includes  += -ITools/Gerber/Gerber
 Includes  += -ITools/PDF
 Includes  += -ITools/PDF/afm
 Includes  += -ITools/PDF/pdf
+Includes  += -IToolbox/Cpp
 
 Libraries  = 
 LibInclude = 
@@ -19,7 +19,6 @@ Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=5
 
 Objects  = obj/Tools/Deflate/JDeflate.o
 Objects += obj/Tools/File/JFile.o
-Objects += obj/Tools/UTF_Converter/UTF_Converter.o
 Objects += obj/Tools/Gerber/JGerber.o
 Objects += obj/Tools/Gerber/Gerber/GerberAperture.o
 Objects += obj/Tools/Gerber/Gerber/GerberLevel.o
@@ -59,6 +58,7 @@ Objects += obj/Tools/PDF/pdf/pdfStream.o
 Objects += obj/Tools/PDF/pdf/pdfString.o
 Objects += obj/Tools/PDF/pdf/pdfType1Font.o
 Objects += obj/Tools/PDF/pdf/pdfType3Font.o
+Objects += obj/Toolbox/Cpp/UTF_Converter.o
 Objects += obj/Engine.o
 
 ifneq ($(shell uname), Linux)
@@ -67,12 +67,12 @@ endif
 
 Headers  = Tools/Deflate/*.h
 Headers += Tools/File/*.h
-Headers += Tools/UTF_Converter/*.h
 Headers += Tools/Gerber/*.h
 Headers += Tools/Gerber/Gerber/*.h
 Headers += Tools/PDF/*.h
 Headers += Tools/PDF/afm/*.h
 Headers += Tools/PDF/pdf/*.h
+Headers += Toolbox/Cpp/*.h
 Headers += *.h
 #-------------------------------------------------------------------------------
 

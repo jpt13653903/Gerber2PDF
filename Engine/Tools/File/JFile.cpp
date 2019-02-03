@@ -114,7 +114,7 @@ bool JFile::Open(ACCESS Access){
 
   #if defined(WINVER)
     wstring wFilename = (const wchar_t*)UTF_Converter.UTF16(Filename).c_str();
-    
+
     switch(Access){
       case Read:
         Handle = CreateFile(
@@ -227,13 +227,13 @@ int JFile::FormatLastError(string* Error){
                   (unsigned long)0,
                   (wchar_t*)Buffer,
                   (unsigned long)0x100,
-  		0);
+                  0);
     Error->assign(to_string(Err));
     Error->append(": ");
     Error->append(UTF_Converter.UTF8((const char16_t*)Buffer));
-  
+
     return Err;
-  
+
   #elif defined(__linux__)
     Error->assign(errno);
     Error->append(": ");
@@ -254,7 +254,7 @@ void JFile::ShowLastError(){
     s.insert(0, ":\r\n");
     s.insert(0, Filename);
     wstring ws = (const wchar_t*)UTF_Converter.UTF16(s).c_str();
-  
+
     if(Err){
       MessageBox(
         0,
