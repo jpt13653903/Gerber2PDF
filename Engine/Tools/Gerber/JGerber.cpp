@@ -1792,20 +1792,19 @@ bool JGerber::LoadGerber(const char* FileName){
 
   StartOfLevel = false;
 
-  File.SetFilename(FileName);
-  if(File.Open(JFile::Read)){
+  if(File.Open(FileName, FILE_WRAPPER::faRead)){
     Length     = File.GetSize();
     Buffer     = new char[Length];
     Index      = 0;
     LineNumber = 1;
-    File.ReadBuffer(Buffer, Length, &b);
+    File.Read(Buffer, Length);
     File.Close();
     b = GetGerber();
     delete[] Buffer;
     return b;
 
   }else{
-    File.ShowLastError();
+    error("%s", GetErrorString(GetLastError()));
   }
 
   return false;

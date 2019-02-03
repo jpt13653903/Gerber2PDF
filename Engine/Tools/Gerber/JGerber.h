@@ -25,7 +25,7 @@
 #include <stdio.h>
 //------------------------------------------------------------------------------
 
-#include "JFile.h"
+#include "FileWrapper.h"
 
 #include "Gerber/GerberAperture.h"
 #include "Gerber/GerberLevel.h"
@@ -36,7 +36,7 @@ extern bool GerberWarnings;
 
 class JGerber{
 private:
-  JFile File;
+  FILE_WRAPPER File;
 
   char*    Buffer;
   unsigned Length;

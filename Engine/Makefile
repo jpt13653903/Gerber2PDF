@@ -3,7 +3,6 @@ Options = -std=c++11 -Wall -fexceptions -O2 -municode
 #-------------------------------------------------------------------------------
 
 Includes   = -ITools/Deflate
-Includes  += -ITools/File
 Includes  += -ITools/Gerber
 Includes  += -ITools/Gerber/Gerber
 Includes  += -ITools/PDF
@@ -18,7 +17,6 @@ LibInclude =
 Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=5
 
 Objects  = obj/Tools/Deflate/JDeflate.o
-Objects += obj/Tools/File/JFile.o
 Objects += obj/Tools/Gerber/JGerber.o
 Objects += obj/Tools/Gerber/Gerber/GerberAperture.o
 Objects += obj/Tools/Gerber/Gerber/GerberLevel.o
@@ -58,6 +56,8 @@ Objects += obj/Tools/PDF/pdf/pdfStream.o
 Objects += obj/Tools/PDF/pdf/pdfString.o
 Objects += obj/Tools/PDF/pdf/pdfType1Font.o
 Objects += obj/Tools/PDF/pdf/pdfType3Font.o
+Objects += obj/Toolbox/Cpp/General.o
+Objects += obj/Toolbox/Cpp/FileWrapper.o
 Objects += obj/Toolbox/Cpp/UTF_Converter.o
 Objects += obj/Engine.o
 
@@ -66,7 +66,6 @@ Resources = obj/Resources/resource.res
 endif
 
 Headers  = Tools/Deflate/*.h
-Headers += Tools/File/*.h
 Headers += Tools/Gerber/*.h
 Headers += Tools/Gerber/Gerber/*.h
 Headers += Tools/PDF/*.h
