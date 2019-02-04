@@ -1,5 +1,9 @@
 CC      = g++
-Options = -std=c++11 -Wall -fexceptions -O2 -municode
+Options = -std=c++11 -Wall -fexceptions -O2
+
+ifeq ($(OS), Windows_NT)
+  Options += -municode
+endif
 #-------------------------------------------------------------------------------
 
 Includes   = -ITools/Deflate
@@ -61,8 +65,8 @@ Objects += obj/Toolbox/Cpp/FileWrapper.o
 Objects += obj/Toolbox/Cpp/UTF_Converter.o
 Objects += obj/Engine.o
 
-ifneq ($(shell uname), Linux)
-Resources = obj/Resources/resource.res
+ifeq ($(OS), Windows_NT)
+  Resources = obj/Resources/resource.res
 endif
 
 Headers  = Tools/Deflate/*.h
@@ -78,10 +82,10 @@ Headers += *.h
 .PHONY: clean all
 .SECONDARY:
 
-ifeq ($(shell uname), Linux)
-all: bin/Gerber2pdf
-else
+ifeq ($(OS), Windows_NT)
 all: bin/Gerber2pdf.exe
+else
+all: bin/Gerber2pdf
 endif
 
 clean:
