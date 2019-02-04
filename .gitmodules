@@ -1,3 +1,7 @@
 [submodule "GUI/imgui"]
 	path = GUI/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "Engine/Toolbox"]
+	path = Engine/Toolbox
+	url = https://github.com/jpt13653903/Toolbox.git
+	branch = master

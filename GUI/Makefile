@@ -99,10 +99,9 @@ Options     = -Wall -fexceptions -O2 -std=c++14
 Includes   += -Iimgui -Iimgui/examples -Iimgui/misc/cpp
 Includes   += -I$(Engine)
 Includes   += -I$(Engine)/Tools/Deflate
-Includes   += -I$(Engine)/Tools/File
 Includes   += -I$(Engine)/Tools/Gerber
 Includes   += -I$(Engine)/Tools/PDF
-Includes   += -I$(Engine)/Tools/String
+Includes   += -I$(Engine)/Toolbox/Cpp
 
 Libraries  += -lEngine -lm
 LibInclude += -L$(Engine)/obj

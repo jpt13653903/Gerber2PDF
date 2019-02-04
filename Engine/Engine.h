@@ -27,6 +27,10 @@
 #endif
 //------------------------------------------------------------------------------
 
+#include <map>
+#include <string>
+//------------------------------------------------------------------------------
+
 #include "JPDF.h"
 #include "JGerber.h"
 //------------------------------------------------------------------------------
@@ -83,9 +87,9 @@ struct ENGINE{
       pdfForm* Form;
       LAYER*   Next;
 
-      bool    Negative;
-      double  Left, Bottom, Right, Top;
-      JString Title;
+      bool        Negative;
+      double      Left, Bottom, Right, Top;
+      std::string Title;
 
       LAYER();
      ~LAYER();
@@ -116,12 +120,13 @@ struct ENGINE{
   private: // Internal State
     JPDF pdf;
 
-    APERTURE* ApertureStack;
-    APERTURE* TempApertureStack;
+    // Use an associative array because the Gerber apertures need not be contiguous
+    typedef std::map<int, pdfForm*> pdfFormArray;
 
-    int      ApertureCount;
-    pdfForm* Apertures[1000];
-    pdfForm* CurrentAperture;
+    APERTURE*    ApertureStack;
+    int          ApertureCount;
+    pdfFormArray Apertures;
+    pdfForm*     CurrentAperture;
 
     pdfOpaque* Opaque;
 

@@ -1520,14 +1520,6 @@ bool JGerber::Parameter(char Delimiter){
       Index += 2;
       if(!AxisSelect()) return false;
 
-    }else if(Buffer[Index] == 'A' && Buffer[Index+1] == 'V'){
-      Index += 2;
-      if(!Attribute()) return false;
-
-    }else if(Buffer[Index] == 'D' && Buffer[Index+1] == 'R'){
-      Index += 2;
-      if(!Attribute()) return false;
-
     }else if(Buffer[Index] == 'F' && Buffer[Index+1] == 'S'){
       Index += 2;
       if(!FormatStatement()) return false;
@@ -1619,15 +1611,19 @@ bool JGerber::Parameter(char Delimiter){
 
     }else if(Buffer[Index] == 'T' && Buffer[Index+1] == 'A'){
       Index += 2;
-      if(!Attribute()) return false;
+      if(!Attribute()) return false; // Aperture Attribute
 
     }else if(Buffer[Index] == 'T' && Buffer[Index+1] == 'D'){
       Index += 2;
-      if(!Attribute()) return false;
+      if(!Attribute()) return false; // Delete Attribute
 
     }else if(Buffer[Index] == 'T' && Buffer[Index+1] == 'F'){
       Index += 2;
-      if(!Attribute()) return false;
+      if(!Attribute()) return false; // File Attribute
+
+    }else if(Buffer[Index] == 'T' && Buffer[Index+1] == 'O'){
+      Index += 2;
+      if(!Attribute()) return false; // Object Attribute
 
     }else if(Buffer[Index] == Delimiter){
       Index++;
@@ -1796,20 +1792,19 @@ bool JGerber::LoadGerber(const char* FileName){
 
   StartOfLevel = false;
 
-  File.SetFilename(FileName);
-  if(File.Open(JFile::Read)){
+  if(File.Open(FileName, FILE_WRAPPER::faRead)){
     Length     = File.GetSize();
     Buffer     = new char[Length];
     Index      = 0;
     LineNumber = 1;
-    File.ReadBuffer(Buffer, Length, &b);
+    File.Read(Buffer, Length);
     File.Close();
     b = GetGerber();
     delete[] Buffer;
     return b;
 
   }else{
-    File.ShowLastError();
+    error("%s", GetErrorString(GetLastError()));
   }
 
   return false;

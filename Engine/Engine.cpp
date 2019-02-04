@@ -21,15 +21,18 @@
 #include "Engine.h"
 //------------------------------------------------------------------------------
 
+using namespace std;
+//------------------------------------------------------------------------------
+
 ENGINE::COLOUR::COLOUR(){
   R = G = B = A = 0;
 }
 //------------------------------------------------------------------------------
 
 ENGINE::OPAQUE_STACK::OPAQUE_STACK(double Value, int& OpaqueCount){
-  JString Name;
-  Name.Set('O'), Name.Append(++OpaqueCount);
-  Opaque = new pdfOpaque(Name.String);
+  string Name;
+  Name.assign(1, 'O'), Name.append(to_string(++OpaqueCount));
+  Opaque = new pdfOpaque(Name.c_str());
   Next   = 0;
   Opaque->Opacity(Value);
 }
@@ -154,6 +157,8 @@ ENGINE::~ENGINE(){
   if(Outline) delete Outline;
 
   delete Opaque;
+
+  APERTURE* TempApertureStack;
 
   while(ApertureStack){
     TempApertureStack = ApertureStack;
@@ -356,7 +361,8 @@ int ENGINE::RenderLayer(
   GerberRender*   Render   = 0;
   GerberAperture* Aperture = 0;
 
-  JString String;
+  string    String;
+  APERTURE* TempApertureStack;
 
   Render = Level->Render();
 
@@ -491,12 +497,13 @@ int ENGINE::RenderLayer(
           RectW          = Aperture->Right - Aperture->Left;
           RectH          = Aperture->Top   - Aperture->Bottom;
 
-          if(Apertures[Aperture->Code]){
-            CurrentAperture = Apertures[Aperture->Code];
+          pdfFormArray::iterator ApertureForm = Apertures.find(Aperture->Code);
+          if(ApertureForm != Apertures.end()){
+            CurrentAperture = ApertureForm->second;
           }else{
-            String.Set   ('D');
-            String.Append(++ApertureCount);
-            CurrentAperture = new pdfForm(String.String);
+            String.assign(1, 'D');
+            String.append(to_string(++ApertureCount));
+            CurrentAperture = new pdfForm(String.c_str());
             CurrentAperture->BBox.Set(
               Aperture->Left,
               Aperture->Bottom,
@@ -554,10 +561,10 @@ ENGINE::LAYER* ENGINE::NewLayer(
 
   Layer->ConvertStrokesToFills = ConvertStrokesToFills;
 
-  JString FormName;
-  FormName.Set('G');
-  FormName.Append(++GerberCount);
-  Layer->Form = new pdfForm(FormName.String);
+  string FormName;
+  FormName.assign(1, 'G');
+  FormName.append(to_string(++GerberCount));
+  Layer->Form = new pdfForm(FormName.c_str());
 
   Layer->Next = Layers;
   Layers      = Layer;
@@ -600,8 +607,8 @@ int ENGINE::Run(const char* FileName, const char* Title){
   bool   Reusing = false;
   double x, y, w, h, w2, h2;
 
-  LAYER*  Layer;
-  JString LevelName;
+  LAYER* Layer;
+  string LevelName;
 
   // Gerber Variables and Structures
   JGerber      Gerber;
@@ -616,7 +623,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
   }else{
     Layer = NewLayer(FileName, ConvertStrokesToFills);
-    Layer->Title.Set(Title);
+    Layer->Title.assign(Title);
 
     printf("\nInfo: Converting %s\n", FileName);
 
@@ -627,14 +634,14 @@ int ENGINE::Run(const char* FileName, const char* Title){
       return 0;
     }
     if(Gerber.Name){
-      Layer->Title.Set(Gerber.Name);
+      Layer->Title.assign(Gerber.Name);
     }else{
       for(
-        j  =      Layer->Title.GetLength()-1;
-        j >= 0 && Layer->Title.String[j] != '\\';
+        j  =      Layer->Title.length()-1;
+        j >= 0 && Layer->Title[j] != '\\';
         j--
       );
-      Layer->Title.Set(Layer->Title.String+j+1);
+      Layer->Title.assign(Layer->Title.c_str() + j+1);
     }
     Layer->Left     = Gerber.Left;
     Layer->Bottom   = Gerber.Bottom;
@@ -659,10 +666,10 @@ int ENGINE::Run(const char* FileName, const char* Title){
   NewPage = false;
 
   Outline = new OUTLINE(Outline);
-  Outline->Item->Title.Set  (Layer->Title.String);
-  Outline->Item->DestFit    (ThePage);
-  pdf           .AddIndirect(Outline->Item);
-  Outlines      .AddChild   (Outline->Item);
+  Outline->Item->Title.SetUnicode(Layer->Title.c_str());
+  Outline->Item->DestFit         (ThePage);
+  pdf           .AddIndirect     (Outline->Item);
+  Outlines      .AddChild        (Outline->Item);
 
   if(!ThePageUsed){
     if(TheContents) TheContents->Deflate();
@@ -744,7 +751,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
   }
 
   if(!Reusing){
-    for(j = 0; j < 1000; j++) Apertures[j] = 0;
+    Apertures.clear();
 
     Negative = Layer->Negative;
 
@@ -757,10 +764,10 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
       if(Level->CountX > 1 ||
          Level->CountY > 1 ){
-        LevelName.Set   ('L');
-        LevelName.Append(++LevelCount);
+        LevelName.assign(1, 'L');
+        LevelName.append(to_string(++LevelCount));
         TempLevelStack        = new LEVEL_FORM;
-        TempLevelStack->Level = new pdfForm(LevelName.String);
+        TempLevelStack->Level = new pdfForm(LevelName.c_str());
         TempLevelStack->Next  = LevelStack;
         LevelStack            = TempLevelStack;
 
@@ -772,7 +779,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
         );
 
         LevelStack->Level->Resources.AddOpaque(Opaque);
-        for(j = 0; j < 1000; j++) Apertures[j] = 0;
+        Apertures.clear();
         Result = RenderLayer(LevelStack->Level, LevelStack->Level, Level);
         if(Result) return Result;
 

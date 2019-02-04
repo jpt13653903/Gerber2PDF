@@ -22,15 +22,15 @@
 #define AFMPARSER_H
 //------------------------------------------------------------------------------
 
-#include "JFile.h"
+#include "FileWrapper.h"
 //------------------------------------------------------------------------------
 
 class afmParser{
 private:
-  JFile    File;
-  char*    Buffer;
-  unsigned Index;
-  unsigned Length;
+  FILE_WRAPPER File;
+  char*        Buffer;
+  unsigned     Index;
+  unsigned     Length;
 
   bool FindEnd(char* Key);
 

@@ -199,22 +199,20 @@ void pdfPNG::Decode(const unsigned char* Buffer, unsigned Length){
 
 bool pdfPNG::LoadFromFile(const char* Filename){
   int   Length;
-  bool  b;
   char* Buffer;
-  JFile File;
+  FILE_WRAPPER File;
 
-  File.SetFilename(Filename);
-  if(File.Open(JFile::Read)){
+  if(File.Open(Filename, FILE_WRAPPER::faRead)){
     Length = File.GetSize();
     Buffer = new char[Length];
-    File.ReadBuffer(Buffer, Length, &b);
+    File.Read(Buffer, Length);
     Decode((unsigned char*)Buffer, Length);
     File.Close();
     delete[] Buffer;
     return true;
 
   }else{
-    File.ShowLastError();
+    error("%s", GetErrorString(GetLastError()));
   }
 
   return false;
