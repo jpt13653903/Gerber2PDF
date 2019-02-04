@@ -22,7 +22,7 @@
 #define PDF_H
 //------------------------------------------------------------------------------
 
-#include "JFile.h"
+#include "FileWrapper.h"
 
 #include "pdf/pdfArray.h"
 #include "pdf/pdfBool.h"
@@ -58,7 +58,7 @@ private:
 
   pdfIndirect Info;
 
-  JFile File;
+  FILE_WRAPPER File;
 
 public:
   JPDF();
