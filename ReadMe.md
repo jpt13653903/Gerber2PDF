@@ -24,6 +24,11 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw
 
 ## Changes:
 
+#### 2019-03-02
+
+- Version-bump to 1.6
+- Removed the background colour limitation.  The same Gerber can now be rendered in different background colours on different pages.
+
 #### 2019-02-04
 
 - Added Unicode file-name support

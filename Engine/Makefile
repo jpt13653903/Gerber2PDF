@@ -18,7 +18,7 @@ Libraries  =
 LibInclude = 
 #-------------------------------------------------------------------------------
 
-Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=5
+Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=6
 
 Objects  = obj/Tools/Deflate/JDeflate.o
 Objects += obj/Tools/Gerber/JGerber.o
