@@ -41,7 +41,7 @@ public:
   pdfForm(const char* Name);
 
   // The "Name" field is deprecated, but still required as a member of this 
-  // class for resources loading purposes.
+  // class for resource loading purposes.
   pdfName      Name;
   pdfRectangle BBox;
 

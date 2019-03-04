@@ -1,4 +1,13 @@
-CC      = g++
+CXX = g++
+AR  = ar
+
+ifdef CROSS
+    # Run make as `make CROSS='TRUE'`
+    # for cross compiling from Linux to Windows
+    CXX = i686-w64-mingw32-g++
+    AR  = i686-w64-mingw32-ar
+endif
+
 Options = -std=c++11 -Wall -fexceptions -O2
 
 ifeq ($(OS), Windows_NT)
@@ -96,25 +105,25 @@ clean:
 
 bin/Gerber2pdf: main.cpp main.h obj/libEngine.a
 	mkdir -p bin
-	$(CC) $(Options) $(Version) $(Includes) $< -s -Lobj -lEngine -o $@
+	$(CXX) $(Options) $(Version) $(Includes) $< -s -Lobj -lEngine -o $@
 
 bin/Gerber2pdf.exe: main.cpp main.h obj/libEngine.a $(Resources)
 	mkdir -p bin
-	$(CC) $(Options) $(Version) $(Includes) $< -s $(Resources) -Lobj -lEngine -o $@
+	$(CXX) $(Options) $(Version) $(Includes) $< -s $(Resources) -Lobj -lEngine -o $@
 #-------------------------------------------------------------------------------
 
 # Libraries
 
 obj/libEngine.a: $(Objects)
 	mkdir -p $(@D)
-	ar rcs $@ $(Objects)
+	$(AR) rcs $@ $(Objects)
 #-------------------------------------------------------------------------------
 
 # Objects
 
 obj/%.o: %.cpp $(Headers)
 	mkdir -p $(@D)
-	$(CC) $(Options) $(Version) $(Defines) -c $(Includes) $< -o $@
+	$(CXX) $(Options) $(Version) $(Defines) -c $(Includes) $< -o $@
 #-------------------------------------------------------------------------------
 
 # Resources

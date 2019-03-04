@@ -5,12 +5,13 @@ else
 endif
 #-------------------------------------------------------------------------------
 
-.PHONY: clean all release Engine
+.PHONY: clean all release Engine GUI
 
-all: Engine
+all: Engine GUI
 
 clean:
 	$(make) -C Engine clean
+	$(make) -C GUI    clean
 
 release: all
 	scp ReadMe.md Engine/bin/* jptaylor@frs.sourceforge.net:/home/frs/project/gerber2pdf/
@@ -18,5 +19,8 @@ release: all
 
 Engine:
 	$(make) -C Engine all
+
+GUI:
+	$(make) -C GUI all
 #-------------------------------------------------------------------------------
 
