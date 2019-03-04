@@ -26,12 +26,7 @@ The -silentexit option disables the pause on exit.
 The -nowarnings option disables deprecated feature warnings.
 
 The optional -background colour is either transparent or opaque.  The
-threshold is A=128.  Set it just before the target page is created.  Take
-care when using this option, because this background colour is used to
-draw the copper pour cut-outs.  That same colour will therefore apply
-for every subsequent use of that layer, irrespective of the "current"
-background colour.  To work around this limitation, use separate Gerber
-files for every different background colour.
+threshold is A=128.  Set it just before the target page is created.
 
 The -strokes2fills option converts all strokes to fills for the next
 file, thereby converting outlines to areas.  It resets to default

@@ -29,6 +29,22 @@ ENGINE::COLOUR::COLOUR(){
 }
 //------------------------------------------------------------------------------
 
+void ENGINE::COLOUR::operator=(COLOUR& Colour){
+  R = Colour.R;
+  G = Colour.G;
+  B = Colour.B;
+  A = Colour.A;
+}
+//------------------------------------------------------------------------------
+
+bool ENGINE::COLOUR::operator== (COLOUR& Colour){
+  return R == Colour.R &&
+         G == Colour.G &&
+         B == Colour.B &&
+         A == Colour.A;
+}
+//------------------------------------------------------------------------------
+
 ENGINE::OPAQUE_STACK::OPAQUE_STACK(double Value, int& OpaqueCount){
   string Name;
   Name.assign(1, 'O'), Name.append(to_string(++OpaqueCount));
@@ -547,7 +563,8 @@ int ENGINE::RenderLayer(
 
 ENGINE::LAYER* ENGINE::NewLayer(
   const char* Filename,
-  bool        ConvertStrokesToFills
+  bool        ConvertStrokesToFills,
+  COLOUR&     Light
 ){
   static int GerberCount = 0;
 
@@ -560,6 +577,7 @@ ENGINE::LAYER* ENGINE::NewLayer(
   Layer->Filename[j] = 0;
 
   Layer->ConvertStrokesToFills = ConvertStrokesToFills;
+  Layer->Light                 = Light;
 
   string FormName;
   FormName.assign(1, 'G');
@@ -588,13 +606,15 @@ static bool StringsEqual(const char* s1, const char* s2){
 
 ENGINE::LAYER* ENGINE::FindLayer(
   const char* Filename,
-  bool        ConvertStrokesToFills
+  bool        ConvertStrokesToFills,
+  COLOUR&     Light
 ){
   LAYER* Layer = Layers;
   while(Layer){
     if(
       StringsEqual(Layer->Filename, Filename) &&
-      Layer->ConvertStrokesToFills == ConvertStrokesToFills
+      Layer->ConvertStrokesToFills == ConvertStrokesToFills &&
+      Layer->Light                 == Light
     ) return Layer;
     Layer = Layer->Next;
   }
@@ -616,13 +636,13 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
   LEVEL_FORM* TempLevelStack;
 
-  Layer = FindLayer(FileName, ConvertStrokesToFills);
+  Layer = FindLayer(FileName, ConvertStrokesToFills, Light);
   if(Layer){
     printf("\nInfo: Using previous conversion of %s\n", FileName);
     Reusing = true;
 
   }else{
-    Layer = NewLayer(FileName, ConvertStrokesToFills);
+    Layer = NewLayer(FileName, ConvertStrokesToFills, Light);
     Layer->Title.assign(Title);
 
     printf("\nInfo: Converting %s\n", FileName);

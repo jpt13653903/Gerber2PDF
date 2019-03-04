@@ -10,6 +10,10 @@ Download and run [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/fi
 
 A batch-file or script is recommended, but a simple "Open with..." link will also work, resulting in a single Gerber converted to a PDF with the same file-name as the Gerber.
 
+## Malware Warning:
+
+The SourceForge automated malware warnings are set up to be quite aggressive, with a high probability of false-positives.  My suggestion is to trust your personal antivirus software instead.
+
 ## Source:
 
 The source is available from the [git repository](https://sourceforge.net/p/gerber2pdf/code/) and [GitHub](https://github.com/jpt13653903/Gerber2PDF).
@@ -19,6 +23,16 @@ To build on Linux, run `make`.
 To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw32-make` from within a POSIX-like environment, such as [Git Bash](https://git-scm.com/).
 
 ## Changes:
+
+#### 2019-03-02
+
+- Version-bump to 1.6
+- Removed the background colour limitation.  The same Gerber can now be rendered in different background colours on different pages.
+
+#### 2019-02-04
+
+- Added Unicode file-name support
+- Various internal architecture improvements (see Git log for details)
 
 #### 2019-01-13
 

@@ -52,6 +52,8 @@ struct ENGINE{
     struct COLOUR{
       double R, G, B, A;
       COLOUR();
+      void operator=  (COLOUR& Colour);
+      bool operator== (COLOUR& Colour);
     } Light, Dark;
 
     bool ConvertStrokesToFills;
@@ -84,6 +86,7 @@ struct ENGINE{
     struct LAYER{
       char*    Filename;
       bool     ConvertStrokesToFills;
+      COLOUR   Light;
       pdfForm* Form;
       LAYER*   Next;
 
@@ -181,11 +184,13 @@ struct ENGINE{
     );
     LAYER* NewLayer(
       const char* Filename,
-      bool        ConvertStrokesToFills
+      bool        ConvertStrokesToFills,
+      COLOUR&     Light
     );
     LAYER* FindLayer(
       const char* Filename,
-      bool        ConvertStrokesToFills
+      bool        ConvertStrokesToFills,
+      COLOUR&     Light
     );
 //------------------------------------------------------------------------------
 
