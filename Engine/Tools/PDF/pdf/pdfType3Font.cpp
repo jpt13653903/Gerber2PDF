@@ -70,16 +70,16 @@ pdfType3Font::~pdfType3Font(){
 void pdfType3Font::Update(){
   Dictionary.Clear();
 
-                           Dictionary.AddEntry("Type"      , &Type);
-                           Dictionary.AddEntry("Subtype"   , &Subtype);
-                           Dictionary.AddEntry("Widths"    , &Widths);
-                           Dictionary.AddEntry("FontBBox"  , &FontBBox);
-                           Dictionary.AddEntry("Encoding"  , &Encoding);
-                           Dictionary.AddEntry("LastChar"  , &LastChar);
-                           Dictionary.AddEntry("CharProcs" , &CharProcs);
-                           Dictionary.AddEntry("FirstChar" , &FirstChar);
-  if(Resources.GetCount()) Dictionary.AddEntry("Resources" , &Resources);
-                           Dictionary.AddEntry("FontMatrix", &FontMatrix);
+                            Dictionary.AddEntry("Type"      , &Type      );
+                            Dictionary.AddEntry("Subtype"   , &Subtype   );
+                            Dictionary.AddEntry("Widths"    , &Widths    );
+                            Dictionary.AddEntry("FontBBox"  , &FontBBox  );
+                            Dictionary.AddEntry("Encoding"  , &Encoding  );
+                            Dictionary.AddEntry("LastChar"  , &LastChar  );
+                            Dictionary.AddEntry("CharProcs" , &CharProcs );
+                            Dictionary.AddEntry("FirstChar" , &FirstChar );
+  if(Resources.GetCount()){ Dictionary.AddEntry("Resources" , &Resources ); }
+                            Dictionary.AddEntry("FontMatrix", &FontMatrix);
 }
 //------------------------------------------------------------------------------
 

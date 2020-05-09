@@ -1409,12 +1409,12 @@ unsigned JDeflate::DecodeDistance(
 //------------------------------------------------------------------------------
 
 unsigned char* JDeflate::Inflate(unsigned char* Buffer, unsigned* Length){
-  char     CM;
-  char     CInfo;
-  char     FCheck;
+  // char     CM;
+  // char     CInfo;
+  // char     FCheck;
   char     FDict;
-  char     FLevel;
-  unsigned DictID = 0;
+  // char     FLevel;
+  // unsigned DictID = 0;
 
   char     BFinal;
   char     BType;
@@ -1436,20 +1436,20 @@ unsigned char* JDeflate::Inflate(unsigned char* Buffer, unsigned* Length){
   JDeflate::BufferSize = 1;
   JDeflate::Length     = 0;
 
-  CM     =  Buffer[Index  ]       & 0x0F;
-  CInfo  = (Buffer[Index++] >> 4) & 0x0F;
+  // CM     =  Buffer[Index  ]       & 0x0F;
+  // CInfo  = (Buffer[Index++] >> 4) & 0x0F;
 
-  FCheck =  Buffer[Index  ]       & 0x1F;
+  // FCheck =  Buffer[Index  ]       & 0x1F;
   FDict  = (Buffer[Index  ] >> 5) & 0x01;
-  FLevel = (Buffer[Index++] >> 6) & 0x03;
+  // FLevel = (Buffer[Index++] >> 6) & 0x03;
 
   if(FDict){
-    printf("Error: Uses dictionary\n");
+    printf("Error: Uses dictionary\n"); // TODO: Future Feature
     return 0;
-    DictID = (Buffer[Index  ] << 24) |
-                      (Buffer[Index+1] << 16) |
-                      (Buffer[Index+2] <<  8) |
-                      (Buffer[Index+3]); Index += 4;
+    // DictID = (Buffer[Index  ] << 24) |
+    //          (Buffer[Index+1] << 16) |
+    //          (Buffer[Index+2] <<  8) |
+    //          (Buffer[Index+3]); Index += 4;
   }
 
   while(Index < *Length){

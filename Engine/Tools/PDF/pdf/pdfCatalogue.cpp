@@ -37,11 +37,11 @@ pdfCatalogue::pdfCatalogue(){
 void pdfCatalogue::Update(){
   Dictionary.Clear();
 
-               Dictionary.AddEntry("Type"      , &Type);
-  if(Pages   ) Dictionary.AddEntry("Pages"     , Pages);
-  if(Outlines) Dictionary.AddEntry("Outlines"  , Outlines);
-               Dictionary.AddEntry("PageMode"  , &PageMode);
-               Dictionary.AddEntry("PageLayout", &PageLayout);
+                Dictionary.AddEntry("Type"      , &Type      );
+  if(Pages   ){ Dictionary.AddEntry("Pages"     ,  Pages     ); }
+  if(Outlines){ Dictionary.AddEntry("Outlines"  ,  Outlines  ); }
+                Dictionary.AddEntry("PageMode"  , &PageMode  );
+                Dictionary.AddEntry("PageLayout", &PageLayout);
 }
 //------------------------------------------------------------------------------
 

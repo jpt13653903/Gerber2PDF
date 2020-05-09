@@ -35,12 +35,12 @@ pdfHyperlink::pdfHyperlink(){
 void pdfHyperlink::Update(){
   Clear();
 
-                        AddEntry("Type"   , &Type);
-                        AddEntry("Subtype", &Subtype);
-  if(Action.GetCount()) AddEntry("A"      , &Action);
-                        AddEntry("Rect"   , &Rect);
-  if(Dest  .GetCount()) AddEntry("Dest"   , &Dest);
-                        AddEntry("Border" , &Border);
+                         AddEntry("Type"   , &Type   );
+                         AddEntry("Subtype", &Subtype);
+  if(Action.GetCount()){ AddEntry("A"      , &Action ); }
+                         AddEntry("Rect"   , &Rect   );
+  if(Dest  .GetCount()){ AddEntry("Dest"   , &Dest   ); }
+                         AddEntry("Border" , &Border );
 }
 //------------------------------------------------------------------------------
 

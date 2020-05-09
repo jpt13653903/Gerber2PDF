@@ -40,14 +40,14 @@ void pdfOutlineItems::Update(){
      Blue     .Value != 0.0 ) Dictionary.AddEntry("C", &ColourArray);
   if(FontFlags.Value != 0.0 ) Dictionary.AddEntry("F", &FontFlags);
 
-  if(Dest .GetCount()) Dictionary.AddEntry("Dest" , &Dest);
-  if(Prev            ) Dictionary.AddEntry("Prev"  ,  Prev);
-  if(Next            ) Dictionary.AddEntry("Next"  ,  Next);
-  if(Last            ) Dictionary.AddEntry("Last"  ,  Last);
-  if(First           ) Dictionary.AddEntry("First" ,  First);
-                       Dictionary.AddEntry("Title" , &Title);
-  if(Count.Value != 0) Dictionary.AddEntry("Count" , &Count);
-  if(Parent          ) Dictionary.AddEntry("Parent",  Parent);
+  if(Dest .GetCount()){ Dictionary.AddEntry("Dest"  , &Dest  ); }
+  if(Prev            ){ Dictionary.AddEntry("Prev"  ,  Prev  ); }
+  if(Next            ){ Dictionary.AddEntry("Next"  ,  Next  ); }
+  if(Last            ){ Dictionary.AddEntry("Last"  ,  Last  ); }
+  if(First           ){ Dictionary.AddEntry("First" ,  First ); }
+                        Dictionary.AddEntry("Title" , &Title );
+  if(Count.Value != 0){ Dictionary.AddEntry("Count" , &Count ); }
+  if(Parent          ){ Dictionary.AddEntry("Parent",  Parent); }
 }
 //------------------------------------------------------------------------------
 
