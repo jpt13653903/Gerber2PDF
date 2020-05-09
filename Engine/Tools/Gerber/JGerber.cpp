@@ -284,7 +284,8 @@ bool JGerber::GetCoordinate(double* Number, int Integer, int Decimal){
         }
       }
       for(j = 0; j < Decimal; j++) *Number /= 10;
-      return n;
+      if(!n) printf("Line %d - Warning: Ignoring ill-formed coordinate\n", LineNumber);
+      return true;
     }
   }
 

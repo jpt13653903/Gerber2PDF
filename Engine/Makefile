@@ -1,4 +1,4 @@
-Options = -std=c++11 -Wall -fexceptions -O2
+Options += -std=c++11 -Wall -fexceptions -O2
 
 ifeq ($(OS), Windows_NT)
   CXX       = x86_64-w64-mingw32-g++

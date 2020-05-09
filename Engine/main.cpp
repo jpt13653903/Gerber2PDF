@@ -27,11 +27,11 @@ using namespace std;
 bool SilentExit = false;
 //------------------------------------------------------------------------------
 
-static void Pause(){
-  if(SilentExit) return;
+static int Pause(){
+  if(SilentExit) return 0;
   printf("\nPress Enter to continue\n");
   char c;
-  scanf("%c", &c);
+  return scanf("%c", &c);
 }
 //------------------------------------------------------------------------------
 
