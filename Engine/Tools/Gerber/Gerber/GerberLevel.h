@@ -61,7 +61,7 @@ private:
   GerberAperture* CurrentAperture;
 
 public:
-  GerberLevel(GerberLevel* PreviousLevel);
+  GerberLevel(GerberLevel* PreviousLevel, GERBER_UNIT Units);
  ~GerberLevel();
 
   GerberLevel* Next;

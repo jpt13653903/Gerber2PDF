@@ -24,7 +24,7 @@
 #define pi 3.141592653589793238463
 //------------------------------------------------------------------------------
 
-GerberLevel::GerberLevel(GerberLevel* PreviousLevel){
+GerberLevel::GerberLevel(GerberLevel* PreviousLevel, GERBER_UNIT Units){
   Name       = 0;
   RenderList = 0;
   LastRender = 0;
@@ -49,14 +49,13 @@ GerberLevel::GerberLevel(GerberLevel* PreviousLevel){
 
   fX = fY = pX = pY = X = Y = I = J = 0.0;
 
-  Units         = guInches;
+  this->Units   = Units;
   Exposure      = geOff;
   Interpolation = giLinear;
 
   if(PreviousLevel){
     SetName(PreviousLevel->Name);
 
-    Units           = PreviousLevel->Units;
     Exposure        = PreviousLevel->Exposure;
     CurrentAperture = PreviousLevel->CurrentAperture;
 
@@ -64,8 +63,8 @@ GerberLevel::GerberLevel(GerberLevel* PreviousLevel){
     Interpolation = PreviousLevel->Interpolation;
     pX            = PreviousLevel->pX;
     pY            = PreviousLevel->pY;
-      X            = PreviousLevel-> X;
-      Y            = PreviousLevel-> Y;
+     X            = PreviousLevel-> X;
+     Y            = PreviousLevel-> Y;
 
     CountX = PreviousLevel->CountX;
     CountY = PreviousLevel->CountY;

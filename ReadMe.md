@@ -24,6 +24,10 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw
 
 ## Changes:
 
+#### 2020-11-11
+
+- Bugfix: Gerbers that issue a move command before selecting a tool now renders without problems.
+
 #### 2020-05-09
 
 - Empty coordinates, although not conforming to the Gerber file format specification, now returns a warning instead of an error.

@@ -352,8 +352,7 @@ bool JGerber::GCode(){
   if(!GetInteger(&Code)) return false;
 
   if(!CurrentLevel && Code != 4){
-    Level = new GerberLevel(CurrentLevel);
-    Level->Units = Units;
+    Level = new GerberLevel(CurrentLevel, Units);
     Add(Level);
   }
 
@@ -469,8 +468,7 @@ bool JGerber::DCode(){
   GerberAperture* Aperture;
 
   if(!CurrentLevel){
-    Level = new GerberLevel(CurrentLevel);
-    Level->Units = Units;
+    Level = new GerberLevel(CurrentLevel, Units);
     Add(Level);
   }
 
@@ -1219,8 +1217,7 @@ bool JGerber::LevelName(){
   Index++;
 
   if(!StartOfLevel){
-    Level = new GerberLevel(CurrentLevel);
-    Level->Units = Units;
+    Level = new GerberLevel(CurrentLevel, Units);
     Level->SetName(Name);
     Add(Level);
 
@@ -1237,8 +1234,7 @@ bool JGerber::LevelPolarity(){
   GerberLevel* Level;
 
   if(!StartOfLevel){
-    Level = new GerberLevel(CurrentLevel);
-    Level->Units = Units;
+    Level = new GerberLevel(CurrentLevel, Units);
     Add(Level);
   }
   StartOfLevel = true;
@@ -1432,8 +1428,7 @@ bool JGerber::StepAndRepeat(){
   GerberLevel* Level;
 
   if(!StartOfLevel){
-    Level = new GerberLevel(CurrentLevel);
-    Level->Units = Units;
+    Level = new GerberLevel(CurrentLevel, Units);
     Add(Level);
   }
   StartOfLevel = true;
@@ -1718,40 +1713,28 @@ bool JGerber::GetGerber(){
       case 'X':
         Index++;
         if(!GetCoordinate(&d, Format.XInteger, Format.XDecimal)) return false;
-        if(!CurrentLevel){
-          printf("Line %d - Error: No level defined\n", LineNumber);
-          return false;
-        }
+        if(!CurrentLevel) Add(new GerberLevel(0, Units));
         CurrentLevel->X = d;
         break;
 
       case 'Y':
         Index++;
         if(!GetCoordinate(&d, Format.YInteger, Format.YDecimal)) return false;
-        if(!CurrentLevel){
-          printf("Line %d - Error: No level defined\n", LineNumber);
-          return false;
-        }
+        if(!CurrentLevel) Add(new GerberLevel(0, Units));
         CurrentLevel->Y = d;
         break;
 
       case 'I':
         Index++;
         if(!GetCoordinate(&d, Format.XInteger, Format.XDecimal)) return false;
-        if(!CurrentLevel){
-          printf("Line %d - Error: No level defined\n", LineNumber);
-          return false;
-        }
+        if(!CurrentLevel) Add(new GerberLevel(0, Units));
         CurrentLevel->I = d;
         break;
 
       case 'J':
         Index++;
         if(!GetCoordinate(&d, Format.YInteger, Format.YDecimal)) return false;
-        if(!CurrentLevel){
-          printf("Line %d - Error: No level defined\n", LineNumber);
-          return false;
-        }
+        if(!CurrentLevel) Add(new GerberLevel(0, Units));
         CurrentLevel->J = d;
         break;
 
