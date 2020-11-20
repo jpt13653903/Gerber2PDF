@@ -1,41 +1,61 @@
 # Gerber2PDF
 
-Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing and hobbyist printing purposes.
+Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing 
+and hobbyist printing purposes.
 
 ## Installation:
 
-Download and run [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf.exe/download) (Windows) or [Gerber2pdf](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf/download) (Linux 64-bit).  This will display the copyright and usage information.
+Download and run
+[Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf.exe/download) (Windows)
+or [Gerber2pdf](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf/download) (Linux 64-bit).
+This will display the copyright and usage information.
 
 ## Usage:
 
-A batch-file or script is recommended, but a simple "Open with..." link will also work, resulting in a single Gerber converted to a PDF with the same file-name as the Gerber.
+A batch-file or script is recommended, but a simple "Open with..." link will 
+also work, resulting in a single Gerber converted to a PDF with the same 
+file-name as the Gerber.
 
 ## Malware Warning:
 
-The SourceForge automated malware warnings are set up to be quite aggressive, with a high probability of false-positives.  My suggestion is to trust your personal antivirus software instead.
+The SourceForge automated malware warnings are set up to be quite aggressive, 
+with a high probability of false-positives.  My suggestion is to trust your 
+personal antivirus software instead.
 
 ## Source:
 
-The source is available from the [git repository](https://sourceforge.net/p/gerber2pdf/code/) and [GitHub](https://github.com/jpt13653903/Gerber2PDF).
+The source is available from the
+[git repository](https://sourceforge.net/p/gerber2pdf/code/) and
+[GitHub](https://github.com/jpt13653903/Gerber2PDF).
 
 To build on Linux, run `make`.
 
-To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw32-make` from within a POSIX-like environment, such as [Git Bash](https://git-scm.com/).
+To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run 
+`mingw32-make` from within a POSIX-like environment, such as
+[Git Bash](https://git-scm.com/).
 
 ## Changes:
 
+#### 2020-11-20
+
+- Bugfix: The polygon aperture type expects an integer number of sides, but 
+  some Gerber files specify it with a trailing ".0000".
+
 #### 2020-11-11
 
-- Bugfix: Gerbers that issue a move command before selecting a tool now renders without problems.
+- Bugfix: Gerbers that issue a move command before selecting a tool now 
+  renders without problems.
 
 #### 2020-05-09
 
-- Empty coordinates, although not conforming to the Gerber file format specification, now returns a warning instead of an error.
+- Empty coordinates, although not conforming to the Gerber file format 
+  specification, now returns a warning instead of an error.
 
 #### 2019-03-02
 
 - Version-bump to 1.6
-- Removed the background colour limitation.  The same Gerber can now be rendered in different background colours on different pages.
+- Removed the background colour limitation.  The same Gerber can now be 
+  rendered in different background colours on different pages.
 
 #### 2019-02-04
 
@@ -45,7 +65,8 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw
 #### 2019-01-13
 
 - Version-bump to 1.5
-- Removed the limitation where `-strokes2fills` applies to all instances of the Gerber file
+- Removed the limitation where `-strokes2fills` applies to all instances of 
+  the Gerber file
 
 #### 2018-11-20
 
@@ -63,7 +84,8 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw
 
 #### 2016-10-09
 
-- Fixed bug relating to Gerbers that specify units by means of the deprecated codes `G70` or `G71`, instead of the mandatory `%MO??*%` parameter.
+- Fixed bug relating to Gerbers that specify units by means of the deprecated 
+  codes `G70` or `G71`, instead of the mandatory `%MO??*%` parameter.
 
 #### 2016-09-25
 
@@ -91,7 +113,8 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw
 
 #### 2015-01-20
 
-- Fixed bug where paths were handled wrong when terminated with a flash instead of a move.
+- Fixed bug where paths were handled wrong when terminated with a flash 
+  instead of a move.
 
 #### 2014-12-04
 
@@ -108,9 +131,11 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run `mingw
 
 #### 2014-06-21
 
-- Added transparency to the layers.  Transparency is specified by adding an optional alpha value to the colour.
+- Added transparency to the layers.  Transparency is specified by adding an 
+  optional alpha value to the colour.
 - Optimised for smaller PDF output by reusing previous Gerber conversions.
-- Added warnings for deprecated features (optionally disabled by the "-nowarnings" option).
+- Added warnings for deprecated features (optionally disabled by
+  the "-nowarnings" option).
 - Added an icon to Gerber2pdf.exe.
 - Fixed step-and-repeat bug
 

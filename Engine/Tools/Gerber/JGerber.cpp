@@ -1,3 +1,5 @@
+#define DEBUG
+
 //==============================================================================
 // Copyright (C) John-Philip Taylor
 // jpt13653903@gmail.com
@@ -729,7 +731,7 @@ bool JGerber::ApertureObround(int Code){
 
 bool JGerber::AperturePolygon(int Code){
   int    n;
-  double w, a, x, y;
+  double w, a, x, y, temp;
   GerberAperture* Aperture;
 
   n =  0;
@@ -751,8 +753,9 @@ bool JGerber::AperturePolygon(int Code){
   if(Index >= Length)      return false;
   if(Buffer[Index] != 'X') return false;
   Index++;
-  if(!GetInteger(&n))      return false;
-
+  if(!GetFloat(&temp))     return false;
+  n = round(temp); // Some Gerbers use floats everywhere, even when it should
+                   // actually be an integer...
   WhiteSpace();
 
   if(Index >= Length) return false;
