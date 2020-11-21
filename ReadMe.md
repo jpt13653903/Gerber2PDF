@@ -34,6 +34,19 @@ To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run
 `mingw32-make` from within a POSIX-like environment, such as
 [Git Bash](https://git-scm.com/).
 
+### Building Issues
+
+A common issue with building is the Git submodules.  If the `Engine/Toolbox` 
+folder is empty, GNU make will issue a very cryptic "No rule to make target".
+
+To solve the issue, run `git submodule update --init --recursive` so that all 
+submodules are initialised and up to date.
+
+You can also download the files manually from
+[the Toolbox repo](https://github.com/jpt13653903/Toolbox/tree/master)
+and save it in the `Engine/Toolbox` folder, but it is highly recommended to let 
+Git sort it out for you.
+
 ## Changes:
 
 #### 2020-11-20
