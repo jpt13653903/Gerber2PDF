@@ -39,6 +39,9 @@ public:
   GERBER_COMMAND Command;
 
   double X, Y, W, H, A; // W and H used for D, Dx and Dy; A in degrees
+  struct{
+    double X, Y;
+  } End;
 
   GerberAperture* Aperture; // Used for gcApertureSelect
   GerberRender*   Next; // Points to the next render command

@@ -49,6 +49,13 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2021-02-06
+
+- Version-bump to 1.7
+- The `-strokes2fills` option now joins disjointed line and arc segments into
+  a single polygon.
+- The `-strokes2fills` option now supports holes in boards.
+
 #### 2020-11-20
 
 - Bugfix: The polygon aperture type expects an integer number of sides, but 

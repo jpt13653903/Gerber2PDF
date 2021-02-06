@@ -27,6 +27,7 @@
 //------------------------------------------------------------------------------
 
 #include <stdio.h>
+#include "General.h"
 #include "GerberEnums.h"
 #include "GerberRender.h"
 //------------------------------------------------------------------------------
@@ -35,71 +36,104 @@ extern bool GerberWarnings;
 //------------------------------------------------------------------------------
 
 class GerberLevel{
-private:
-  GerberRender* RenderList; // Linked list of render commands
-  GerberRender* LastRender; // Last render command used for easy additions
+  private: // Standard private members and function
+    GerberRender* RenderList; // Linked list of render commands
+    GerberRender* LastRender; // Last render command used for easy additions
 
-  void Add(GerberRender* Render);
+    void          Add   (GerberRender*  Render );
+    GerberRender* AddNew(GERBER_COMMAND Command);
 
-  bool   Path; // Busy with path definition
-  bool   OutlineFill;
-  double pX, pY; // Previous point used for relative data
-  double fX, fY; // First point of polygon
+    bool   Path; // Busy with path definition
+    bool   OutlineFill;
+    double pX, pY; // Previous point used for relative data
+    double fX, fY; // First point of polygon
 
-  double Get_mm(double Number);
+    double Get_mm(double Number);
 
-  double GetAngle(
-    double x1, double y1, // Start, relative to center
-    double x2, double y2  // End, relative to center
-  );
+    double GetAngle(
+      double x1, double y1, // Start, relative to center
+      double x2, double y2  // End, relative to center
+    );
 
-  void Move (unsigned LineNumber);
-  void Line ();
-  void Arc  ();
-  void Flash();
+    void Move (unsigned LineNumber);
+    void Line ();
+    void Arc  ();
+    void Flash();
 
-  GerberAperture* CurrentAperture;
+    GerberAperture* CurrentAperture;
+  //----------------------------------------------------------------------------
 
-public:
-  GerberLevel(GerberLevel* PreviousLevel, GERBER_UNIT Units);
- ~GerberLevel();
+  private: // Specifically used by JoinSegments()
+    class Segment{
+      private:
+        bool Closed = false; // true => closed; false => maybe closed
 
-  GerberLevel* Next;
+      public:
+        GerberRender* CommandList = 0;
+        GerberRender* LastCommand = 0;
+        Segment*      Prev        = 0;
+        Segment*      Next        = 0;
 
-  // Image bounding box
-  double Left;
-  double Bottom;
-  double Right;
-  double Top;
+        void Add     (GerberRender* Command);
+        bool IsClosed();
+        void Reverse ();
+        void Isolate ();
+    };
+    Segment* SegmentList = 0;
+    Segment* LastSegment = 0;
 
-  // Step-and-Repeat
-  int    CountX, CountY;
-  double StepX , StepY;
+    Segment* FindNeighbour(Segment* Current);
 
-  void SetName(const char* Name);
+    void NewSegment     ();
+    void ExtractSegments();
+    void JoinSegments   ();
+    void AddSegments    ();
+  //----------------------------------------------------------------------------
 
-  char* Name; // null for default level
-  bool  Negative;
-  bool  Relative;
-  bool  Incremental;
-  bool  Multiquadrant;
+  public: // Public interface
+    GerberLevel(GerberLevel* PreviousLevel, GERBER_UNIT Units);
+   ~GerberLevel();
 
-  double X, Y, I, J;
+    GerberLevel* Next;
 
-  GERBER_UNIT          Units;
-  GERBER_EXPOSURE      Exposure;
-  GERBER_INTERPOLATION Interpolation;
+    // Image bounding box
+    double Left;
+    double Bottom;
+    double Right;
+    double Top;
 
-  void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
+    // Step-and-Repeat
+    int    CountX, CountY;
+    double StepX , StepY;
 
-  void OutlineBegin(unsigned LineNumber);
-  void OutlineEnd  (unsigned LineNumber);
+    void SetName(const char* Name);
 
-  void Do(unsigned LineNumber);
+    char* Name; // null for default level
+    bool  Negative;
+    bool  Relative;
+    bool  Incremental;
+    bool  Multiquadrant;
 
-  // Linked list of render commands
-  // Memory freed automatically
-  GerberRender* Render();
+    double X, Y, I, J;
+
+    GERBER_UNIT          Units;
+    GERBER_EXPOSURE      Exposure;
+    GERBER_INTERPOLATION Interpolation;
+
+    void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
+
+    void OutlineBegin(unsigned LineNumber);
+    void OutlineEnd  (unsigned LineNumber);
+
+    void Do(unsigned LineNumber);
+
+    // Linked list of render commands
+    // Memory freed automatically
+    GerberRender* Render();
+
+    // Forms a single area out of the various line and arc segments in the 
+    // layer, typically used to obtain a solid board from an outline.
+    void ConvertStrokesToFills();
 };
 //------------------------------------------------------------------------------
 

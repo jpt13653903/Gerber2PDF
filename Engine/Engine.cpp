@@ -380,6 +380,7 @@ int ENGINE::RenderLayer(
   string    String;
   APERTURE* TempApertureStack;
 
+  if(ConvertStrokesToFills) Level->ConvertStrokesToFills();
   Render = Level->Render();
 
   if(!Render) return 0;
@@ -483,12 +484,7 @@ int ENGINE::RenderLayer(
         break;
 
       case gcStroke:
-        if(ConvertStrokesToFills){
-          Contents->Close      ();
-          Contents->FillEvenOdd();
-        }else{
-          Contents->Stroke();
-        }
+        Contents->Stroke();
         break;
 
       case gcFill:

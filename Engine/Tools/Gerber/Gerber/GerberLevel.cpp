@@ -119,13 +119,18 @@ double GerberLevel::Get_mm(double Number){
 void GerberLevel::Add(GerberRender* Render){
   Render->Next = 0;
 
-  if(RenderList){
-    LastRender->Next = Render;
-  }else{
-    RenderList = Render;
-  }
+  if(RenderList) LastRender->Next = Render;
+  else           RenderList       = Render;
 
   LastRender = Render;
+}
+//------------------------------------------------------------------------------
+
+GerberRender* GerberLevel::AddNew(GERBER_COMMAND Command){
+  GerberRender* Temp = new GerberRender;
+  Temp->Command = Command;
+  Add(Temp);
+  return Temp;
 }
 //------------------------------------------------------------------------------
 
@@ -139,18 +144,16 @@ void GerberLevel::Move(unsigned LineNumber){
           "Line %d - Warning: Deprecated feature: Open contours\n",
           LineNumber
         );
-        Temp = new GerberRender;
-        Temp->Command = gcClose;
-        Add(Temp);
+        AddNew(gcClose);
       }
-      Temp = new GerberRender;
-      Temp->Command = gcFill;
-      Add(Temp);
+      Temp = AddNew(gcFill);
+      Temp->End.X = pX;
+      Temp->End.Y = pY;
 
     }else{
-      Temp = new GerberRender;
-      Temp->Command = gcStroke;
-      Add(Temp);
+      Temp = AddNew(gcStroke);
+      Temp->End.X = pX;
+      Temp->End.Y = pY;
     }
   }
 
@@ -186,11 +189,9 @@ void GerberLevel::Line(){
     if(Right  < r) Right  = r;
     if(Top    < t) Top    = t;
 
-    Temp = new GerberRender;
-    Temp->Command = gcBeginLine;
-    Temp->X = pX;
-    Temp->Y = pY;
-    Add(Temp);
+    Temp = AddNew(gcBeginLine);
+    Temp->End.X = Temp->X = pX;
+    Temp->End.Y = Temp->Y = pY;
 
   }else{
     if(
@@ -202,35 +203,27 @@ void GerberLevel::Line(){
 
   switch(Interpolation){
     case giLinear:
-      Temp = new GerberRender;
-      Temp->Command = gcLine;
-      Temp->X = Get_mm(X);
-      Temp->Y = Get_mm(Y);
-      Add(Temp);
+      Temp = AddNew(gcLine);
+      Temp->End.X = Temp->X = Get_mm(X);
+      Temp->End.Y = Temp->Y = Get_mm(Y);
       break;
 
     case giLinear10X:
-      Temp = new GerberRender;
-      Temp->Command = gcLine;
-      Temp->X = Get_mm(X)*10.0;
-      Temp->Y = Get_mm(Y)*10.0;
-      Add(Temp);
+      Temp = AddNew(gcLine);
+      Temp->End.X = Temp->X = Get_mm(X)*10.0;
+      Temp->End.Y = Temp->Y = Get_mm(Y)*10.0;
       break;
 
     case giLinear0_1X:
-      Temp = new GerberRender;
-      Temp->Command = gcLine;
-      Temp->X = Get_mm(X)*0.1;
-      Temp->Y = Get_mm(Y)*0.1;
-      Add(Temp);
+      Temp = AddNew(gcLine);
+      Temp->End.X = Temp->X = Get_mm(X)*0.1;
+      Temp->End.Y = Temp->Y = Get_mm(Y)*0.1;
       break;
 
     case giLinear0_01X:
-      Temp = new GerberRender;
-      Temp->Command = gcLine;
-      Temp->X = Get_mm(X)*0.01;
-      Temp->Y = Get_mm(Y)*0.01;
-      Add(Temp);
+      Temp = AddNew(gcLine);
+      Temp->End.X = Temp->X = Get_mm(X)*0.01;
+      Temp->End.Y = Temp->Y = Get_mm(Y)*0.01;
       break;
 
     case giClockwiseCircular:
@@ -355,15 +348,12 @@ void GerberLevel::Arc(){
 
   a = GetAngle(x1, y1, x2, y2);
 
-  Temp = new GerberRender;
-  Temp->Command = gcArc;
+  Temp = AddNew(gcArc);
   Temp->X = x3;
   Temp->Y = y3;
   Temp->A = a;
-  Add(Temp);
-
-  pX = Get_mm(X);
-  pY = Get_mm(Y);
+  Temp->End.X = pX = Get_mm(X);
+  Temp->End.Y = pY = Get_mm(Y);
 
   // Calculate bounding box
   int    j;
@@ -411,11 +401,9 @@ void GerberLevel::Flash(){
   // pX = Get_mm(X);
   // pY = Get_mm(Y);
 
-  Temp = new GerberRender;
-  Temp->Command = gcFlash;
+  Temp = AddNew(gcFlash);
   Temp->X = pX;
   Temp->Y = pY;
-  Add(Temp);
 
   if(CurrentAperture){
     l = pX + CurrentAperture->Left;
@@ -437,38 +425,27 @@ void GerberLevel::ApertureSelect(GerberAperture* Aperture, unsigned LineNumber){
   Exposure = geOff;
   Move(LineNumber);
 
-  Temp           = new GerberRender;
-  Temp->Aperture = Aperture;
-  Temp->Command  = gcApertureSelect;
-  Add(Temp);
-
+  Temp = AddNew(gcApertureSelect);
+  Temp->Aperture  = Aperture;
   CurrentAperture = Aperture;
 }
 //------------------------------------------------------------------------------
 
 void GerberLevel::OutlineBegin(unsigned LineNumber){
-  GerberRender* Temp;
-
   Exposure = geOff;
   Move(LineNumber);
 
-  Temp          = new GerberRender;
-  Temp->Command = gcBeginOutline;
-  Add(Temp);
+  AddNew(gcBeginOutline);
 
   OutlineFill = true;
 }
 //------------------------------------------------------------------------------
 
 void GerberLevel::OutlineEnd(unsigned LineNumber){
-  GerberRender* Temp;
-
   Exposure = geOff;
   Move(LineNumber);
 
-  Temp           = new GerberRender;
-  Temp->Command  = gcEndOutline;
-  Add(Temp);
+  AddNew(gcEndOutline);
 
   OutlineFill = false;
 }
@@ -500,5 +477,277 @@ void GerberLevel::Do(unsigned LineNumber){
 
 GerberRender* GerberLevel::Render(){
   return RenderList;
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::Segment::Add(GerberRender* Command){
+  Closed = false;
+
+  if(LastCommand) LastCommand->Next = Command;
+  else            CommandList       = Command;
+
+  LastCommand = Command;
+}
+//------------------------------------------------------------------------------
+
+bool GerberLevel::Segment::IsClosed(){
+  if(Closed) return true;
+  if(!LastCommand) return false;
+
+  assert(CommandList->Command == gcBeginLine);
+  assert(LastCommand->Command == gcLine ||
+         LastCommand->Command == gcArc  );
+
+  if(LastCommand->End.X == CommandList->X &&
+     LastCommand->End.Y == CommandList->Y){
+    Closed = true;
+    return true;
+  }
+  return false;
+}
+//------------------------------------------------------------------------------
+
+void swap(double& A, double& B){
+  double T = A;
+  A = B;
+  B = T;
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::Segment::Reverse(){
+  if(IsClosed()) return; // Don't bother reversing closed loops
+  if(!CommandList) return;
+
+  GerberRender* OldList = CommandList;
+  CommandList = LastCommand = 0;
+
+  GerberRender* BeginLine = OldList;
+  OldList = OldList->Next;
+  LastCommand = OldList;
+
+  assert(BeginLine->Command == gcBeginLine);
+
+  double X = BeginLine->X;
+  double Y = BeginLine->Y;
+
+  GerberRender* Command;
+  while(OldList){
+    Command = OldList;
+    OldList = OldList->Next;
+    Command->Next = 0;
+
+    switch(Command->Command){
+      case gcLine:
+        Command->X = X;
+        Command->Y = Y;
+        swap(X, Command->End.X);
+        swap(Y, Command->End.Y);
+        Command->Next = CommandList;
+        CommandList   = Command;
+        break;
+
+      case gcArc:
+        Command->A *= -1;
+        swap(X, Command->End.X);
+        swap(Y, Command->End.Y);
+        Command->Next = CommandList;
+        CommandList = Command;
+        break;
+
+      default:
+        assert(false);
+        delete Command;
+        break;
+    }
+  }
+  BeginLine->X = X;
+  BeginLine->Y = Y;
+  BeginLine->Next = CommandList;
+  CommandList = BeginLine;
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::Segment::Isolate(){
+  if(Prev) Prev->Next = Next;
+  if(Next) Next->Prev = Prev;
+  Next = Prev = 0;
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::NewSegment(){
+  Segment* Temp = new Segment;
+
+  if(LastSegment) LastSegment->Next = Temp;
+  else            SegmentList       = Temp;
+
+  Temp->Prev  = LastSegment;
+  LastSegment = Temp;
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::ExtractSegments(){
+  GerberRender* OldList = RenderList;
+  RenderList = LastRender = 0;
+
+  bool isOutline = false;
+
+  GerberRender* Command;
+
+  while(OldList){
+    Command = OldList;
+    OldList = OldList->Next;
+    Command->Next = 0;
+
+    switch(Command->Command){
+      case gcBeginLine:
+        if(isOutline){
+          Add(Command);
+        }else{
+          NewSegment();
+          LastSegment->Add(Command);
+        }
+        break;
+
+      case gcLine:
+        if(isOutline){
+          Add(Command);
+        }else{
+          assert(LastSegment, NewSegment());
+          LastSegment->Add(Command);
+        }
+        break;
+
+      case gcArc:
+        if(isOutline){
+          Add(Command);
+        }else{
+          assert(LastSegment, NewSegment());
+          LastSegment->Add(Command);
+        }
+        break;
+
+      case gcStroke:
+        assert(isOutline == false);
+        delete Command;
+        break;
+
+      case gcClose:
+      case gcFill:
+        assert(isOutline == true);
+        Add(Command);
+        break;
+
+      case gcBeginOutline:
+        isOutline = true;
+        Add(Command);
+        break;
+
+      case gcEndOutline:
+        isOutline = false;
+        Add(Command);
+        break;
+
+      case gcApertureSelect:
+      case gcFlash:
+        delete Command;
+        break;
+
+      case gcRectangle:
+      case gcCircle:
+      case gcErase:
+      default:
+        assert(false);
+        delete Command;
+        break;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+
+GerberLevel::Segment* GerberLevel::FindNeighbour(Segment* Current){
+  if(!Current->CommandList) return 0;
+  if( Current->IsClosed() ) return 0;
+
+  Segment* Candidate = SegmentList;
+
+  while(Candidate){
+    if(Candidate != Current && Candidate->CommandList && !Candidate->IsClosed()){
+      if(Current->LastCommand->End.X == Candidate->CommandList->X &&
+         Current->LastCommand->End.Y == Candidate->CommandList->Y ){
+        return Candidate;
+      }
+      if(Current->LastCommand->End.X == Candidate->LastCommand->End.X &&
+         Current->LastCommand->End.Y == Candidate->LastCommand->End.Y ){
+        Candidate->Reverse();
+        return Candidate;
+      }
+    }
+    Candidate = Candidate->Next;
+  }
+  return 0;
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::JoinSegments(){
+  Segment* Current = SegmentList;
+  GerberRender* BeginLine;
+
+  while(Current){
+    Segment* Neighbour = FindNeighbour(Current);
+
+    if(Neighbour){
+      Neighbour->Isolate();
+
+      BeginLine = Neighbour->CommandList;
+      Neighbour->CommandList = Neighbour->CommandList->Next;
+      delete BeginLine;
+
+      Current->LastCommand->Next = Neighbour->CommandList;
+      while(Current->LastCommand->Next){
+        Current->LastCommand = Current->LastCommand->Next;
+      }
+    }else{
+      Current = Current->Next;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::AddSegments(){
+  Segment*      Temp;
+  GerberRender* CommandList;
+
+  if(SegmentList){
+    AddNew(gcBeginOutline);
+
+    while(SegmentList){
+      CommandList = SegmentList->CommandList;
+
+      assert(CommandList && CommandList->Command == gcBeginLine);
+
+      bool Closed = SegmentList->IsClosed();
+
+      LastRender->Next = CommandList;
+      while(LastRender->Next) LastRender = LastRender->Next;
+
+      if(!Closed) AddNew(gcClose);
+
+      Temp = SegmentList;
+      SegmentList = SegmentList->Next;
+      Temp->Isolate();
+      delete Temp;
+    }
+    LastSegment = 0;
+
+    AddNew(gcFill);
+    AddNew(gcEndOutline);
+  }
+}
+//------------------------------------------------------------------------------
+
+void GerberLevel::ConvertStrokesToFills(){
+  ExtractSegments();
+  JoinSegments();
+  AddSegments();
 }
 //------------------------------------------------------------------------------
