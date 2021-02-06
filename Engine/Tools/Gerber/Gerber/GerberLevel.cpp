@@ -696,8 +696,8 @@ void GerberLevel::JoinSegments(){
     Segment* Neighbour = FindNeighbour(Current);
 
     if(Neighbour){
-      if(LastSegment == Neighbour) LastSegment = LastSegment->Prev;
       if(SegmentList == Neighbour) SegmentList = SegmentList->Next;
+      if(LastSegment == Neighbour) LastSegment = LastSegment->Prev;
       Neighbour->Isolate();
 
       BeginLine = Neighbour->CommandList;
@@ -705,9 +705,7 @@ void GerberLevel::JoinSegments(){
       delete BeginLine;
 
       Current->LastCommand->Next = Neighbour->CommandList;
-      while(Current->LastCommand->Next){
-        Current->LastCommand = Current->LastCommand->Next;
-      }
+      Current->LastCommand       = Neighbour->LastCommand;
       delete Neighbour;
 
     }else{
@@ -718,23 +716,19 @@ void GerberLevel::JoinSegments(){
 //------------------------------------------------------------------------------
 
 void GerberLevel::AddSegments(){
-  Segment*      Temp;
-  GerberRender* CommandList;
+  Segment* Temp;
 
   if(SegmentList){
     AddNew(gcBeginOutline);
 
     while(SegmentList){
-      CommandList = SegmentList->CommandList;
+      assert(SegmentList->CommandList);
+      assert(SegmentList->CommandList->Command == gcBeginLine);
 
-      assert(CommandList && CommandList->Command == gcBeginLine);
+      LastRender->Next = SegmentList->CommandList;
+      LastRender       = SegmentList->LastCommand;
 
-      bool Closed = SegmentList->IsClosed();
-
-      LastRender->Next = CommandList;
-      while(LastRender->Next) LastRender = LastRender->Next;
-
-      if(!Closed) AddNew(gcClose);
+      if(!SegmentList->IsClosed()) AddNew(gcClose);
 
       Temp = SegmentList;
       SegmentList = SegmentList->Next;
