@@ -696,6 +696,8 @@ void GerberLevel::JoinSegments(){
     Segment* Neighbour = FindNeighbour(Current);
 
     if(Neighbour){
+      if(LastSegment == Neighbour) LastSegment = LastSegment->Prev;
+      if(SegmentList == Neighbour) SegmentList = SegmentList->Next;
       Neighbour->Isolate();
 
       BeginLine = Neighbour->CommandList;
@@ -706,6 +708,8 @@ void GerberLevel::JoinSegments(){
       while(Current->LastCommand->Next){
         Current->LastCommand = Current->LastCommand->Next;
       }
+      delete Neighbour;
+
     }else{
       Current = Current->Next;
     }

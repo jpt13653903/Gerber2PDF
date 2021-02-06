@@ -36,7 +36,7 @@ extern bool GerberWarnings;
 //------------------------------------------------------------------------------
 
 class GerberLevel{
-  private: // Standard private members and function
+  private: // Standard private members and functions
     GerberRender* RenderList; // Linked list of render commands
     GerberRender* LastRender; // Last render command used for easy additions
 
@@ -63,7 +63,7 @@ class GerberLevel{
     GerberAperture* CurrentAperture;
   //----------------------------------------------------------------------------
 
-  private: // Specifically used by JoinSegments()
+  private: // Specifically used by ConvertStrokesToFills()
     class Segment{
       private:
         bool Closed = false; // true => closed; false => maybe closed
