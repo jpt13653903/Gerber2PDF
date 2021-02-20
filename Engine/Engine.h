@@ -50,7 +50,12 @@ struct ENGINE{
     bool NewPage;
 
     struct COLOUR{
-      double R, G, B, A;
+      bool UseCMYK;
+      union{
+        struct{ double R, G, B; };
+        struct{ double C, M, Y, K; };
+      };
+      double A;
       COLOUR();
       void operator=  (COLOUR& Colour);
       bool operator== (COLOUR& Colour);

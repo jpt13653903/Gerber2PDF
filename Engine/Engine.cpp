@@ -25,23 +25,36 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 ENGINE::COLOUR::COLOUR(){
+  UseCMYK = false;
   R = G = B = A = 0;
+  C = M = Y = K = 0;
 }
 //------------------------------------------------------------------------------
 
 void ENGINE::COLOUR::operator=(COLOUR& Colour){
-  R = Colour.R;
-  G = Colour.G;
-  B = Colour.B;
-  A = Colour.A;
+  UseCMYK = Colour.UseCMYK;
+
+  // RGB is part of the union
+  C = Colour.C;
+  M = Colour.M;
+  Y = Colour.Y;
+  K = Colour.K;
 }
 //------------------------------------------------------------------------------
 
 bool ENGINE::COLOUR::operator== (COLOUR& Colour){
-  return R == Colour.R &&
-         G == Colour.G &&
-         B == Colour.B &&
-         A == Colour.A;
+  if(UseCMYK){
+    return C == Colour.C &&
+           M == Colour.M &&
+           Y == Colour.Y &&
+           K == Colour.K &&
+           A == Colour.A;
+  }else{
+    return R == Colour.R &&
+           G == Colour.G &&
+           B == Colour.B &&
+           A == Colour.A;
+  }
 }
 //------------------------------------------------------------------------------
 
@@ -390,8 +403,13 @@ int ENGINE::RenderLayer(
 
   if(Level->Negative != Negative){
     Contents->Opaque      (Opaque);
-    Contents->StrokeColour(Light.R, Light.G, Light.B);
-    Contents->FillColour  (Light.R, Light.G, Light.B);
+    if(Light.UseCMYK){
+      Contents->StrokeColour(Light.C, Light.M, Light.Y, Light.K);
+      Contents->FillColour  (Light.C, Light.M, Light.Y, Light.K);
+    }else{
+      Contents->StrokeColour(Light.R, Light.G, Light.B);
+      Contents->FillColour  (Light.R, Light.G, Light.B);
+    }
   }
 
   while(Render){
@@ -712,8 +730,13 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
     if(Light.A > 0.5){
       TheContents->Push();
-        TheContents->StrokeColour(Light.R, Light.G, Light.B);
-        TheContents->FillColour  (Light.R, Light.G, Light.B);
+        if(Light.UseCMYK){
+          TheContents->StrokeColour(Light.C, Light.M, Light.Y, Light.K);
+          TheContents->FillColour  (Light.C, Light.M, Light.Y, Light.K);
+        }else{
+          TheContents->StrokeColour(Light.R, Light.G, Light.B);
+          TheContents->FillColour  (Light.R, Light.G, Light.B);
+        }
 
         TheContents->Opaque(Opaque);
 
@@ -748,8 +771,13 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
   if(Layer->Negative){
     TheContents->Push();
-      TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
-      TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
+      if(Dark.UseCMYK){
+        TheContents->StrokeColour(Dark.C, Dark.M, Dark.Y, Dark.K);
+        TheContents->FillColour  (Dark.C, Dark.M, Dark.Y, Dark.K);
+      }else{
+        TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
+        TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
+      }
 
       if(Dark.A == 1.0){
         TheContents->Opaque(Opaque);
@@ -833,10 +861,15 @@ int ENGINE::Run(const char* FileName, const char* Title){
     Layer->Form->Deflate();
     pdf.AddIndirect(Layer->Form);
   }
-  ThePage    ->Resources.AddForm(Layer->Form);
-  ThePage    ->Update();
-  TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
-  TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
+  ThePage->Resources.AddForm(Layer->Form);
+  ThePage->Update();
+  if(Dark.UseCMYK){
+    TheContents->StrokeColour(Dark.C, Dark.M, Dark.Y, Dark.K);
+    TheContents->FillColour  (Dark.C, Dark.M, Dark.Y, Dark.K);
+  }else{
+    TheContents->StrokeColour(Dark.R, Dark.G, Dark.B);
+    TheContents->FillColour  (Dark.R, Dark.G, Dark.B);
+  }
 
   TheContents->Push();
     if(Dark.A == 1.0){

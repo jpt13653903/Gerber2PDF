@@ -213,6 +213,7 @@ static bool StringStart(const char* String, const char* Start){
         if(G < 0 || G > 255) continue;
         if(B < 0 || B > 255) continue;
         if(A < 0 || A > 255) continue;
+        Engine.Dark.UseCMYK = false;
         Engine.Dark.R = R/255.0;
         Engine.Dark.G = G/255.0;
         Engine.Dark.B = B/255.0;
@@ -221,7 +222,6 @@ static bool StringStart(const char* String, const char* Start){
       }else if(StringStart(argv[arg]+1, "colourCMYK=")){
         int i = 12;
         int C, M, Y, K, A;
-        double R, G, B;
         if(!GetInt(argv[arg], &i, &C)) continue;
         if(!GetInt(argv[arg], &i, &M)) continue;
         if(!GetInt(argv[arg], &i, &Y)) continue;
@@ -236,10 +236,11 @@ static bool StringStart(const char* String, const char* Start){
         if(Y < 0 || Y > 100) continue;
         if(K < 0 || K > 100) continue;
         if(A < 0 || A > 100) continue;
-        pdfContents::CMYK_to_RGB(C/100.0, M/100.0, Y/100.0, K/100.0, R, G, B);
-        Engine.Dark.R = R;
-        Engine.Dark.G = G;
-        Engine.Dark.B = B;
+        Engine.Dark.UseCMYK = true;
+        Engine.Dark.C = C/100.0;
+        Engine.Dark.M = M/100.0;
+        Engine.Dark.Y = Y/100.0;
+        Engine.Dark.K = K/100.0;
         Engine.Dark.A = A/100.0;
 
       }else if(StringStart(argv[arg]+1, "background=")){
@@ -257,6 +258,7 @@ static bool StringStart(const char* String, const char* Start){
         if(G < 0 || G > 255) continue;
         if(B < 0 || B > 255) continue;
         if(A < 0 || A > 255) continue;
+        Engine.Light.UseCMYK = false;
         if(A < 128){
           Engine.Light.R = 1.0;
           Engine.Light.G = 1.0;
@@ -272,7 +274,6 @@ static bool StringStart(const char* String, const char* Start){
       }else if(StringStart(argv[arg]+1, "backgroundCMYK=")){
         int i = 16;
         int C, M, Y, K, A;
-        double R, G, B;
         if(!GetInt(argv[arg], &i, &C)) continue;
         if(!GetInt(argv[arg], &i, &M)) continue;
         if(!GetInt(argv[arg], &i, &Y)) continue;
@@ -287,16 +288,18 @@ static bool StringStart(const char* String, const char* Start){
         if(Y < 0 || Y > 100) continue;
         if(K < 0 || K > 100) continue;
         if(A < 0 || A > 100) continue;
-        pdfContents::CMYK_to_RGB(C/100.0, M/100.0, Y/100.0, K/100.0, R, G, B);
+        Engine.Light.UseCMYK = true;
         if(A < 50){
-          Engine.Light.R = 1.0;
-          Engine.Light.G = 1.0;
-          Engine.Light.B = 1.0;
+          Engine.Light.C = 0.0;
+          Engine.Light.M = 0.0;
+          Engine.Light.Y = 0.0;
+          Engine.Light.K = 0.0;
           Engine.Light.A = 0.0;
         }else{
-          Engine.Light.R = R;
-          Engine.Light.G = G;
-          Engine.Light.B = B;
+          Engine.Light.C = C/100.0;
+          Engine.Light.M = M/100.0;
+          Engine.Light.Y = Y/100.0;
+          Engine.Light.K = K/100.0;
           Engine.Light.A = 1.0;
         }
 

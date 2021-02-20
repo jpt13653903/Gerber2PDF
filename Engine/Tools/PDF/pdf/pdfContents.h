@@ -59,6 +59,11 @@ private:
 
   void cm(double a, double b, double c, double d, double e, double f);
 
+  void RGB_to_CMYK(double  red , double  green  , double  blue,
+                   double& cyan, double& magenta, double& yellow, double& black);
+  void CMYK_to_RGB(double  cyan, double  magenta, double  yellow, double  black,
+                   double& red , double& green  , double& blue);
+
 public:
   pdfContents(bool UseCMYK = false);
 
@@ -77,11 +82,6 @@ public:
   void LineJoin (JoinStyle Style);
   void LineStyle(double  on, double  off, double phase);
   void LineStyle(double* on, double* off, int count, double phase);
-
-  static void RGB_to_CMYK(double  red , double  green  , double  blue,
-                          double& cyan, double& magenta, double& yellow, double& black);
-  static void CMYK_to_RGB(double  cyan, double  magenta, double  yellow, double  black,
-                          double& red , double& green  , double& blue);
 
   void StrokeColour(double red , double green  , double blue);                 // [0.0, 1.0]
   void StrokeColour(double cyan, double magenta, double yellow, double black); // [0.0, 1.0]
