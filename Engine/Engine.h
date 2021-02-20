@@ -57,6 +57,7 @@ struct ENGINE{
     } Light, Dark;
 
     bool ConvertStrokesToFills;
+    bool UseCMYK;
 //------------------------------------------------------------------------------
 
   private: // Internal structures
@@ -105,7 +106,7 @@ struct ENGINE{
       pdfContents* Contents;
       PAGE*        Next;
 
-      PAGE(PAGE* Next);
+      PAGE(PAGE* Next, bool UseCMYK);
      ~PAGE();
     };
     PAGE* Page;

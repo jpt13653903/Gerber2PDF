@@ -21,7 +21,7 @@
 #include "pdfForm.h"
 //------------------------------------------------------------------------------
 
-pdfForm::pdfForm(const char* Name){
+pdfForm::pdfForm(const char* Name, bool UseCMYK): pdfContents(UseCMYK){
   Type   .Set("XObject");
   SubType.Set("Form");
 

@@ -87,9 +87,9 @@ ENGINE::LAYER::~LAYER(){
 }
 //------------------------------------------------------------------------------
 
-ENGINE::PAGE::PAGE(PAGE* Next){
-  this->Page     = new pdfPage;
-  this->Contents = new pdfContents;
+ENGINE::PAGE::PAGE(PAGE* Next, bool UseCMYK){
+  this->Page     = new pdfPage    (UseCMYK);
+  this->Contents = new pdfContents(UseCMYK);
   this->Next     = Next;
 }
 //------------------------------------------------------------------------------
@@ -115,6 +115,7 @@ ENGINE::OUTLINE::~OUTLINE(){
 
 ENGINE::ENGINE(){
   ConvertStrokesToFills = false;
+  UseCMYK               = false;
 
   PageSize = PS_Tight;
 
@@ -515,7 +516,7 @@ int ENGINE::RenderLayer(
           }else{
             String.assign(1, 'D');
             String.append(to_string(++ApertureCount));
-            CurrentAperture = new pdfForm(String.c_str());
+            CurrentAperture = new pdfForm(String.c_str(), UseCMYK);
             CurrentAperture->BBox.Set(
               Aperture->Left,
               Aperture->Bottom,
@@ -578,7 +579,7 @@ ENGINE::LAYER* ENGINE::NewLayer(
   string FormName;
   FormName.assign(1, 'G');
   FormName.append(to_string(++GerberCount));
-  Layer->Form = new pdfForm(FormName.c_str());
+  Layer->Form = new pdfForm(FormName.c_str(), UseCMYK);
 
   Layer->Next = Layers;
   Layers      = Layer;
@@ -675,7 +676,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
   // Write the PDF
   if(!ThePage || NewPage || !Combine){
-    Page        = new PAGE(Page);
+    Page        = new PAGE(Page, UseCMYK);
     ThePage     = Page->Page;
     ThePageUsed = false;
   }
@@ -783,7 +784,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
         LevelName.assign(1, 'L');
         LevelName.append(to_string(++LevelCount));
         TempLevelStack        = new LEVEL_FORM;
-        TempLevelStack->Level = new pdfForm(LevelName.c_str());
+        TempLevelStack->Level = new pdfForm(LevelName.c_str(), UseCMYK);
         TempLevelStack->Next  = LevelStack;
         LevelStack            = TempLevelStack;
 

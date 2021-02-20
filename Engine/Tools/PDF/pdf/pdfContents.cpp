@@ -27,7 +27,9 @@
 #define pi 3.141592653589793238463
 //------------------------------------------------------------------------------
 
-pdfContents::pdfContents(){
+pdfContents::pdfContents(bool UseCMYK){
+  this->UseCMYK = UseCMYK;
+
   CurrentFont = 0;
   FontSize    = 0;
 
@@ -279,7 +281,54 @@ void pdfContents::LineStyle(double* on, double* off, int count, double phase){
 }
 //------------------------------------------------------------------------------
 
+// https://www.101computing.net/cmyk-to-rgb-conversion-algorithm/
+void pdfContents::RGB_to_CMYK(
+  double  red , double  green  , double  blue,
+  double& cyan, double& magenta, double& yellow, double& black
+){
+  double          max = red;
+  if(max < green) max = green;
+  if(max < blue ) max = blue;
+
+  black = 1.0 - max;
+
+  if(black == 1.0){
+    cyan    = 0.0;
+    magenta = 0.0;
+    yellow  = 0.0;
+  }else{
+    cyan    = (1.0 - red   - black) / (1.0 - black);
+    magenta = (1.0 - green - black) / (1.0 - black);
+    yellow  = (1.0 - blue  - black) / (1.0 - black);
+  }
+}
+//------------------------------------------------------------------------------
+
+// https://www.101computing.net/cmyk-to-rgb-conversion-algorithm/
+void pdfContents::CMYK_to_RGB(
+  double  cyan, double  magenta, double  yellow, double  black,
+  double& red , double& green  , double& blue
+){
+  if(black == 1.0){
+    red   = 0.0;
+    green = 0.0;
+    blue  = 0.0;
+  }else{
+    red   = (1.0 - cyan   ) * (1.0 - black);
+    green = (1.0 - magenta) * (1.0 - black);
+    blue  = (1.0 - yellow ) * (1.0 - black);
+  }
+}
+//------------------------------------------------------------------------------
+
 void pdfContents::StrokeColour(double red, double green, double blue){
+  if(UseCMYK){
+    double c, m, y, k;
+    RGB_to_CMYK(red, green, blue, c, m, y, k);
+    StrokeColour(c, m, y, k);
+    return;
+  }
+
   int l;
   char* Buffer;
   pdfNumber r, g, b;
@@ -308,7 +357,52 @@ void pdfContents::StrokeColour(double red, double green, double blue){
 }
 //------------------------------------------------------------------------------
 
+void pdfContents::StrokeColour(double cyan, double magenta, double yellow, double black){
+  if(!UseCMYK){
+    double r, g, b;
+    CMYK_to_RGB(cyan, magenta, yellow, black, r, g, b);
+    StrokeColour(r, g, b);
+    return;
+  }
+
+  int l;
+  char* Buffer;
+  pdfNumber c, m, y, k;
+
+  c = cyan;
+  m = magenta;
+  y = yellow;
+  k = black;
+
+  l = c.GetLength() + 1 + m.GetLength() + 1 + y.GetLength() + 1 + k.GetLength();
+  Buffer = new char[l+3];
+
+  l  = c.GetOutput(Buffer);
+  Buffer[l++] = ' ';
+  l += m.GetOutput(Buffer+l);
+  Buffer[l++] = ' ';
+  l += y.GetOutput(Buffer+l);
+  Buffer[l++] = ' ';
+  l += k.GetOutput(Buffer+l);
+
+  Buffer[l++] = ' ';
+  Buffer[l++] = 'K';
+  Buffer[l++] = 0;
+
+  AddLine(Buffer);
+
+  delete[] Buffer;
+}
+//------------------------------------------------------------------------------
+
 void pdfContents::FillColour(double red, double green, double blue){
+  if(UseCMYK){
+    double c, m, y, k;
+    RGB_to_CMYK(red, green, blue, c, m, y, k);
+    FillColour(c, m, y, k);
+    return;
+  }
+
   int l;
   char* Buffer;
   pdfNumber r, g, b;
@@ -329,6 +423,44 @@ void pdfContents::FillColour(double red, double green, double blue){
   Buffer[l++] = ' ';
   Buffer[l++] = 'r';
   Buffer[l++] = 'g';
+  Buffer[l++] = 0;
+
+  AddLine(Buffer);
+
+  delete[] Buffer;
+}
+//------------------------------------------------------------------------------
+
+void pdfContents::FillColour(double cyan, double magenta, double yellow, double black){
+  if(!UseCMYK){
+    double r, g, b;
+    CMYK_to_RGB(cyan, magenta, yellow, black, r, g, b);
+    FillColour(r, g, b);
+    return;
+  }
+
+  int l;
+  char* Buffer;
+  pdfNumber c, m, y, k;
+
+  c = cyan;
+  m = magenta;
+  y = yellow;
+  k = black;
+
+  l = c.GetLength() + 1 + m.GetLength() + 1 + y.GetLength() + 1 + k.GetLength();
+  Buffer = new char[l+3];
+
+  l  = c.GetOutput(Buffer);
+  Buffer[l++] = ' ';
+  l += m.GetOutput(Buffer+l);
+  Buffer[l++] = ' ';
+  l += y.GetOutput(Buffer+l);
+  Buffer[l++] = ' ';
+  l += k.GetOutput(Buffer+l);
+
+  Buffer[l++] = ' ';
+  Buffer[l++] = 'k';
   Buffer[l++] = 0;
 
   AddLine(Buffer);

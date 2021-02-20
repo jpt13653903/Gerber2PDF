@@ -120,11 +120,12 @@ static bool StringStart(const char* String, const char* Start){
       "You should have received a copy of the GNU General Public License\n"
       "along with this program.  If not, see <http://www.gnu.org/licenses/>\n"
       "\n"
-      "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name]"
-              " ...\n"
-      "       [-background=R,G,B[,A]] [-strokes2fills] ...\n"
-      "       [-page_size=extents|A3|A4|letter] ...\n"
-      "       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...\n"
+      "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-CMYK] ...\n"
+      "       [-output=output_file_name] ...\n"
+      "       [-background=R,G,B[,A]] [-backgroundCMYK=C,M,Y,K[,A]] ...\n"
+      "       [-strokes2fills] [-page_size=extents|A3|A4|letter] ...\n"
+      "       file_1 [-combine] file_2 file_3 file_4...\n"
+      "       [-colour=R,G,B[,A]] [-colourCMYK=C,M,Y,K[,A]] [-mirror] ...\n"
       "       [-nomirror] [-nocombine] ... file_N\n"
       "\n"
       "Example: Gerber2pdf -output=My_Project\n"
@@ -145,8 +146,18 @@ static bool StringStart(const char* String, const char* Start){
       "The -silentexit option disables the pause on exit.\n"
       "The -nowarnings option disables deprecated feature warnings.\n"
       "\n"
+      "The -CMYK option translates the output PDF to use the CMYK colour space.\n"
+      "The colours can still be specified using -colour and -background,\n"
+      "but this is not quite accurate.  For more accurate colour control,\n"
+      "use -colourCMYK and -backgroundCMYK instead.\n"
+      "\n"
+      "The -colour (in RGB) uses components in the range 0 to 255, whereas\n"
+      "the -colourCMYK uses components in the range 0 to 100.  This is true\n"
+      "for the Alpha component as well.\n"
+      "\n"
       "The optional -background colour is either transparent or opaque.  The\n"
-      "threshold is A=128.  Set it just before the target page is created.\n"
+      "threshold is 50%% (i.e. A=128 for RGB and A=50 for CMYK).\n"
+      "Set it just before the target page is created.\n"
       "\n"
       "The -strokes2fills option converts all strokes to fills for the next\n"
       "file, thereby converting outlines to areas.  It resets to default\n"
@@ -207,6 +218,30 @@ static bool StringStart(const char* String, const char* Start){
         Engine.Dark.B = B/255.0;
         Engine.Dark.A = A/255.0;
 
+      }else if(StringStart(argv[arg]+1, "colourCMYK=")){
+        int i = 12;
+        int C, M, Y, K, A;
+        double R, G, B;
+        if(!GetInt(argv[arg], &i, &C)) continue;
+        if(!GetInt(argv[arg], &i, &M)) continue;
+        if(!GetInt(argv[arg], &i, &Y)) continue;
+        if(!GetInt(argv[arg], &i, &K)) continue;
+        if(argv[arg][i]){
+          if(!GetInt(argv[arg], &i, &A)) continue;
+        }else{
+          A = 100;
+        }
+        if(C < 0 || C > 100) continue;
+        if(M < 0 || M > 100) continue;
+        if(Y < 0 || Y > 100) continue;
+        if(K < 0 || K > 100) continue;
+        if(A < 0 || A > 100) continue;
+        pdfContents::CMYK_to_RGB(C/100.0, M/100.0, Y/100.0, K/100.0, R, G, B);
+        Engine.Dark.R = R;
+        Engine.Dark.G = G;
+        Engine.Dark.B = B;
+        Engine.Dark.A = A/100.0;
+
       }else if(StringStart(argv[arg]+1, "background=")){
         int i = 12;
         int R, G, B, A;
@@ -234,6 +269,37 @@ static bool StringStart(const char* String, const char* Start){
           Engine.Light.A =     1.0;
         }
 
+      }else if(StringStart(argv[arg]+1, "backgroundCMYK=")){
+        int i = 16;
+        int C, M, Y, K, A;
+        double R, G, B;
+        if(!GetInt(argv[arg], &i, &C)) continue;
+        if(!GetInt(argv[arg], &i, &M)) continue;
+        if(!GetInt(argv[arg], &i, &Y)) continue;
+        if(!GetInt(argv[arg], &i, &K)) continue;
+        if(argv[arg][i]){
+          if(!GetInt(argv[arg], &i, &A)) continue;
+        }else{
+          A = 100;
+        }
+        if(C < 0 || C > 100) continue;
+        if(M < 0 || M > 100) continue;
+        if(Y < 0 || Y > 100) continue;
+        if(K < 0 || K > 100) continue;
+        if(A < 0 || A > 100) continue;
+        pdfContents::CMYK_to_RGB(C/100.0, M/100.0, Y/100.0, K/100.0, R, G, B);
+        if(A < 50){
+          Engine.Light.R = 1.0;
+          Engine.Light.G = 1.0;
+          Engine.Light.B = 1.0;
+          Engine.Light.A = 0.0;
+        }else{
+          Engine.Light.R = R;
+          Engine.Light.G = G;
+          Engine.Light.B = B;
+          Engine.Light.A = 1.0;
+        }
+
       }else if(StringStart(argv[arg]+1, "combine")){
         Engine.Combine = true;
         Engine.NewPage = true;
@@ -252,6 +318,9 @@ static bool StringStart(const char* String, const char* Start){
 
       }else if(StringStart(argv[arg]+1, "silentexit")){
         SilentExit = true;
+
+      }else if(StringStart(argv[arg]+1, "CMYK")){
+        Engine.UseCMYK = true;
 
       }else if(StringStart(argv[arg]+1, "strokes2fills")){
         Engine.ConvertStrokesToFills = true;

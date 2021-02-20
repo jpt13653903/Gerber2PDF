@@ -52,6 +52,7 @@ public:
   };
 
 private:
+  bool     UseCMYK;
   pdfFont* CurrentFont;
   double   FontSize; // The current font size
   double   X, Y;     // The current point when drawing lines
@@ -59,7 +60,7 @@ private:
   void cm(double a, double b, double c, double d, double e, double f);
 
 public:
-  pdfContents();
+  pdfContents(bool UseCMYK = false);
 
   void Push();
   void Pop();
@@ -77,8 +78,15 @@ public:
   void LineStyle(double  on, double  off, double phase);
   void LineStyle(double* on, double* off, int count, double phase);
 
-  void StrokeColour(double red, double green, double blue); // [0.0, 1.0]
-  void FillColour  (double red, double green, double blue); // [0.0, 1.0]
+  static void RGB_to_CMYK(double  red , double  green  , double  blue,
+                          double& cyan, double& magenta, double& yellow, double& black);
+  static void CMYK_to_RGB(double  cyan, double  magenta, double  yellow, double  black,
+                          double& red , double& green  , double& blue);
+
+  void StrokeColour(double red , double green  , double blue);                 // [0.0, 1.0]
+  void StrokeColour(double cyan, double magenta, double yellow, double black); // [0.0, 1.0]
+  void FillColour  (double red , double green  , double blue);                 // [0.0, 1.0]
+  void FillColour  (double cyan, double magenta, double yellow, double black); // [0.0, 1.0]
   void Opaque      (pdfOpaque* Opaque);
 
   // Use these to begin a line

@@ -1,10 +1,12 @@
 # Gerber2PDF
 
 ```
-Usage: Gerber2pdf [-silentexit] [-nowarnings] [-output=output_file_name] ...
-       [-background=R,G,B[,A]] [-strokes2fills] ...
-       [-page_size=extents|A3|A4|letter] ...
-       file_1 [-combine] file_2 ... [-colour=R,G,B[,A]] [-mirror] ...
+Usage: Gerber2pdf [-silentexit] [-nowarnings] [-CMYK] ...
+       [-output=output_file_name] ...
+       [-background=R,G,B[,A]] [-backgroundCMYK=C,M,Y,K[,A]] ...
+       [-strokes2fills] [-page_size=extents|A3|A4|letter] ...
+       file_1 [-combine] file_2 file_3 file_4...
+       [-colour=R,G,B[,A]] [-colourCMYK=C,M,Y,K[,A]] [-mirror] ...
        [-nomirror] [-nocombine] ... file_N
 
 Example: Gerber2pdf -output=My_Project
@@ -25,8 +27,18 @@ Example: Gerber2pdf -output=My_Project
 The -silentexit option disables the pause on exit.
 The -nowarnings option disables deprecated feature warnings.
 
+The -CMYK option translates the output PDF to use the CMYK colour space.
+The colours can still be specified using -colour and -background,
+but this is not quite accurate.  For more accurate colour control,
+use -colourCMYK and -backgroundCMYK instead.
+
+The -colour (in RGB) uses components in the range 0 to 255, whereas
+the -colourCMYK uses components in the range 0 to 100.  This is true
+for the Alpha component as well.
+
 The optional -background colour is either transparent or opaque.  The
-threshold is A=128.  Set it just before the target page is created.
+threshold is 50% (i.e. A=128 for RGB and A=50 for CMYK).
+Set it just before the target page is created.
 
 The -strokes2fills option converts all strokes to fills for the next
 file, thereby converting outlines to areas.  It resets to default

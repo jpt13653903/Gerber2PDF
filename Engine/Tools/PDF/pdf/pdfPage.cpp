@@ -21,12 +21,13 @@
 #include "pdfPage.h"
 //------------------------------------------------------------------------------
 
-pdfPage::pdfPage(){
+pdfPage::pdfPage(bool UseCMYK){
   Object = &Dictionary;
   Type.Set("Page");
 
-  GroupSubtype    .Set("Transparency");
-  GroupColourSpace.Set("DeviceRGB");
+  GroupSubtype.Set("Transparency");
+  if(UseCMYK) GroupColourSpace.Set("DeviceCMYK");
+  else        GroupColourSpace.Set("DeviceRGB");
 
   Group.AddEntry("S" , &GroupSubtype);
   Group.AddEntry("CS", &GroupColourSpace);

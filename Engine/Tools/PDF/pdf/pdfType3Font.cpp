@@ -21,7 +21,9 @@
 #include "pdfType3Font.h"
 //------------------------------------------------------------------------------
 
-pdfType3Font::pdfType3Font(const char* Name) : pdfFont(Name){
+pdfType3Font::pdfType3Font(const char* Name, bool UseCMYK) : pdfFont(Name){
+  this->UseCMYK = UseCMYK;
+
   Widths   .Object = &WidthsArray;
   Encoding .Object = &EncodingDictionary;
   CharProcs.Object = &CharProcsDictionary;
@@ -156,7 +158,7 @@ pdfContents* pdfType3Font::NewGlyph(
   char*     Buffer;
   pdfNumber na, nb, nc, nd, ne, nf;
 
-  pdfContents* Contents = new pdfContents;
+  pdfContents* Contents = new pdfContents(UseCMYK);
 
   Metrics.AddMetric(Name, Left, Bottom, Right, Top, Advance);
 

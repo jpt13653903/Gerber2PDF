@@ -62,6 +62,8 @@
 
 class pdfType3Font : public pdfFont{
 private:
+  bool UseCMYK;
+
   pdfArray  FontBBox;
   pdfNumber Left;
   pdfNumber Bottom;
@@ -96,7 +98,7 @@ private:
   pdfContents** GetFontGlyphs(unsigned* GlyphCount); // The root of the parser
 
 public:
-  pdfType3Font(const char* Name);
+  pdfType3Font(const char* Name, bool UseCMYK = false);
  ~pdfType3Font();
 
   // These are handled by JPDF::AddType3Font and should not be used directly

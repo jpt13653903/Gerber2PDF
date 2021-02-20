@@ -49,6 +49,11 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2021-02-20
+
+- Added the `-CMYK` option, which converts the output PDF
+  to use the CMYK colour space.
+
 #### 2021-02-06
 
 - Version-bump to 1.7

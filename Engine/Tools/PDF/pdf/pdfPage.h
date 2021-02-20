@@ -48,7 +48,7 @@ private:
   pdfName GroupColourSpace;
 
 public:
-  pdfPage();
+  pdfPage(bool UseCMYK = false);
 
   // Called by the parent upon adding this page as a child.
   // Do not call directly.

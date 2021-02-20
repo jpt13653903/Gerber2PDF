@@ -38,7 +38,7 @@ protected:
   pdfName GroupSubtype;
 
 public:
-  pdfForm(const char* Name);
+  pdfForm(const char* Name, bool UseCMYK = false);
 
   // The "Name" field is deprecated, but still required as a member of this 
   // class for resources loading purposes.
