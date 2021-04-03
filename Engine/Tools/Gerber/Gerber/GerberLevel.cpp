@@ -684,6 +684,46 @@ GerberLevel::Segment* GerberLevel::FindNeighbour(Segment* Current){
     }
     Candidate = Candidate->Next;
   }
+
+  // No candidates found, but run the test again checking for near segments.
+  // Points are considered the same if they are closer than 1 μm.
+  // This is required because many Gerber generators make rounding errors.
+
+  Candidate = SegmentList;
+  double dX, dY;
+
+  while(Candidate){
+    if(Candidate != Current && Candidate->CommandList && !Candidate->IsClosed()){
+      dX = fabs(Current->LastCommand->End.X - Candidate->CommandList->X);
+      dY = fabs(Current->LastCommand->End.Y - Candidate->CommandList->Y);
+      if(dX < 1e-3 && dY < 1e-3 ){
+        if(GerberWarnings) printf(
+          "Strokes2Fills - Warning: "
+          "Joining segments that are close, but not coincident:\n"
+          "    dX = %08.6lf mm (%07.5lf mil)\n"
+          "    dY = %08.6lf mm (%07.5lf mil)\n",
+          dX, dX/25.4e-3,
+          dY, dY/25.4e-3
+        );
+        return Candidate;
+      }
+      dX = fabs(Current->LastCommand->End.X - Candidate->LastCommand->End.X);
+      dY = fabs(Current->LastCommand->End.Y - Candidate->LastCommand->End.Y);
+      if(dX < 1e-3 && dY < 1e-3 ){
+        Candidate->Reverse();
+        if(GerberWarnings) printf(
+          "Strokes2Fills - Warning: "
+          "Joining segments that are close, but not coincident:\n"
+          "    dX = %08.6lf mm (%07.5lf mil)\n"
+          "    dY = %08.6lf mm (%07.5lf mil)\n",
+          dX, dX/25.4e-3,
+          dY, dY/25.4e-3
+        );
+        return Candidate;
+      }
+    }
+    Candidate = Candidate->Next;
+  }
   return 0;
 }
 //------------------------------------------------------------------------------

@@ -49,6 +49,11 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2021-04-03
+
+- Strokes2Fills is now tolerant to rounding errors in the Gerber.  Segments
+  closer than 1 μm apart are considered to be coincident.
+
 #### 2021-02-20
 
 - Added the `-CMYK` option, which converts the output PDF
