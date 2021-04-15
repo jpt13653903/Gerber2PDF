@@ -28,8 +28,8 @@ LibInclude =
 
 Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=7
 
-Objects  = $(shell find Tools   -iname "*.cpp")
-Objects += $(shell find Toolbox -iname "*.cpp")
+Objects  = $(shell find Tools       -iname "*.cpp")
+Objects += $(shell find Toolbox/Cpp -iname "*.cpp")
 Objects += Engine.cpp
 Objects := $(Objects:%.cpp=$(obj)/%.o)
 
