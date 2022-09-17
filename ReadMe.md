@@ -5,7 +5,7 @@ and hobbyist printing purposes.
 
 ## Installation:
 
-To build from source for Windows, Linux, or macOS, see [Source:]().
+To build from source for Windows, Linux, or macOS, see [Source](#source).
 
 Alternatively, download and run
 [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf.exe/download) (Windows)
