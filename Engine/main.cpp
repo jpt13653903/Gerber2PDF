@@ -63,7 +63,7 @@ static bool StringStart(const char* String, const char* Start){
 }
 //------------------------------------------------------------------------------
 
-#ifdef __linux__
+#ifdef NIX
   static unsigned long GetCurrentDirectory(
     unsigned long BufferLength,
     char*         Buffer
@@ -180,7 +180,7 @@ static bool StringStart(const char* String, const char* Start){
       Path[j++] = L'\\';
       Path[j  ] = 0;
     }
-  #elif defined(__linux__)
+  #elif defined(NIX)
     char Path[0x100];
     GetCurrentDirectory(0x100, Path);
     for(j = 0; Path[j]; j++);
@@ -349,7 +349,7 @@ static bool StringStart(const char* String, const char* Start){
       if(FileName[1] != '\\' && FileName[1] != ':'){
         FileName.insert(0, UTF_Converter.UTF8((const char16_t*)Path));
       }
-    #elif defined(__linux__)
+    #elif defined(NIX)
       if(FileName[0] != '/'){
         FileName.insert(0, Path);
       }
@@ -369,7 +369,7 @@ static bool StringStart(const char* String, const char* Start){
       if(OutputFileName[1] != '\\' && OutputFileName[1] != ':'){
         OutputFileName.insert(0, UTF_Converter.UTF8((const char16_t*)Path));
       }
-    #elif defined(__linux__)
+    #elif defined(NIX)
       if(OutputFileName[0] != '/'){
         OutputFileName.insert(0, Path);
       }

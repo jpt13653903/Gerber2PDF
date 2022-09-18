@@ -5,7 +5,9 @@ and hobbyist printing purposes.
 
 ## Installation:
 
-Download and run
+To build from source for Windows, Linux, or macOS, see [Source](#source).
+
+Alternatively, download and run
 [Gerber2pdf.exe](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf.exe/download) (Windows)
 or [Gerber2pdf](https://sourceforge.net/projects/gerber2pdf/files/Gerber2pdf/download) (Linux 64-bit).
 This will display the copyright and usage information.
@@ -28,11 +30,13 @@ The source is available from the
 [git repository](https://sourceforge.net/p/gerber2pdf/code/) and
 [GitHub](https://github.com/jpt13653903/Gerber2PDF).
 
-To build on Linux, run `make`.
+To build on Linux, run `git submodule update --init --recursive && make`.
+
+To build on macOS, run `git submodule update --init --recursive && make`.
 
 To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run 
-`mingw32-make` from within a POSIX-like environment, such as
-[Git Bash](https://git-scm.com/).
+`git submodule update --init --recursive && mingw32-make` from within a 
+POSIX-like environment, such as [Git Bash](https://git-scm.com/).
 
 ### Building Issues
 
