@@ -58,6 +58,7 @@ Git sort it out for you.
 - Version-bump to 1.8
 - Added automatic translation to the output PDF to place the global PDF origin
   at the bottom-left of the page.
+- Bugfix: Increased the rounding error tolerance on arc calculations.
 
 #### 2021-04-03
 
