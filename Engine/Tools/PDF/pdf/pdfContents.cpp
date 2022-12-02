@@ -131,14 +131,32 @@ void pdfContents::Translate(double x, double y){
 }
 //------------------------------------------------------------------------------
 
+void pdfContents::Prescale(double x, double y){
+  cm(x, 0, 0, y, 0, 0, false);
+}
+//------------------------------------------------------------------------------
+
 void pdfContents::Scale(double x, double y){
   cm(x, 0, 0, y, 0, 0);
+}
+//------------------------------------------------------------------------------
+
+void pdfContents::Prerotate(double angle){
+  angle *= pi/180.0;
+  cm(cos(angle), sin(angle), -sin(angle), cos(angle), 0, 0, false);
 }
 //------------------------------------------------------------------------------
 
 void pdfContents::Rotate(double angle){
   angle *= pi/180.0;
   cm(cos(angle), sin(angle), -sin(angle), cos(angle), 0, 0);
+}
+//------------------------------------------------------------------------------
+
+void pdfContents::Preskew(double alpha, double beta){
+  alpha *= pi/180.0;
+  beta  *= pi/180.0;
+  cm(1, tan(alpha), tan(beta), 1, 0, 0, false);
 }
 //------------------------------------------------------------------------------
 

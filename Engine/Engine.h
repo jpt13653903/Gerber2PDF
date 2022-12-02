@@ -62,6 +62,7 @@ struct ENGINE{
     } Light, Dark;
 
     bool ConvertStrokesToFills;
+    bool ScaleToFit;
     bool UseCMYK;
 //------------------------------------------------------------------------------
 

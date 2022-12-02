@@ -128,6 +128,7 @@ ENGINE::OUTLINE::~OUTLINE(){
 
 ENGINE::ENGINE(){
   ConvertStrokesToFills = false;
+  ScaleToFit            = false;
   UseCMYK               = false;
 
   PageSize = PS_Tight;
@@ -902,6 +903,8 @@ void ENGINE::Finish(const char* OutputFileName){
     double Top    = -1e100;
     double Width;
     double Height;
+    double PaperWidth;
+    double PaperHeight;
     double Delta;
 
     // Calculate the extents
@@ -924,37 +927,68 @@ void ENGINE::Finish(const char* OutputFileName){
     Height = Top - Bottom;
 
     // Centre on standard sizes
-    if(PageSize == PS_A3){
-      if(Width > Height){
-        Width  = 420/25.4*72.0;
-        Height = 297/25.4*72.0;
-      }else{
-        Width  = 297/25.4*72.0;
-        Height = 420/25.4*72.0;
-      }
-    }else if(PageSize == PS_A4){
-      if(Width > Height){
-        Width  = 297/25.4*72.0;
-        Height = 210/25.4*72.0;
-      }else{
-        Width  = 210/25.4*72.0;
-        Height = 297/25.4*72.0;
-      }
-    }else if(PageSize == PS_Letter){
-      if(Width > Height){
-        Width  = 11.0*72.0;
-        Height =  8.5*72.0;
-      }else{
-        Width  =  8.5*72.0;
-        Height = 11.0*72.0;
+    switch(PageSize){
+      case PS_A3:
+        if(Width > Height){
+          PaperWidth  = 420/25.4*72.0;
+          PaperHeight = 297/25.4*72.0;
+        }else{
+          PaperWidth  = 297/25.4*72.0;
+          PaperHeight = 420/25.4*72.0;
+        }
+        break;
+
+      case PS_A4:
+        if(Width > Height){
+          PaperWidth  = 297/25.4*72.0;
+          PaperHeight = 210/25.4*72.0;
+        }else{
+          PaperWidth  = 210/25.4*72.0;
+          PaperHeight = 297/25.4*72.0;
+        }
+        break;
+
+      case PS_Letter:
+        if(Width > Height){
+          PaperWidth  = 11.0*72.0;
+          PaperHeight =  8.5*72.0;
+        }else{
+          PaperWidth  =  8.5*72.0;
+          PaperHeight = 11.0*72.0;
+        }
+        break;
+
+      default:
+        PaperWidth  = Width;
+        PaperHeight = Height;
+        ScaleToFit  = false;
+        break;
+    }
+
+    if(ScaleToFit){
+      double ScaleX = (PaperWidth  - 20.0/25.4*72.0) / Width;
+      double ScaleY = (PaperHeight - 20.0/25.4*72.0) / Height;
+      double Scale  = ScaleX;
+      if(ScaleX > ScaleY) Scale = ScaleY;
+      Left   *= Scale;
+      Bottom *= Scale;
+      Right  *= Scale;
+      Top    *= Scale;
+      Width  *= Scale;
+      Height *= Scale;
+
+      page = Page;
+      while(page){
+        if(page->Contents) page->Contents->Prescale(Scale, Scale);
+        page = page->Next;
       }
     }
 
-    Delta   = (Width - (Right - Left)) / 2.0;
+    Delta   = (PaperWidth - Width) / 2.0;
     Left   -= Delta;
     Right  += Delta;
 
-    Delta   = (Height - (Top - Bottom)) / 2.0;
+    Delta   = (PaperHeight - Height) / 2.0;
     Bottom -= Delta;
     Top    += Delta;
 

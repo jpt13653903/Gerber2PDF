@@ -124,6 +124,7 @@ static bool StringStart(const char* String, const char* Start){
       "       [-output=output_file_name] ...\n"
       "       [-background=R,G,B[,A]] [-backgroundCMYK=C,M,Y,K[,A]] ...\n"
       "       [-strokes2fills] [-page_size=extents|A3|A4|letter] ...\n"
+      "       [-scale_to_fit] ...\n"
       "       file_1 [-combine] file_2 file_3 file_4...\n"
       "       [-colour=R,G,B[,A]] [-colourCMYK=C,M,Y,K[,A]] [-mirror] ...\n"
       "       [-nomirror] [-nocombine] ... file_N\n"
@@ -164,7 +165,9 @@ static bool StringStart(const char* String, const char* Start){
       "after that file.\n"
       "\n"
       "The -page_size option takes global effect and can have one of 4 values:\n"
-      "  \"extents\", \"A3\", \"A4\" or \"letter\"\n",
+      "  \"extents\", \"A3\", \"A4\" or \"letter\"\n"
+      "\n"
+      "The -scale_to_fit option only takes effect on standard paper sizes.\n",
       MAJOR_VERSION, MINOR_VERSION // These are defined in the Makefile
     );
     Pause();
@@ -335,6 +338,9 @@ static bool StringStart(const char* String, const char* Start){
         else if(!strcmp(argv[arg]+10, "=letter" )) Engine.PageSize = ENGINE::PS_Letter;
         else printf("Error: Only \"extents\", \"A3\", \"A4\" and \"letter\"\n"
                     "       page sizes are supported\n");
+
+      }else if(StringStart(argv[arg]+1, "scale_to_fit")){
+        Engine.ScaleToFit = true;
       }
       continue; // handle the next argument
     }

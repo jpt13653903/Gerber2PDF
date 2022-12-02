@@ -74,6 +74,10 @@ public:
   void Use_mm(); // Transforms the space such that all dimentions are in mm
 
   void Pretranslate(double x, double y);
+  void Prescale    (double x, double y);
+  void Prerotate   (double angle);
+  void Preskew     (double alpha, double beta);
+
   void Translate   (double x, double y);
   void Scale       (double x, double y);
   void Rotate      (double angle);

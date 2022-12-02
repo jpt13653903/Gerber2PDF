@@ -59,6 +59,7 @@ Git sort it out for you.
 - Added automatic translation to the output PDF to place the global PDF origin
   at the bottom-left of the page.
 - Bugfix: Increased the rounding error tolerance on arc calculations.
+- Added the `-scale_to_fit` option.
 
 #### 2021-04-03
 
