@@ -53,6 +53,12 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2022-12-02
+
+- Version-bump to 1.8
+- Added automatic translation to the output PDF to place the global PDF origin
+  at the bottom-left of the page.
+
 #### 2021-04-03
 
 - Strokes2Fills is now tolerant to rounding errors in the Gerber.  Segments

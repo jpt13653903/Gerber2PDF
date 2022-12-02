@@ -70,7 +70,8 @@ void pdfContents::Opaque(pdfOpaque* Opaque){
 void pdfContents::cm(
   double a, double b,
   double c, double d,
-  double e, double f
+  double e, double f,
+  bool Append
 ){
   int l;
   char* Buffer;
@@ -108,7 +109,8 @@ void pdfContents::cm(
   Buffer[l++] = 'm';
   Buffer[l++] = 0;
 
-  AddLine(Buffer);
+  if(Append) AddLine     (Buffer);
+  else       AddLineFront(Buffer);
 
   delete[] Buffer;
 }
@@ -116,6 +118,11 @@ void pdfContents::cm(
 
 void pdfContents::Use_mm(){
   Scale(72.0/25.4, 72.0/25.4);
+}
+//------------------------------------------------------------------------------
+
+void pdfContents::Pretranslate(double x, double y){
+  cm(1, 0, 0, 1, x, y, false);
 }
 //------------------------------------------------------------------------------
 

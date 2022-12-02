@@ -51,8 +51,9 @@ public:
   // Decode a ZLib Stream and clears the Filter
   void Inflate();
 
-  void AddBinary(const unsigned char* Buffer, unsigned Length);
-  void AddLine  (const          char* Line);
+  void AddBinary   (const unsigned char* Buffer, unsigned Length);
+  void AddLine     (const          char* Line);
+  void AddLineFront(const          char* Line);
 
   int GetBodyLength();
   int GetBody      (char* Buffer);

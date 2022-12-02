@@ -57,7 +57,8 @@ private:
   double   FontSize; // The current font size
   double   X, Y;     // The current point when drawing lines
 
-  void cm(double a, double b, double c, double d, double e, double f);
+  void cm(double a, double b, double c, double d, double e, double f,
+          bool Append = true);
 
   void RGB_to_CMYK(double  red , double  green  , double  blue,
                    double& cyan, double& magenta, double& yellow, double& black);
@@ -72,10 +73,11 @@ public:
 
   void Use_mm(); // Transforms the space such that all dimentions are in mm
 
-  void Translate(double x, double y);
-  void Scale    (double x, double y);
-  void Rotate   (double angle);
-  void Skew     (double alpha, double beta);
+  void Pretranslate(double x, double y);
+  void Translate   (double x, double y);
+  void Scale       (double x, double y);
+  void Rotate      (double angle);
+  void Skew        (double alpha, double beta);
 
   void LineWidth(double    Width);
   void LineCap  (CapStyle  Style);

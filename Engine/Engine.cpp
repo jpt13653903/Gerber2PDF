@@ -707,7 +707,6 @@ int ENGINE::Run(const char* FileName, const char* Title){
   Outlines      .AddChild        (Outline->Item);
 
   if(!ThePageUsed){
-    if(TheContents) TheContents->Deflate();
     TheContents = Page->Contents;
     ThePage->Contents   (TheContents);
     pdf     .AddIndirect(ThePage    );
@@ -894,10 +893,9 @@ int ENGINE::Run(const char* FileName, const char* Title){
 //------------------------------------------------------------------------------
 
 void ENGINE::Finish(const char* OutputFileName){
-  if(TheContents) TheContents->Deflate();
+  PAGE* page;
 
   if(PageSize != PS_Tight){
-    PAGE*  page;
     double Left   =  1e100;
     double Bottom =  1e100;
     double Right  = -1e100;
@@ -965,6 +963,23 @@ void ENGINE::Finish(const char* OutputFileName){
       page->Page->MediaBox.Set(Left, Bottom, Right, Top);
       page = page->Next;
     }
+  }
+
+  page = Page;
+  while(page){
+    if(page->Contents){
+      page->Contents->Pretranslate(
+        -page->Page->MediaBox.Left  .Value,
+        -page->Page->MediaBox.Bottom.Value
+      );
+      page->Page->MediaBox.Set(
+        0, 0,
+        page->Page->MediaBox.Right.Value - page->Page->MediaBox.Left  .Value,
+        page->Page->MediaBox.Top  .Value - page->Page->MediaBox.Bottom.Value
+      );
+      page->Contents->Deflate();
+    }
+    page = page->Next;
   }
 
   if(PageCount){

@@ -122,6 +122,36 @@ void pdfStream::AddLine(const char* Line){
 }
 //------------------------------------------------------------------------------
 
+void pdfStream::AddLineFront(const char* Line){
+  int j, l;
+  unsigned char* Temp;
+
+  for(l = 0; Line[l]; l++);
+  l += 1; // Linefeed
+
+  if(Length.Value + l > BufferSize){
+    while(Length.Value + l > BufferSize) BufferSize <<= 1;
+    Temp = new unsigned char[BufferSize];
+    for(j = 0; j < Length.Value; j++){
+      Temp[j] = Buffer[j];
+    }
+    delete[] Buffer;
+    Buffer = Temp;
+  }
+
+  for(j = Length.Value-1; j >= 0; j--){
+    Buffer[j+l] = Buffer[j];
+  }
+  l -= 1;
+  for(j = 0; j < l; j++){
+    Buffer[j] = Line[j];
+  }
+  Buffer[j] = '\n';
+
+  Length.Value += l+1;
+}
+//------------------------------------------------------------------------------
+
 int pdfStream::GetBodyLength(){
   int r = 0;
 
