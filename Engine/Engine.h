@@ -45,6 +45,12 @@ struct ENGINE{
       PS_Letter
     } PageSize;
 
+    enum PAGE_ORIENTATION{
+      PO_Auto = 0,
+      PO_Portrait,
+      PO_Landscape
+    } PageOrientation;
+
     bool Mirror;
     bool Combine;
     bool NewPage;

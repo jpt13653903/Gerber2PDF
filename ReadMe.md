@@ -53,6 +53,12 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2022-12-03
+
+- Reduced the border around "scale-to-fit" to 5 mm
+- Added the `-orientation` option, so that the user can specify
+  portrait or landscape on standard paper sizes.
+
 #### 2022-12-02
 
 - Version-bump to 1.8

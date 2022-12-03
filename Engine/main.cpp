@@ -124,7 +124,7 @@ static bool StringStart(const char* String, const char* Start){
       "       [-output=output_file_name] ...\n"
       "       [-background=R,G,B[,A]] [-backgroundCMYK=C,M,Y,K[,A]] ...\n"
       "       [-strokes2fills] [-page_size=extents|A3|A4|letter] ...\n"
-      "       [-scale_to_fit] ...\n"
+      "       [-orientation=portrait|landscape] [-scale_to_fit] ...\n"
       "       file_1 [-combine] file_2 file_3 file_4...\n"
       "       [-colour=R,G,B[,A]] [-colourCMYK=C,M,Y,K[,A]] [-mirror] ...\n"
       "       [-nomirror] [-nocombine] ... file_N\n"
@@ -167,7 +167,8 @@ static bool StringStart(const char* String, const char* Start){
       "The -page_size option takes global effect and can have one of 4 values:\n"
       "  \"extents\", \"A3\", \"A4\" or \"letter\"\n"
       "\n"
-      "The -scale_to_fit option only takes effect on standard paper sizes.\n",
+      "The -orientation and -scale_to_fit options only take effect\n"
+      "on standard paper sizes (i.e. A3, A4 and letter).\n",
       MAJOR_VERSION, MINOR_VERSION // These are defined in the Makefile
     );
     Pause();
@@ -306,40 +307,46 @@ static bool StringStart(const char* String, const char* Start){
           Engine.Light.A = 1.0;
         }
 
-      }else if(StringStart(argv[arg]+1, "combine")){
+      }else if(!strcmp(argv[arg]+1, "combine")){
         Engine.Combine = true;
         Engine.NewPage = true;
 
-      }else if(StringStart(argv[arg]+1, "nocombine")){
+      }else if(!strcmp(argv[arg]+1, "nocombine")){
         Engine.Combine = false;
 
-      }else if(StringStart(argv[arg]+1, "mirror")){
+      }else if(!strcmp(argv[arg]+1, "mirror")){
         Engine.Mirror = true;
 
-      }else if(StringStart(argv[arg]+1, "nomirror")){
+      }else if(!strcmp(argv[arg]+1, "nomirror")){
         Engine.Mirror = false;
 
-      }else if(StringStart(argv[arg]+1, "nowarnings")){
+      }else if(!strcmp(argv[arg]+1, "nowarnings")){
         GerberWarnings = false; // Defined in JGerber.h
 
-      }else if(StringStart(argv[arg]+1, "silentexit")){
+      }else if(!strcmp(argv[arg]+1, "silentexit")){
         SilentExit = true;
 
-      }else if(StringStart(argv[arg]+1, "CMYK")){
+      }else if(!strcmp(argv[arg]+1, "CMYK")){
         Engine.UseCMYK = true;
 
-      }else if(StringStart(argv[arg]+1, "strokes2fills")){
+      }else if(!strcmp(argv[arg]+1, "strokes2fills")){
         Engine.ConvertStrokesToFills = true;
 
-      }else if(StringStart(argv[arg]+1, "page_size")){
-        if     (!strcmp(argv[arg]+10, "=extents")) Engine.PageSize = ENGINE::PS_Extents;
-        else if(!strcmp(argv[arg]+10, "=A3"     )) Engine.PageSize = ENGINE::PS_A3;
-        else if(!strcmp(argv[arg]+10, "=A4"     )) Engine.PageSize = ENGINE::PS_A4;
-        else if(!strcmp(argv[arg]+10, "=letter" )) Engine.PageSize = ENGINE::PS_Letter;
+      }else if(StringStart(argv[arg]+1, "page_size=")){
+        if     (!strcmp(argv[arg]+11, "extents")) Engine.PageSize = ENGINE::PS_Extents;
+        else if(!strcmp(argv[arg]+11, "A3"     )) Engine.PageSize = ENGINE::PS_A3;
+        else if(!strcmp(argv[arg]+11, "A4"     )) Engine.PageSize = ENGINE::PS_A4;
+        else if(!strcmp(argv[arg]+11, "letter" )) Engine.PageSize = ENGINE::PS_Letter;
         else printf("Error: Only \"extents\", \"A3\", \"A4\" and \"letter\"\n"
                     "       page sizes are supported\n");
 
-      }else if(StringStart(argv[arg]+1, "scale_to_fit")){
+      }else if(StringStart(argv[arg]+1, "orientation=")){
+        if     (!strcmp(argv[arg]+13, "portrait" )) Engine.PageOrientation = ENGINE::PO_Portrait;
+        else if(!strcmp(argv[arg]+13, "landscape")) Engine.PageOrientation = ENGINE::PO_Landscape;
+        else printf("Error: Only \"portrait\" and \"landscape\"\n"
+                    "       orientations are supported\n");
+
+      }else if(!strcmp(argv[arg]+1, "scale_to_fit")){
         Engine.ScaleToFit = true;
       }
       continue; // handle the next argument

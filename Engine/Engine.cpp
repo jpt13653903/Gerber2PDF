@@ -131,7 +131,8 @@ ENGINE::ENGINE(){
   ScaleToFit            = false;
   UseCMYK               = false;
 
-  PageSize = PS_Tight;
+  PageSize        = PS_Tight;
+  PageOrientation = PO_Auto;
 
   OpaqueCount = 0;
   OpaqueStack = 0;
@@ -926,10 +927,15 @@ void ENGINE::Finish(const char* OutputFileName){
     Width  = Right - Left;
     Height = Top - Bottom;
 
+    if(PageOrientation == PO_Auto){
+      if(Width > Height) PageOrientation = PO_Landscape;
+      else               PageOrientation = PO_Portrait;
+    }
+
     // Centre on standard sizes
     switch(PageSize){
       case PS_A3:
-        if(Width > Height){
+        if(PageOrientation == PO_Landscape){
           PaperWidth  = 420/25.4*72.0;
           PaperHeight = 297/25.4*72.0;
         }else{
@@ -939,7 +945,7 @@ void ENGINE::Finish(const char* OutputFileName){
         break;
 
       case PS_A4:
-        if(Width > Height){
+        if(PageOrientation == PO_Landscape){
           PaperWidth  = 297/25.4*72.0;
           PaperHeight = 210/25.4*72.0;
         }else{
@@ -949,7 +955,7 @@ void ENGINE::Finish(const char* OutputFileName){
         break;
 
       case PS_Letter:
-        if(Width > Height){
+        if(PageOrientation == PO_Landscape){
           PaperWidth  = 11.0*72.0;
           PaperHeight =  8.5*72.0;
         }else{
@@ -962,12 +968,11 @@ void ENGINE::Finish(const char* OutputFileName){
         PaperWidth  = Width;
         PaperHeight = Height;
         ScaleToFit  = false;
-        break;
     }
 
     if(ScaleToFit){
-      double ScaleX = (PaperWidth  - 20.0/25.4*72.0) / Width;
-      double ScaleY = (PaperHeight - 20.0/25.4*72.0) / Height;
+      double ScaleX = (PaperWidth  - 10.0/25.4*72.0) / Width  * 1.05;
+      double ScaleY = (PaperHeight - 10.0/25.4*72.0) / Height * 1.05;
       double Scale  = ScaleX;
       if(ScaleX > ScaleY) Scale = ScaleY;
       Left   *= Scale;
