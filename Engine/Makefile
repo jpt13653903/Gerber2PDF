@@ -21,6 +21,7 @@ Includes  += -ITools/PDF
 Includes  += -ITools/PDF/afm
 Includes  += -ITools/PDF/pdf
 Includes  += -IToolbox/Cpp
+Includes  += -IZLib
 
 Libraries  =
 LibInclude =
@@ -47,9 +48,9 @@ clean:
 
 # Binaries
 
-$(Output): main.cpp main.h $(obj)/libEngine.a $(Resources)
+$(Output): main.cpp main.h $(obj)/libEngine.a ZLib/zlib.h ZLIb/libz.a $(Resources)
 	mkdir -p bin
-	$(CXX) $(Options) $(Version) $(Includes) $< -s $(Resources) -L$(obj) -lEngine -o $@
+	$(CXX) $(Options) $(Version) $(Includes) $< -s $(Resources) -L$(obj) -lEngine -LZLib -lz -o $@
 #-------------------------------------------------------------------------------
 
 # Libraries
