@@ -1,6 +1,6 @@
 # Gerber2PDF
 
-Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing 
+Gerber2PDF is a command-line tool to convert Gerber files to PDF for proofing
 and hobbyist printing purposes.
 
 ## Installation:
@@ -14,14 +14,14 @@ This will display the copyright and usage information.
 
 ## Usage:
 
-A batch-file or script is recommended, but a simple "Open with..." link will 
-also work, resulting in a single Gerber converted to a PDF with the same 
+A batch-file or script is recommended, but a simple "Open with..." link will
+also work, resulting in a single Gerber converted to a PDF with the same
 file-name as the Gerber.
 
 ## Malware Warning:
 
-The SourceForge automated malware warnings are set up to be quite aggressive, 
-with a high probability of false-positives.  My suggestion is to trust your 
+The SourceForge automated malware warnings are set up to be quite aggressive,
+with a high probability of false-positives.  My suggestion is to trust your
 personal antivirus software instead.
 
 ## Source:
@@ -34,24 +34,29 @@ To build on Linux, run `git submodule update --init --recursive && make`.
 
 To build on macOS, run `git submodule update --init --recursive && make`.
 
-To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run 
-`git submodule update --init --recursive && mingw32-make` from within a 
+To build on Windows, install [MinGW](http://tdm-gcc.tdragon.net/) and run
+`git submodule update --init --recursive && mingw32-make` from within a
 POSIX-like environment, such as [Git Bash](https://git-scm.com/).
 
 ### Building Issues
 
-A common issue with building is the Git submodules.  If the `Engine/Toolbox` 
+A common issue with building is the Git submodules.  If the `Engine/Toolbox`
 folder is empty, GNU make will issue a very cryptic "No rule to make target".
 
-To solve the issue, run `git submodule update --init --recursive` so that all 
+To solve the issue, run `git submodule update --init --recursive` so that all
 submodules are initialised and up to date.
 
 You can also download the files manually from
 [the Toolbox repo](https://github.com/jpt13653903/Toolbox/tree/master)
-and save it in the `Engine/Toolbox` folder, but it is highly recommended to let 
+and save it in the `Engine/Toolbox` folder, but it is highly recommended to let
 Git sort it out for you.
 
 ## Changes:
+
+#### 2023-12-28
+
+- Version-bump to 1.9
+- Replaced custom Deflate algorithm with the standard ZLib library
 
 #### 2022-12-03
 
@@ -86,23 +91,23 @@ Git sort it out for you.
 
 #### 2020-11-20
 
-- Bugfix: The polygon aperture type expects an integer number of sides, but 
+- Bugfix: The polygon aperture type expects an integer number of sides, but
   some Gerber files specify it with a trailing ".0000".
 
 #### 2020-11-11
 
-- Bugfix: Gerbers that issue a move command before selecting a tool now 
+- Bugfix: Gerbers that issue a move command before selecting a tool now
   renders without problems.
 
 #### 2020-05-09
 
-- Empty coordinates, although not conforming to the Gerber file format 
+- Empty coordinates, although not conforming to the Gerber file format
   specification, now returns a warning instead of an error.
 
 #### 2019-03-02
 
 - Version-bump to 1.6
-- Removed the background colour limitation.  The same Gerber can now be 
+- Removed the background colour limitation.  The same Gerber can now be
   rendered in different background colours on different pages.
 
 #### 2019-02-04
@@ -113,7 +118,7 @@ Git sort it out for you.
 #### 2019-01-13
 
 - Version-bump to 1.5
-- Removed the limitation where `-strokes2fills` applies to all instances of 
+- Removed the limitation where `-strokes2fills` applies to all instances of
   the Gerber file
 
 #### 2018-11-20
@@ -132,7 +137,7 @@ Git sort it out for you.
 
 #### 2016-10-09
 
-- Fixed bug relating to Gerbers that specify units by means of the deprecated 
+- Fixed bug relating to Gerbers that specify units by means of the deprecated
   codes `G70` or `G71`, instead of the mandatory `%MO??*%` parameter.
 
 #### 2016-09-25
@@ -161,7 +166,7 @@ Git sort it out for you.
 
 #### 2015-01-20
 
-- Fixed bug where paths were handled wrong when terminated with a flash 
+- Fixed bug where paths were handled wrong when terminated with a flash
   instead of a move.
 
 #### 2014-12-04
@@ -179,7 +184,7 @@ Git sort it out for you.
 
 #### 2014-06-21
 
-- Added transparency to the layers.  Transparency is specified by adding an 
+- Added transparency to the layers.  Transparency is specified by adding an
   optional alpha value to the colour.
 - Optimised for smaller PDF output by reusing previous Gerber conversions.
 - Added warnings for deprecated features (optionally disabled by
