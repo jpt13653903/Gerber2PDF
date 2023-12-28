@@ -21,12 +21,13 @@ Includes  += -ITools/PDF
 Includes  += -ITools/PDF/afm
 Includes  += -ITools/PDF/pdf
 Includes  += -IToolbox/Cpp
+Includes  += -IZLib
 
 Libraries  =
 LibInclude =
 #-------------------------------------------------------------------------------
 
-Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=8
+Version = -DMAJOR_VERSION=1 -DMINOR_VERSION=9
 
 Objects  = $(shell find Tools       -iname "*.cpp")
 Objects += $(shell find Toolbox/Cpp -iname "*.cpp")
@@ -36,20 +37,23 @@ Objects := $(Objects:%.cpp=$(obj)/%.o)
 Headers  = $(shell find . -iname "*.h")
 #-------------------------------------------------------------------------------
 
-.PHONY: clean all
+.PHONY: clean all FORCE
 .SECONDARY:
 
 all: $(Output)
 
 clean:
 	rm -rf $(Output) $(obj)
+	cd ZLib; git clean -xdf
+
+FORCE:
 #-------------------------------------------------------------------------------
 
 # Binaries
 
-$(Output): main.cpp main.h $(obj)/libEngine.a $(Resources)
+$(Output): main.cpp main.h $(obj)/libEngine.a ZLib/zlib.h ZLib/libz.a $(Resources)
 	mkdir -p bin
-	$(CXX) $(Options) $(Version) $(Includes) $< -s $(Resources) -L$(obj) -lEngine -o $@
+	$(CXX) $(Options) $(Version) $(Includes) $< -s $(Resources) -L$(obj) -lEngine -LZLib -lz -o $@
 #-------------------------------------------------------------------------------
 
 # Libraries
@@ -57,6 +61,16 @@ $(Output): main.cpp main.h $(obj)/libEngine.a $(Resources)
 $(obj)/libEngine.a: $(Objects)
 	mkdir -p $(@D)
 	ar -rcs $@ $(Objects)
+
+ifeq ($(OS), Windows_NT)
+ZLib/libz.a: FORCE
+	$(MAKE) -C ZLib -f win32/Makefile.gcc
+else
+ZLib/libz.a: FORCE
+	cd ZLib          ; \
+		./configure && \
+		make
+endif
 #-------------------------------------------------------------------------------
 
 # Objects

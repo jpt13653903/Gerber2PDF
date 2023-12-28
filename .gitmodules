@@ -2,3 +2,6 @@
 	path = Engine/Toolbox
 	url = https://github.com/jpt13653903/Toolbox.git
 	branch = master
+[submodule "Engine/ZLib"]
+	path = Engine/ZLib
+	url = https://github.com/madler/zlib.git
