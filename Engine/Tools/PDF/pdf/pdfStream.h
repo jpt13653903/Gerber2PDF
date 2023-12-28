@@ -46,7 +46,7 @@ public:
   pdfStream();
 
   // Encode using ZLib format and sets the Filter
-  void Deflate(unsigned WindowSize = 0x800);
+  void Deflate();
 
   // Decode a ZLib Stream and clears the Filter
   void Inflate();

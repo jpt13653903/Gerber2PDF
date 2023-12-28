@@ -38,13 +38,13 @@ void pdfStream::Update(){
 }
 //------------------------------------------------------------------------------
 
-void pdfStream::Deflate(unsigned WindowSize){
+void pdfStream::Deflate(){
   unsigned char* Temp = Buffer;
   unsigned       L    = Length.Value;
 
   if(!Filter.Empty()) return;
 
-  Buffer = ZLib.Deflate(Temp, &L, WindowSize);
+  Buffer = ZLib.Deflate(Temp, &L);
 
   delete[] Temp;
   BufferSize = L;
