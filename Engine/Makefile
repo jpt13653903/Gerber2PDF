@@ -53,7 +53,7 @@ FORCE:
 
 $(Output): main.cpp main.h $(obj)/libEngine.a ZLib/zlib.h ZLib/libz.a $(Resources)
 	mkdir -p bin
-	$(CXX) $(Options) $(Version) $(Includes) $< -s $(Resources) -L$(obj) -lEngine -LZLib -lz -o $@
+	$(CXX) $(Options) $(Version) $(Includes) $< -s $(Resources) -L$(obj) -lEngine ZLib/libz.a -o $@
 #-------------------------------------------------------------------------------
 
 # Libraries
