@@ -458,9 +458,9 @@ int ENGINE::RenderLayer(
         }else if(SolidRectangle){
           DrawRectLine(
             Contents,
-            RectX           , RectY,
+            RectX    , RectY,
             Render->X, Render->Y,
-            RectW           , RectH
+            RectW    , RectH
           );
           RectX = Render->X;
           RectY = Render->Y;
@@ -477,7 +477,7 @@ int ENGINE::RenderLayer(
 
       case gcArc:
         if(OutlinePath || SolidCircle){
-          Contents->Arc(Render->X, Render->Y, Render->A);
+          Contents->ArcTo(Render->X, Render->Y, Render->A, Render->End.X, Render->End.Y);
         }else{
           printf(
             "Error: Only solid circular apertures can be used for arcs\n"
