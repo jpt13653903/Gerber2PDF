@@ -53,6 +53,13 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2024-01-13
+
+- Version-bump to 1.10
+- Increased the arc rounding error tolerance even further
+- The global options `page_size`, `orientation` and `scale_to_fit` can now be
+  overridden with `next_page_size`, `next_orientation` and `next_scale_to_fit`.
+
 #### 2023-12-28
 
 - Version-bump to 1.9

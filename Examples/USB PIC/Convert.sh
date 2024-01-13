@@ -35,5 +35,5 @@
     top_solder_mask.grb                                              \
     bottom_solder_mask.grb                                           \
     drill_file.drl.grb                                               \
-    board_outline.grb 
+    board_outline.grb
 
