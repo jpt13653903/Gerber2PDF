@@ -43,13 +43,13 @@ struct ENGINE{
       PS_A3,
       PS_A4,
       PS_Letter
-    } PageSize;
+    } PageSize, NextPageSize;
 
     enum PAGE_ORIENTATION{
       PO_Auto = 0,
       PO_Portrait,
       PO_Landscape
-    } PageOrientation;
+    } Orientation, NextOrientation;
 
     bool Mirror;
     bool Combine;
@@ -69,6 +69,7 @@ struct ENGINE{
 
     bool ConvertStrokesToFills;
     bool ScaleToFit;
+    bool NextScaleToFit;
     bool UseCMYK;
 //------------------------------------------------------------------------------
 
@@ -114,9 +115,12 @@ struct ENGINE{
 
     // These stacks keep track of objects to be deleted at the end
     struct PAGE{
-      pdfPage*     Page;
-      pdfContents* Contents;
-      PAGE*        Next;
+      pdfPage*         Page;
+      pdfContents*     Contents;
+      PAGE_SIZE        PageSize    = PS_Tight;
+      PAGE_ORIENTATION Orientation = PO_Auto;
+      bool             ScaleToFit  = false;
+      PAGE*            Next;
 
       PAGE(PAGE* Next, bool UseCMYK);
      ~PAGE();
@@ -126,7 +130,7 @@ struct ENGINE{
     struct OUTLINE{
       pdfOutlineItems* Item;
       OUTLINE*         Next;
-      
+
       OUTLINE(OUTLINE* Next);
      ~OUTLINE();
     };
@@ -204,6 +208,10 @@ struct ENGINE{
       const char* Filename,
       bool        ConvertStrokesToFills,
       COLOUR&     Light
+    );
+    void SetMediaBox(
+      PAGE*  Page,
+      double Left,  double Bottom, double Right, double Top
     );
 //------------------------------------------------------------------------------
 
