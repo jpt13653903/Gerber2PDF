@@ -268,10 +268,10 @@ double GerberLevel::GetAngle(
 
   if(Interpolation == giClockwiseCircular){ // CW
     while(a >= 0.0) a -= 360.0; // [-360; 0)
-    if(!Multiquadrant && a < -180.0) a += 360; // [-180; 180)
+    if(!Multiquadrant && a < -95.0) a += 360; // [-95; 265)
   }else{ // CCW
     while(a <= 0.0) a += 360.0; // (0; 360]
-    if(!Multiquadrant && a > 180.0) a -= 360; // (-180; 180]
+    if(!Multiquadrant && a > 95.0) a -= 360; // (-265; 95]
   }
 
   if(Multiquadrant){

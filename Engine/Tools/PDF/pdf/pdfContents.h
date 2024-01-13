@@ -105,6 +105,9 @@ public:
   void Line  (double   x, double   y);
   void Arc   (double   x, double   y,  // Center; < 4 ppm error
               double   a);             // Angle [deg], positive => CCW
+  void ArcTo (double   x, double   y,  // Center; < 4 ppm error
+              double   a,              // Angle [deg], positive => CCW
+              double  ex, double  ey); // End-point (forced)
   void Bezier(double c1x, double c1y,  // Control point 1
               double c2x, double c2y,  // Control point 2
               double   x, double   y); // Final   point
