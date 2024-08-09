@@ -1004,6 +1004,11 @@ bool GerberMacro::Float(double* Number){
   double    Scale   = 0.1;
   unsigned  i       = Index;
 
+  // This could be an optional argument
+  if(Index < Length && Buffer[Index] == '*'){
+    return true;
+  }
+
   if(Index < Length && Buffer[Index] == '-'){
     Sign = true;
     Index++;
@@ -1211,6 +1216,7 @@ GerberMacro::OPERATOR_ITEM* GerberMacro::Factor(){
   }else{
     Item = Variable();
     if(!Item){
+      d = 0.0; // Default in case the argument is optional
       if(!Float(&d)){
         printf("Error: Float expected\n");
         return 0;

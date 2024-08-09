@@ -53,6 +53,11 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2024-08-09
+
+- Version-bump to 1.11
+- The aperture macro rotation argument is now optional
+
 #### 2024-01-13
 
 - Version-bump to 1.10
