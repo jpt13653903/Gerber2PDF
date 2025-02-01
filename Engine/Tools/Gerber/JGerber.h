@@ -23,6 +23,7 @@
 //------------------------------------------------------------------------------
 
 #include <stdio.h>
+#include <map>
 //------------------------------------------------------------------------------
 
 #include "FileWrapper.h"
@@ -84,7 +85,7 @@ private:
 
   GERBER_UNIT Units;
 
-  GerberAperture** Apertures;
+  std::map<int, GerberAperture*> Apertures;
 
   // Macro structures
   struct MACRO_ITEM{

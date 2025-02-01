@@ -53,6 +53,12 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2025-02-01
+
+- Version-bump to 1.12
+- The aperture index is now effectively infinite (<2^31 instead of <1000)
+- Changed the compiler to C++20
+
 #### 2024-08-09
 
 - Version-bump to 1.11

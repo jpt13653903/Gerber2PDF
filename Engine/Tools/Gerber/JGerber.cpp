@@ -42,8 +42,6 @@ bool Equal(const char* s1, const char* s2){
 //------------------------------------------------------------------------------
 
 void JGerber::Initialise(){
-  int j;
-
   Buffer = 0;
   Length = 0;
   Index  = 0;
@@ -72,24 +70,17 @@ void JGerber::Initialise(){
   OffsetA = OffsetB = 0.0;
   ScaleA  = ScaleB  = 1.0;
 
-  Apertures = new GerberAperture*[1000];
-  for(j = 0; j < 1000; j++){
-    Apertures[j] = 0;
-  };
-
   Macros = 0;
 }
 //------------------------------------------------------------------------------
 
 void JGerber::Cleanup(){
-  int j;
-
   if(Levels) delete Levels;
 
-  for(j = 0; j < 1000; j++){
-    if(Apertures[j]) delete Apertures[j];
-  };
-  delete[] Apertures;
+  for(auto& [Index, Aperture]: Apertures){
+      delete Aperture;
+  }
+  Apertures.clear();
 
   MACRO_ITEM* TempMacro;
   while(Macros){
@@ -492,19 +483,11 @@ bool JGerber::DCode(){
       return true;
 
     default: // Select aperture
-      if(Code >= 1000){
-        printf(
-          "Line %d - Error: Aperture code out of range: D%d\n",
-          LineNumber,
-          Code
-        );
-        return false;
-      }
-      Aperture = Apertures[Code];
-      if(!Aperture){
+      if(!Apertures.contains(Code)){
         printf("Line %d - Error: Aperture not defined: D%d\n", LineNumber, Code);
         return false;
       }
+      Aperture = Apertures[Code];
       CurrentLevel->ApertureSelect(Aperture, LineNumber);
       return true;
   }
@@ -543,16 +526,7 @@ bool JGerber::MCode(bool* EndOfFile){
 //------------------------------------------------------------------------------
 
 bool JGerber::Add(GerberAperture* Aperture){
-  if(Aperture->Code >= 1000){
-    printf(
-      "Line %d - Error: Aperture code out of range: D%d\n",
-      LineNumber,
-      Aperture->Code
-    );
-    delete Aperture;
-    return false;
-  }
-  if(Apertures[Aperture->Code]){
+  if(Apertures.contains(Aperture->Code)){
     printf(
       "Line %d - Error: Overloading of apertures not supported: D%d\n",
       LineNumber,
