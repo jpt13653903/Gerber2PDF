@@ -58,7 +58,7 @@ private:
 
   pdfIndirect Info;
 
-  FILE_WRAPPER File;
+  FileWrapper File;
 
 public:
   JPDF();

@@ -36,16 +36,16 @@ afmParser::~afmParser(){
 bool afmParser::Open(const char* FileName){
   bool b;
 
-  if(File.Open(FileName, FILE_WRAPPER::faRead)){
+  if(File.open(FileName, FileWrapper::Access::Read)){
     Index  = 0;
-    Length = File.GetSize();
+    Length = File.getSize();
     Buffer = new char[Length];
-    b = (File.Read(Buffer, Length) == Length);
-    File.Close();
+    b = (File.read(Buffer, Length) == Length);
+    File.close();
     return b;
 
   }else{
-    error("%s", GetErrorString(GetLastError()));
+    error("%s", getErrorString(GetLastError()));
   }
 
   return false;

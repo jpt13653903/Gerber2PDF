@@ -76,20 +76,20 @@ void pdfFontFile::CalculateLengths(char* Buffer, int Length){
 bool pdfFontFile::LoadPFB(const char* FileName){
   int   Length;
   char* Buffer;
-  FILE_WRAPPER File;
+  FileWrapper File;
 
-  if(File.Open(FileName, FILE_WRAPPER::faRead)){
-    Length = File.GetSize();
+  if(File.open(FileName, FileWrapper::Access::Read)){
+    Length = File.getSize();
     Buffer = new char[Length];
-    File.Read(Buffer, Length);
+    File.read(Buffer, Length);
     AddBinary((unsigned char*)Buffer, Length);
-    File.Close();
+    File.close();
     CalculateLengths(Buffer, Length);
     delete[] Buffer;
     return true;
 
   }else{
-    error("%s", GetErrorString(GetLastError()));
+    error("%s", getErrorString(GetLastError()));
   }
 
   return false;

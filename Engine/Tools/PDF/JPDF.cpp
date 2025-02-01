@@ -119,10 +119,10 @@ void JPDF::WritePDF(const char* FileName){
     Size.Value = 1;
   }
 
-  if(File.Open(FileName, FILE_WRAPPER::faCreate)){
+  if(File.open(FileName, FileWrapper::Access::Create)){
     // Header
-    FilePointer += File.Write("%" PDF_Version "\n", 9);
-    FilePointer += File.Write("%\x85\x9A\xF0\xC7\n", 6);
+    FilePointer += File.write("%" PDF_Version "\n", 9);
+    FilePointer += File.write("%\x85\x9A\xF0\xC7\n", 6);
 
     // Body
     Temp = First;
@@ -135,17 +135,17 @@ void JPDF::WritePDF(const char* FileName){
         BufferLength = Length;
       }
       Temp->Object->GetBody(Buffer);
-      FilePointer += File.Write(Buffer, Length);
+      FilePointer += File.write(Buffer, Length);
       Temp = Temp->Next;
     }
 
     //XRef
     StartRef.Value = FilePointer;
-    FilePointer += File.Write("xref\n", 5);
+    FilePointer += File.write("xref\n", 5);
 
     pdfNumber n;
     n.Value = Last->Object->Reference+1;
-    FilePointer += File.Write("0 ", 2);
+    FilePointer += File.write("0 ", 2);
     Length = n.GetLength();
     if(Length > BufferLength){
       delete[] Buffer;
@@ -153,8 +153,8 @@ void JPDF::WritePDF(const char* FileName){
       BufferLength = Length;
     }
     n.GetOutput(Buffer);
-    FilePointer += File.Write(Buffer, Length);
-    FilePointer += File.Write("\n", 1);
+    FilePointer += File.write(Buffer, Length);
+    FilePointer += File.write("\n", 1);
 
     Buffer[10] = ' ';
     Buffer[16] = ' ';
@@ -163,14 +163,14 @@ void JPDF::WritePDF(const char* FileName){
     Buffer[19] = '\n';
 
     GetXRefEntry(Buffer, 0, 65535);
-    FilePointer += File.Write(Buffer, 20);
+    FilePointer += File.write(Buffer, 20);
 
     Buffer[17] = 'n';
     Length = 20;
     Temp = First;
     while(Temp){
       GetXRefEntry(Buffer, Temp->Offset, 0);
-      FilePointer += File.Write(Buffer, 20);
+      FilePointer += File.write(Buffer, 20);
       Temp = Temp->Next;
     }
 
@@ -179,7 +179,7 @@ void JPDF::WritePDF(const char* FileName){
                       Trailer.AddEntry("Root", &Catalogue);
     if(d->GetCount()) Trailer.AddEntry("Info", &Info);
 
-    FilePointer += File.Write("trailer\n", 8);
+    FilePointer += File.write("trailer\n", 8);
     Length = Trailer.GetLength();
     if(Length > BufferLength){
       delete[] Buffer;
@@ -187,8 +187,8 @@ void JPDF::WritePDF(const char* FileName){
       BufferLength = Length;
     }
     Trailer.GetOutput(Buffer);
-    FilePointer += File.Write(Buffer, Length);
-    FilePointer += File.Write("\nstartxref\n", 11);
+    FilePointer += File.write(Buffer, Length);
+    FilePointer += File.write("\nstartxref\n", 11);
     Length = StartRef.GetLength();
     if(Length > BufferLength){
       delete[] Buffer;
@@ -196,11 +196,11 @@ void JPDF::WritePDF(const char* FileName){
       BufferLength = Length;
     }
     StartRef.GetOutput(Buffer);
-    FilePointer += File.Write(Buffer, Length);
-    FilePointer += File.Write("\n%%EOF\n", 7);
-    File.Close();
+    FilePointer += File.write(Buffer, Length);
+    FilePointer += File.write("\n%%EOF\n", 7);
+    File.close();
   }else{
-    error("%s", GetErrorString(GetLastError()));
+    error("%s", getErrorString(GetLastError()));
   }
 
   delete[] Buffer;

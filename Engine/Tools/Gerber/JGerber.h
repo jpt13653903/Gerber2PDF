@@ -36,7 +36,7 @@ extern bool GerberWarnings;
 
 class JGerber{
 private:
-  FILE_WRAPPER File;
+  FileWrapper File;
 
   char*    Buffer;
   unsigned Length;

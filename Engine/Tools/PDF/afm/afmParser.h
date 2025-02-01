@@ -27,10 +27,10 @@
 
 class afmParser{
 private:
-  FILE_WRAPPER File;
-  char*        Buffer;
-  unsigned     Index;
-  unsigned     Length;
+  FileWrapper File;
+  char*       Buffer;
+  unsigned    Index;
+  unsigned    Length;
 
   bool FindEnd(char* Key);
 

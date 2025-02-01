@@ -127,20 +127,20 @@ void pdfJPEG::GetSizes(const unsigned char* Buffer, unsigned Length){
 bool pdfJPEG::LoadFromFile(const char* Filename){
   int   Length;
   char* Buffer;
-  FILE_WRAPPER File;
+  FileWrapper File;
 
-  if(File.Open(Filename, FILE_WRAPPER::faRead)){
-    Length = File.GetSize();
+  if(File.open(Filename, FileWrapper::Access::Read)){
+    Length = File.getSize();
     Buffer = new char[Length];
-    File.Read(Buffer, Length);
+    File.read(Buffer, Length);
     AddBinary((unsigned char*)Buffer, Length);
     GetSizes ((unsigned char*)Buffer, Length);
-    File.Close();
+    File.close();
     delete[] Buffer;
     return true;
 
   }else{
-    error("%s", GetErrorString(GetLastError()));
+    error("%s", getErrorString(GetLastError()));
   }
 
   return false;

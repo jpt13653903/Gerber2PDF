@@ -80,14 +80,14 @@ static bool StringStart(const char* String, const char* Start){
     string argv_string[0x1000];
     const char* argv[0x1000];
     for(int n = 0; n < argc; n++){
-      argv_string[n] = UTF_Converter.UTF8((const char16_t*)wargv[n]);
+      argv_string[n] = utfConverter.toUtf8((const char16_t*)wargv[n]);
       argv       [n] = argv_string[n].c_str();
     }
 #else
   int main(int argc, const char** argv){
 #endif
 
-  SetupTerminal();
+  setupTerminal();
 
   ENGINE Engine;
 
@@ -383,7 +383,7 @@ static bool StringStart(const char* String, const char* Start){
     }
     #if defined(WINVER)
       if(FileName[1] != '\\' && FileName[1] != ':'){
-        FileName.insert(0, UTF_Converter.UTF8((const char16_t*)Path));
+        FileName.insert(0, utfConverter.toUtf8((const char16_t*)Path));
       }
     #elif defined(NIX)
       if(FileName[0] != '/'){
@@ -403,7 +403,7 @@ static bool StringStart(const char* String, const char* Start){
   }else{
     #if defined(WINVER)
       if(OutputFileName[1] != '\\' && OutputFileName[1] != ':'){
-        OutputFileName.insert(0, UTF_Converter.UTF8((const char16_t*)Path));
+        OutputFileName.insert(0, utfConverter.toUtf8((const char16_t*)Path));
       }
     #elif defined(NIX)
       if(OutputFileName[0] != '/'){

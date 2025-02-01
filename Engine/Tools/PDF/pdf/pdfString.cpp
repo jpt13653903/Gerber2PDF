@@ -90,7 +90,7 @@ void pdfString::Set(
 void pdfString::SetUnicode(const char* String){
   bool HasUnicode = false;
 
-  u16string UTF16 = UTF_Converter.UTF16(String);
+  u16string UTF16 = utfConverter.toUtf16(String);
 
   string UTF16_BE;
 
