@@ -22,187 +22,187 @@
 //------------------------------------------------------------------------------
 
 JPDF::JPDF(){
-  First = Last = 0;
+    First = Last = 0;
 
-  Info.Object = new pdfDictionary;
-  AddIndirect(&Info);
-  AddIndirect(&Catalogue);
+    Info.Object = new pdfDictionary;
+    AddIndirect(&Info);
+    AddIndirect(&Catalogue);
 }
 //------------------------------------------------------------------------------
 
 JPDF::~JPDF(){
-  delete Info.Object;
+    delete Info.Object;
 
-  while(First){
-    Last  = First;
-    First = First->Next;
-    delete Last;
-  }
+    while(First){
+        Last  = First;
+        First = First->Next;
+        delete Last;
+    }
 }
 //------------------------------------------------------------------------------
 
 void JPDF::AddIndirect(pdfIndirect* Indirect){
-  Element* Temp = new Element;
+    Element* Temp = new Element;
 
-  Temp->Object = Indirect;
-  Temp->Next   = 0;
+    Temp->Object = Indirect;
+    Temp->Next   = 0;
 
-  if(First){
-    Temp->Object->Reference = Last->Object->Reference+1;
-    Last->Next = Temp;
-  }else{
-    Temp->Object->Reference = 1;
-    First = Temp;
-  }
-  Last = Temp;
+    if(First){
+        Temp->Object->Reference = Last->Object->Reference+1;
+        Last->Next = Temp;
+    }else{
+        Temp->Object->Reference = 1;
+        First = Temp;
+    }
+    Last = Temp;
 }
 //------------------------------------------------------------------------------
 
 void JPDF::AddType1Font(pdfType1Font* Font){
-  AddIndirect(  Font);
-  AddIndirect(&(Font->Widths));
-  AddIndirect(&(Font->FontDescriptor));
-  AddIndirect(&(Font->FontDescriptor.FontFile));
+    AddIndirect(  Font);
+    AddIndirect(&(Font->Widths));
+    AddIndirect(&(Font->FontDescriptor));
+    AddIndirect(&(Font->FontDescriptor.FontFile));
 }
 //------------------------------------------------------------------------------
 
 void JPDF::AddType3Font(pdfType3Font* Font){
-  Font->SetWidths();
-  Font->SetEncoding();
+    Font->SetWidths();
+    Font->SetEncoding();
 
-  AddIndirect(  Font);
-  AddIndirect(&(Font->Widths   ));
-  AddIndirect(&(Font->Encoding ));
-  AddIndirect(&(Font->CharProcs));
+    AddIndirect(  Font);
+    AddIndirect(&(Font->Widths   ));
+    AddIndirect(&(Font->Encoding ));
+    AddIndirect(&(Font->CharProcs));
 }
 //------------------------------------------------------------------------------
 
 static void GetXRefEntry(char* Buffer, unsigned Offset, unsigned GN){
-  int j;
-  for(j = 9; j >= 0; j--){
-    Buffer[j] = (Offset % 10) + '0';
-    Offset   /= 10;
-  }
-  for(j = 15; j >= 11; j--){
-    Buffer[j] = (GN % 10) + '0';
-    GN       /= 10;
-  }
+    int j;
+    for(j = 9; j >= 0; j--){
+        Buffer[j] = (Offset % 10) + '0';
+        Offset   /= 10;
+    }
+    for(j = 15; j >= 11; j--){
+        Buffer[j] = (GN % 10) + '0';
+        GN       /= 10;
+    }
 }
 //------------------------------------------------------------------------------
 
 void JPDF::WritePDF(const char* FileName){
-  int            BufferLength = 20;
-  int            Length;
-  char*          Buffer = new char[20];
-  unsigned       FilePointer = 0;
-  Element*       Temp;
-  pdfNumber      Size;
-  pdfNumber      StartRef;
-  pdfDictionary  Trailer;
-  pdfDictionary* d = (pdfDictionary*)Info.Object;
+    int            BufferLength = 20;
+    int            Length;
+    char*          Buffer = new char[20];
+    unsigned       FilePointer = 0;
+    Element*       Temp;
+    pdfNumber      Size;
+    pdfNumber      StartRef;
+    pdfDictionary  Trailer;
+    pdfDictionary* d = (pdfDictionary*)Info.Object;
 
-  d->Clear();
-  pdfName Type;
-  Type.Set("Info");
-  if(!Type        .Empty()) d->AddEntry("Type"        , &Type);
-  if(!Title       .Empty()) d->AddEntry("Title"       , &Title);
-  if(!Author      .Empty()) d->AddEntry("Author"      , &Author);
-  if(!Subject     .Empty()) d->AddEntry("Subject"     , &Subject);
-  if(!Keywords    .Empty()) d->AddEntry("Keywords"    , &Keywords);
-  if(!Creator     .Empty()) d->AddEntry("Creator"     , &Creator);
-  if(!Producer    .Empty()) d->AddEntry("Producer"    , &Producer);
-  if(!CreationDate.Empty()) d->AddEntry("CreationDate", &CreationDate);
+    d->Clear();
+    pdfName Type;
+    Type.Set("Info");
+    if(!Type        .Empty()) d->AddEntry("Type"        , &Type);
+    if(!Title       .Empty()) d->AddEntry("Title"       , &Title);
+    if(!Author      .Empty()) d->AddEntry("Author"      , &Author);
+    if(!Subject     .Empty()) d->AddEntry("Subject"     , &Subject);
+    if(!Keywords    .Empty()) d->AddEntry("Keywords"    , &Keywords);
+    if(!Creator     .Empty()) d->AddEntry("Creator"     , &Creator);
+    if(!Producer    .Empty()) d->AddEntry("Producer"    , &Producer);
+    if(!CreationDate.Empty()) d->AddEntry("CreationDate", &CreationDate);
 
-  if(Last){
-    Size.Value = Last->Object->Reference+1;
-  }else{
-    Size.Value = 1;
-  }
-
-  if(File.open(FileName, FileWrapper::Access::Create)){
-    // Header
-    FilePointer += File.write("%" PDF_Version "\n", 9);
-    FilePointer += File.write("%\x85\x9A\xF0\xC7\n", 6);
-
-    // Body
-    Temp = First;
-    while(Temp){
-      Temp->Offset = FilePointer;
-      Length = Temp->Object->GetBodyLength();
-      if(Length > BufferLength){
-        delete[] Buffer;
-        Buffer = new char[Length];
-        BufferLength = Length;
-      }
-      Temp->Object->GetBody(Buffer);
-      FilePointer += File.write(Buffer, Length);
-      Temp = Temp->Next;
+    if(Last){
+        Size.Value = Last->Object->Reference+1;
+    }else{
+        Size.Value = 1;
     }
 
-    //XRef
-    StartRef.Value = FilePointer;
-    FilePointer += File.write("xref\n", 5);
+    if(File.open(FileName, FileWrapper::Access::Create)){
+        // Header
+        FilePointer += File.write("%" PDF_Version "\n", 9);
+        FilePointer += File.write("%\x85\x9A\xF0\xC7\n", 6);
 
-    pdfNumber n;
-    n.Value = Last->Object->Reference+1;
-    FilePointer += File.write("0 ", 2);
-    Length = n.GetLength();
-    if(Length > BufferLength){
-      delete[] Buffer;
-      Buffer = new char[Length];
-      BufferLength = Length;
+        // Body
+        Temp = First;
+        while(Temp){
+            Temp->Offset = FilePointer;
+            Length = Temp->Object->GetBodyLength();
+            if(Length > BufferLength){
+                delete[] Buffer;
+                Buffer = new char[Length];
+                BufferLength = Length;
+            }
+            Temp->Object->GetBody(Buffer);
+            FilePointer += File.write(Buffer, Length);
+            Temp = Temp->Next;
+        }
+
+        //XRef
+        StartRef.Value = FilePointer;
+        FilePointer += File.write("xref\n", 5);
+
+        pdfNumber n;
+        n.Value = Last->Object->Reference+1;
+        FilePointer += File.write("0 ", 2);
+        Length = n.GetLength();
+        if(Length > BufferLength){
+            delete[] Buffer;
+            Buffer = new char[Length];
+            BufferLength = Length;
+        }
+        n.GetOutput(Buffer);
+        FilePointer += File.write(Buffer, Length);
+        FilePointer += File.write("\n", 1);
+
+        Buffer[10] = ' ';
+        Buffer[16] = ' ';
+        Buffer[17] = 'f';
+        Buffer[18] = ' ';
+        Buffer[19] = '\n';
+
+        GetXRefEntry(Buffer, 0, 65535);
+        FilePointer += File.write(Buffer, 20);
+
+        Buffer[17] = 'n';
+        Length = 20;
+        Temp = First;
+        while(Temp){
+            GetXRefEntry(Buffer, Temp->Offset, 0);
+            FilePointer += File.write(Buffer, 20);
+            Temp = Temp->Next;
+        }
+
+        // Trailer________________________________________
+                          Trailer.AddEntry("Size", &Size);
+                          Trailer.AddEntry("Root", &Catalogue);
+        if(d->GetCount()) Trailer.AddEntry("Info", &Info);
+
+        FilePointer += File.write("trailer\n", 8);
+        Length = Trailer.GetLength();
+        if(Length > BufferLength){
+            delete[] Buffer;
+            Buffer = new char[Length];
+            BufferLength = Length;
+        }
+        Trailer.GetOutput(Buffer);
+        FilePointer += File.write(Buffer, Length);
+        FilePointer += File.write("\nstartxref\n", 11);
+        Length = StartRef.GetLength();
+        if(Length > BufferLength){
+            delete[] Buffer;
+            Buffer = new char[Length];
+            BufferLength = Length;
+        }
+        StartRef.GetOutput(Buffer);
+        FilePointer += File.write(Buffer, Length);
+        FilePointer += File.write("\n%%EOF\n", 7);
+        File.close();
+    }else{
+        error("%s", getErrorString(GetLastError()));
     }
-    n.GetOutput(Buffer);
-    FilePointer += File.write(Buffer, Length);
-    FilePointer += File.write("\n", 1);
 
-    Buffer[10] = ' ';
-    Buffer[16] = ' ';
-    Buffer[17] = 'f';
-    Buffer[18] = ' ';
-    Buffer[19] = '\n';
-
-    GetXRefEntry(Buffer, 0, 65535);
-    FilePointer += File.write(Buffer, 20);
-
-    Buffer[17] = 'n';
-    Length = 20;
-    Temp = First;
-    while(Temp){
-      GetXRefEntry(Buffer, Temp->Offset, 0);
-      FilePointer += File.write(Buffer, 20);
-      Temp = Temp->Next;
-    }
-
-    // Trailer________________________________________
-                      Trailer.AddEntry("Size", &Size);
-                      Trailer.AddEntry("Root", &Catalogue);
-    if(d->GetCount()) Trailer.AddEntry("Info", &Info);
-
-    FilePointer += File.write("trailer\n", 8);
-    Length = Trailer.GetLength();
-    if(Length > BufferLength){
-      delete[] Buffer;
-      Buffer = new char[Length];
-      BufferLength = Length;
-    }
-    Trailer.GetOutput(Buffer);
-    FilePointer += File.write(Buffer, Length);
-    FilePointer += File.write("\nstartxref\n", 11);
-    Length = StartRef.GetLength();
-    if(Length > BufferLength){
-      delete[] Buffer;
-      Buffer = new char[Length];
-      BufferLength = Length;
-    }
-    StartRef.GetOutput(Buffer);
-    FilePointer += File.write(Buffer, Length);
-    FilePointer += File.write("\n%%EOF\n", 7);
-    File.close();
-  }else{
-    error("%s", getErrorString(GetLastError()));
-  }
-
-  delete[] Buffer;
+    delete[] Buffer;
 }
 //------------------------------------------------------------------------------

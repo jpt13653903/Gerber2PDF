@@ -36,88 +36,88 @@ JDeflate::JDeflate(){
 
 unsigned char* JDeflate::Deflate(unsigned char* Buffer, unsigned* Length)
 {
-  const int CHUNK = 64<<10;
+    const int CHUNK = 64<<10;
 
-  int ret;
-  unsigned char out[CHUNK];
+    int ret;
+    unsigned char out[CHUNK];
 
-  z_stream Stream;
-  Stream.zalloc = Z_NULL;
-  Stream.zfree  = Z_NULL;
-  Stream.opaque = Z_NULL;
-  ret = deflateInit(&Stream, Z_BEST_COMPRESSION);
-  if(ret != Z_OK) return 0;
+    z_stream Stream;
+    Stream.zalloc = Z_NULL;
+    Stream.zfree  = Z_NULL;
+    Stream.opaque = Z_NULL;
+    ret = deflateInit(&Stream, Z_BEST_COMPRESSION);
+    if(ret != Z_OK) return 0;
 
-  Stream.next_in = Buffer;
-  Stream.avail_in = *Length;
+    Stream.next_in = Buffer;
+    Stream.avail_in = *Length;
 
-  vector<unsigned char> Result;
+    vector<unsigned char> Result;
 
-  do{
-    Stream.avail_out = CHUNK;
-    Stream.next_out = out;
-    ret = deflate(&Stream, Z_FINISH);
-    assert(ret != Z_STREAM_ERROR);
-    unsigned have = CHUNK - Stream.avail_out;
+    do{
+        Stream.avail_out = CHUNK;
+        Stream.next_out = out;
+        ret = deflate(&Stream, Z_FINISH);
+        assert(ret != Z_STREAM_ERROR);
+        unsigned have = CHUNK - Stream.avail_out;
 
-    for(unsigned n = 0; n < have; n++) Result.push_back(out[n]);
-  } while (Stream.avail_out == 0);
+        for(unsigned n = 0; n < have; n++) Result.push_back(out[n]);
+    } while (Stream.avail_out == 0);
 
-  assert(Stream.avail_in == 0);
-  assert(ret == Z_STREAM_END);
+    assert(Stream.avail_in == 0);
+    assert(ret == Z_STREAM_END);
 
-  deflateEnd(&Stream);
+    deflateEnd(&Stream);
 
-  int n  = 0;
-  Buffer = new unsigned char[Result.size()];
-  for(auto Element: Result) Buffer[n++] = Element;
-  *Length = n;
+    int n  = 0;
+    Buffer = new unsigned char[Result.size()];
+    for(auto Element: Result) Buffer[n++] = Element;
+    *Length = n;
 
-  return Buffer;
+    return Buffer;
 }
 //------------------------------------------------------------------------------
 
 unsigned char* JDeflate::Inflate(unsigned char* Buffer, unsigned* Length)
 {
-  const int CHUNK = 64<<10;
+    const int CHUNK = 64<<10;
 
-  int ret;
-  unsigned char out[CHUNK];
+    int ret;
+    unsigned char out[CHUNK];
 
-  z_stream Stream;
-  Stream.zalloc   = Z_NULL;
-  Stream.zfree    = Z_NULL;
-  Stream.opaque   = Z_NULL;
-  Stream.avail_in = 0;
-  Stream.next_in  = Z_NULL;
-  ret = inflateInit(&Stream);
-  if(ret != Z_OK) return 0;
+    z_stream Stream;
+    Stream.zalloc   = Z_NULL;
+    Stream.zfree    = Z_NULL;
+    Stream.opaque   = Z_NULL;
+    Stream.avail_in = 0;
+    Stream.next_in  = Z_NULL;
+    ret = inflateInit(&Stream);
+    if(ret != Z_OK) return 0;
 
-  Stream.next_in  = Buffer;
-  Stream.avail_in = *Length;
+    Stream.next_in  = Buffer;
+    Stream.avail_in = *Length;
 
-  vector<unsigned char> Result;
+    vector<unsigned char> Result;
 
-  do{
-    Stream.avail_out = CHUNK;
-    Stream.next_out = out;
-    ret = inflate(&Stream, Z_FINISH);
-    assert(ret != Z_STREAM_ERROR);
-    unsigned have = CHUNK - Stream.avail_out;
+    do{
+        Stream.avail_out = CHUNK;
+        Stream.next_out = out;
+        ret = inflate(&Stream, Z_FINISH);
+        assert(ret != Z_STREAM_ERROR);
+        unsigned have = CHUNK - Stream.avail_out;
 
-    for(unsigned n = 0; n < have; n++) Result.push_back(out[n]);
-  } while (Stream.avail_out == 0);
+        for(unsigned n = 0; n < have; n++) Result.push_back(out[n]);
+    } while (Stream.avail_out == 0);
 
-  assert(Stream.avail_in == 0);
-  assert(ret == Z_STREAM_END);
+    assert(Stream.avail_in == 0);
+    assert(ret == Z_STREAM_END);
 
-  inflateEnd(&Stream);
+    inflateEnd(&Stream);
 
-  int n  = 0;
-  Buffer = new unsigned char[Result.size()];
-  for(auto Element: Result) Buffer[n++] = Element;
-  *Length = n;
+    int n  = 0;
+    Buffer = new unsigned char[Result.size()];
+    for(auto Element: Result) Buffer[n++] = Element;
+    *Length = n;
 
-  return Buffer;
+    return Buffer;
 }
 //------------------------------------------------------------------------------

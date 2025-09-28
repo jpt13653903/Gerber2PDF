@@ -22,40 +22,40 @@
 //------------------------------------------------------------------------------
 
 pdfFontDescriptor::pdfFontDescriptor(){
-  Type.Set("FontDescriptor");
-  Flags = 0x4; // Symbolic
+    Type.Set("FontDescriptor");
+    Flags = 0x4; // Symbolic
 
-  Object = &Dictionary;
+    Object = &Dictionary;
 
-  Dictionary.AddEntry("Type"       , &Type);
-  Dictionary.AddEntry("Flags"      , &Flags);
-  Dictionary.AddEntry("StemV"      , &StemV);
-  Dictionary.AddEntry("Ascent"     , &Ascent);
-  Dictionary.AddEntry("Descent"    , &Descent);
-  Dictionary.AddEntry("XHeight"    , &XHeight);
-  Dictionary.AddEntry("FontName"   , &FontName);
-  Dictionary.AddEntry("FontBBox"   , &FontBBox);
-  Dictionary.AddEntry("FontFile"   , &FontFile);
-  Dictionary.AddEntry("CapHeight"  , &CapHeight);
-  Dictionary.AddEntry("ItalicAngle", &ItalicAngle);
+    Dictionary.AddEntry("Type"       , &Type);
+    Dictionary.AddEntry("Flags"      , &Flags);
+    Dictionary.AddEntry("StemV"      , &StemV);
+    Dictionary.AddEntry("Ascent"     , &Ascent);
+    Dictionary.AddEntry("Descent"    , &Descent);
+    Dictionary.AddEntry("XHeight"    , &XHeight);
+    Dictionary.AddEntry("FontName"   , &FontName);
+    Dictionary.AddEntry("FontBBox"   , &FontBBox);
+    Dictionary.AddEntry("FontFile"   , &FontFile);
+    Dictionary.AddEntry("CapHeight"  , &CapHeight);
+    Dictionary.AddEntry("ItalicAngle", &ItalicAngle);
 }
 //------------------------------------------------------------------------------
 
 void pdfFontDescriptor::LoadMetrics(pdfFontMetrics* Metrics){
-  if(!Metrics) return;
+    if(!Metrics) return;
 
-  FontName.Set(Metrics->FontName);
+    FontName.Set(Metrics->FontName);
 
-  FontBBox.Set(
-    Metrics->Box.Left,
-    Metrics->Box.Bottom,
-    Metrics->Box.Right,
-    Metrics->Box.Top
-  );
+    FontBBox.Set(
+        Metrics->Box.Left,
+        Metrics->Box.Bottom,
+        Metrics->Box.Right,
+        Metrics->Box.Top
+    );
 
-  Ascent    = Metrics->Box.Top;
-  Descent   = Metrics->Box.Bottom;
-  CapHeight = Metrics->Height('M');
-  XHeight   = Metrics->Height('x');
+    Ascent    = Metrics->Box.Top;
+    Descent   = Metrics->Box.Bottom;
+    CapHeight = Metrics->Height('M');
+    XHeight   = Metrics->Height('x');
 }
 //------------------------------------------------------------------------------

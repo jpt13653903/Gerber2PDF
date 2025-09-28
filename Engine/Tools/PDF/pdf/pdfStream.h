@@ -29,36 +29,36 @@
 //------------------------------------------------------------------------------
 
 class pdfStream : public pdfIndirect{
-private:
-  unsigned int BufferSize;
-  JDeflate     ZLib;
+    private:
+        unsigned int BufferSize;
+        JDeflate     ZLib;
 
-protected:
-  unsigned char* Buffer;
+    protected:
+        unsigned char* Buffer;
 
-  pdfDictionary  Dictionary;
-  pdfNumber      Length;
-  pdfName        Filter;
+        pdfDictionary  Dictionary;
+        pdfNumber      Length;
+        pdfName        Filter;
 
-  virtual void Update();
+        virtual void Update();
 
-public:
-  pdfStream();
+    public:
+        pdfStream();
 
-  // Encode using ZLib format and sets the Filter
-  void Deflate();
+        // Encode using ZLib format and sets the Filter
+        void Deflate();
 
-  // Decode a ZLib Stream and clears the Filter
-  void Inflate();
+        // Decode a ZLib Stream and clears the Filter
+        void Inflate();
 
-  void AddBinary   (const unsigned char* Buffer, unsigned Length);
-  void AddLine     (const          char* Line);
-  void AddLineFront(const          char* Line);
+        void AddBinary   (const unsigned char* Buffer, unsigned Length);
+        void AddLine     (const          char* Line);
+        void AddLineFront(const          char* Line);
 
-  int GetBodyLength();
-  int GetBody      (char* Buffer);
+        int GetBodyLength();
+        int GetBody      (char* Buffer);
 
-  int GetSize();
+        int GetSize();
 };
 //------------------------------------------------------------------------------
 

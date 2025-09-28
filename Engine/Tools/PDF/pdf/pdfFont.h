@@ -29,50 +29,50 @@
 
 // The standard 14 fonts
 class pdfFont : public pdfIndirect{
-public:
-  enum FONT{
-    Times_Roman,
-    Times_Bold,
-    Times_Italic,
-    Times_BoldItalic,
+    public:
+        enum FONT{
+            Times_Roman,
+            Times_Bold,
+            Times_Italic,
+            Times_BoldItalic,
 
-    Helvetica,
-    Helvetica_Bold,
-    Helvetica_Oblique,
-    Helvetica_BoldOblique,
+            Helvetica,
+            Helvetica_Bold,
+            Helvetica_Oblique,
+            Helvetica_BoldOblique,
 
-    Courier,
-    Courier_Bold,
-    Courier_Oblique,
-    Courier_BoldOblique,
+            Courier,
+            Courier_Bold,
+            Courier_Oblique,
+            Courier_BoldOblique,
 
-    Symbol,
-    ZapfDingbats,
-  };
+            Symbol,
+            ZapfDingbats,
+        };
 
-private:
-  bool WinANSI;
+    private:
+        bool WinANSI;
 
-protected:
-  pdfDictionary Dictionary;
+    protected:
+        pdfDictionary Dictionary;
 
-  pdfName Type;
-  pdfName Subtype;
-  pdfName BaseFont;
-  pdfName Encoding;
+        pdfName Type;
+        pdfName Subtype;
+        pdfName BaseFont;
+        pdfName Encoding;
 
-  virtual void Update();
+        virtual void Update();
 
-public:
-  pdfName Name; // Do not use the name directly
+    public:
+        pdfName Name; // Do not use the name directly
 
-  pdfFont(const char* Name);
+        pdfFont(const char* Name);
 
-  // Load an AFM file into the Metrics for kerning to work
-  pdfFontMetrics Metrics;
+        // Load an AFM file into the Metrics for kerning to work
+        pdfFontMetrics Metrics;
 
-  void SetFont   (FONT Font);
-  void SetWinANSI(); // Also calls Metrics.SetWinANSI
+        void SetFont   (FONT Font);
+        void SetWinANSI(); // Also calls Metrics.SetWinANSI
 };
 //------------------------------------------------------------------------------
 

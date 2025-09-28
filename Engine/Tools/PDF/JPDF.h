@@ -47,43 +47,43 @@
 //------------------------------------------------------------------------------
 
 class JPDF{
-private:
-  struct Element{
-    pdfIndirect* Object;
-    unsigned     Offset;
-    Element    * Next;
-  };
-  Element* First;
-  Element* Last;
+    private:
+        struct Element{
+            pdfIndirect* Object;
+            unsigned     Offset;
+            Element    * Next;
+        };
+        Element* First;
+        Element* Last;
 
-  pdfIndirect Info;
+        pdfIndirect Info;
 
-  FileWrapper File;
+        FileWrapper File;
 
-public:
-  JPDF();
- ~JPDF();
+    public:
+        JPDF();
+       ~JPDF();
 
-  pdfString Title;
-  pdfString Author;
-  pdfString Subject;
-  pdfString Keywords;
-  pdfString Creator;
-  pdfString Producer;
-  pdfString CreationDate;
+        pdfString Title;
+        pdfString Author;
+        pdfString Subject;
+        pdfString Keywords;
+        pdfString Creator;
+        pdfString Producer;
+        pdfString CreationDate;
 
-  pdfCatalogue Catalogue;
+        pdfCatalogue Catalogue;
 
-  // Adds an indirect object to the object list
-  void AddIndirect(pdfIndirect* Indirect);
+        // Adds an indirect object to the object list
+        void AddIndirect(pdfIndirect* Indirect);
 
-  // Use this to add all the components of the Type1 font to the Indirect list
-  void AddType1Font(pdfType1Font* Font);
+        // Use this to add all the components of the Type1 font to the Indirect list
+        void AddType1Font(pdfType1Font* Font);
 
-  // Define the font in full before calling this function
-  void AddType3Font(pdfType3Font* Font);
+        // Define the font in full before calling this function
+        void AddType3Font(pdfType3Font* Font);
 
-  void WritePDF   (const char * FileName);
+        void WritePDF   (const char * FileName);
 };
 //------------------------------------------------------------------------------
 

@@ -23,42 +23,42 @@
 //------------------------------------------------------------------------------
 
 pdfResources::pdfResources(){
-  Indent = 1;
-  ExtGState.OneLine = true;
-  XObjects .OneLine = true;
-  Fonts    .OneLine = true;
+    Indent = 1;
+    ExtGState.OneLine = true;
+    XObjects .OneLine = true;
+    Fonts    .OneLine = true;
 }
 //------------------------------------------------------------------------------
 
 void pdfResources::Update(){
-  Clear();
-  if(Fonts    .GetCount()) AddEntry("Font"     , &Fonts);
-  if(XObjects .GetCount()) AddEntry("XObject"  , &XObjects);
-  if(ExtGState.GetCount()) AddEntry("ExtGState", &ExtGState);
+    Clear();
+    if(Fonts    .GetCount()) AddEntry("Font"     , &Fonts);
+    if(XObjects .GetCount()) AddEntry("XObject"  , &XObjects);
+    if(ExtGState.GetCount()) AddEntry("ExtGState", &ExtGState);
 }
 //------------------------------------------------------------------------------
 
 void pdfResources::AddFont(pdfFont* Font){
-  Fonts.AddEntry(Font->Name.Get(), Font);
-  Update();
+    Fonts.AddEntry(Font->Name.Get(), Font);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfResources::AddForm(pdfForm* Form){
-  XObjects.AddEntry(Form->Name.Get(), Form);
-  Update();
+    XObjects.AddEntry(Form->Name.Get(), Form);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfResources::AddImage(pdfImage* Image){
-  XObjects.AddEntry(Image->Name.Get(), Image);
-  Update();
+    XObjects.AddEntry(Image->Name.Get(), Image);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfResources::AddOpaque(pdfOpaque* Opaque){
-  ExtGState.AddEntry(Opaque->Name.Get(), Opaque);
-  Update();
+    ExtGState.AddEntry(Opaque->Name.Get(), Opaque);
+    Update();
 }
 //------------------------------------------------------------------------------
 

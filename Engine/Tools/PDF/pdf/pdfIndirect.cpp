@@ -22,79 +22,79 @@
 //------------------------------------------------------------------------------
 
 pdfIndirect::pdfIndirect(){
-  Reference = 0;
-  Object    = 0;
+    Reference = 0;
+    Object    = 0;
 }
 //------------------------------------------------------------------------------
 
 int pdfIndirect::GetLength(){
-  int r = 0;
+    int r = 0;
 
-  pdfNumber n;
-  n = Reference;
-  r += n.GetLength();
-  r += 4; // The generation number, spaces and "R"
+    pdfNumber n;
+    n = Reference;
+    r += n.GetLength();
+    r += 4; // The generation number, spaces and "R"
 
-  return r;
+    return r;
 }
 //------------------------------------------------------------------------------
 
 int pdfIndirect::GetOutput(char* Buffer){
-  int i = 0;
+    int i = 0;
 
-  pdfNumber n;
-  n = Reference;
-  i += n.GetOutput(Buffer);
+    pdfNumber n;
+    n = Reference;
+    i += n.GetOutput(Buffer);
 
-  Buffer[i++] = ' ';
-  Buffer[i++] = '0';
-  Buffer[i++] = ' ';
-  Buffer[i++] = 'R';
+    Buffer[i++] = ' ';
+    Buffer[i++] = '0';
+    Buffer[i++] = ' ';
+    Buffer[i++] = 'R';
 
-  return i;
+    return i;
 }
 //------------------------------------------------------------------------------
 
 int pdfIndirect::GetBodyLength(){
-  int r = 0;
+    int r = 0;
 
-  pdfNumber n;
-  n = Reference;
-  r += n.GetLength();
-  r += 7; // The generation number, "obj" and newline and spaces
-  if(Object) r += Object->GetLength();
-  r += 8; // Newline and the "endobj" keyword
+    pdfNumber n;
+    n = Reference;
+    r += n.GetLength();
+    r += 7; // The generation number, "obj" and newline and spaces
+    if(Object) r += Object->GetLength();
+    r += 8; // Newline and the "endobj" keyword
 
-  return r;
+    return r;
 }
 //------------------------------------------------------------------------------
 
 int pdfIndirect::GetBody(char* Buffer){
-  int i = 0;
+    int i = 0;
 
-  pdfNumber n;
-  n = Reference;
-  i += n.GetOutput(Buffer);
+    pdfNumber n;
+    n = Reference;
+    i += n.GetOutput(Buffer);
 
-  Buffer[i++] = ' ';
-  Buffer[i++] = '0';
-  Buffer[i++] = ' ';
-  Buffer[i++] = 'o';
-  Buffer[i++] = 'b';
-  Buffer[i++] = 'j';
-  Buffer[i++] = ' ';
+    Buffer[i++] = ' ';
+    Buffer[i++] = '0';
+    Buffer[i++] = ' ';
+    Buffer[i++] = 'o';
+    Buffer[i++] = 'b';
+    Buffer[i++] = 'j';
+    Buffer[i++] = ' ';
 
-  if(Object) i += Object->GetOutput(Buffer + i);
+    if(Object) i += Object->GetOutput(Buffer + i);
 
-  Buffer[i++] = ' ';
-  Buffer[i++] = 'e';
-  Buffer[i++] = 'n';
-  Buffer[i++] = 'd';
-  Buffer[i++] = 'o';
-  Buffer[i++] = 'b';
-  Buffer[i++] = 'j';
-  Buffer[i++] = '\n';
+    Buffer[i++] = ' ';
+    Buffer[i++] = 'e';
+    Buffer[i++] = 'n';
+    Buffer[i++] = 'd';
+    Buffer[i++] = 'o';
+    Buffer[i++] = 'b';
+    Buffer[i++] = 'j';
+    Buffer[i++] = '\n';
 
-  return i;
+    return i;
 }
 //------------------------------------------------------------------------------

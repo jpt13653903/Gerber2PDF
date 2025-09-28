@@ -36,104 +36,104 @@ extern bool GerberWarnings;
 //------------------------------------------------------------------------------
 
 class GerberLevel{
-  private: // Standard private members and functions
-    GerberRender* RenderList; // Linked list of render commands
-    GerberRender* LastRender; // Last render command used for easy additions
+    private: // Standard private members and functions
+        GerberRender* RenderList; // Linked list of render commands
+        GerberRender* LastRender; // Last render command used for easy additions
 
-    void          Add   (GerberRender*  Render );
-    GerberRender* AddNew(GERBER_COMMAND Command);
+        void          Add   (GerberRender*  Render );
+        GerberRender* AddNew(GERBER_COMMAND Command);
 
-    bool   Path; // Busy with path definition
-    bool   OutlineFill;
-    double pX, pY; // Previous point used for relative data
-    double fX, fY; // First point of polygon
+        bool   Path; // Busy with path definition
+        bool   OutlineFill;
+        double pX, pY; // Previous point used for relative data
+        double fX, fY; // First point of polygon
 
-    double Get_mm(double Number);
+        double Get_mm(double Number);
 
-    double GetAngle(
-      double x1, double y1, // Start, relative to center
-      double x2, double y2  // End, relative to center
-    );
+        double GetAngle(
+            double x1, double y1, // Start, relative to center
+            double x2, double y2  // End, relative to center
+        );
 
-    void Move (unsigned LineNumber);
-    void Line ();
-    void Arc  ();
-    void Flash();
+        void Move (unsigned LineNumber);
+        void Line ();
+        void Arc  ();
+        void Flash();
 
-    GerberAperture* CurrentAperture;
-  //----------------------------------------------------------------------------
+        GerberAperture* CurrentAperture;
+    //----------------------------------------------------------------------------
 
-  private: // Specifically used by ConvertStrokesToFills()
-    class Segment{
-      private:
-        bool Closed = false; // true => closed; false => maybe closed
+    private: // Specifically used by ConvertStrokesToFills()
+        class Segment{
+            private:
+                bool Closed = false; // true => closed; false => maybe closed
 
-      public:
-        GerberRender* CommandList = 0;
-        GerberRender* LastCommand = 0;
-        Segment*      Prev        = 0;
-        Segment*      Next        = 0;
+            public:
+                GerberRender* CommandList = 0;
+                GerberRender* LastCommand = 0;
+                Segment*      Prev        = 0;
+                Segment*      Next        = 0;
 
-        void Add     (GerberRender* Command);
-        bool IsClosed();
-        void Reverse ();
-        void Isolate ();
-    };
-    Segment* SegmentList = 0;
-    Segment* LastSegment = 0;
+                void Add     (GerberRender* Command);
+                bool IsClosed();
+                void Reverse ();
+                void Isolate ();
+        };
+        Segment* SegmentList = 0;
+        Segment* LastSegment = 0;
 
-    Segment* FindNeighbour(Segment* Current);
+        Segment* FindNeighbour(Segment* Current);
 
-    void NewSegment     ();
-    void ExtractSegments();
-    void JoinSegments   ();
-    void AddSegments    ();
-  //----------------------------------------------------------------------------
+        void NewSegment     ();
+        void ExtractSegments();
+        void JoinSegments   ();
+        void AddSegments    ();
+    //----------------------------------------------------------------------------
 
-  public: // Public interface
-    GerberLevel(GerberLevel* PreviousLevel, GERBER_UNIT Units);
-   ~GerberLevel();
+    public: // Public interface
+        GerberLevel(GerberLevel* PreviousLevel, GERBER_UNIT Units);
+       ~GerberLevel();
 
-    GerberLevel* Next;
+        GerberLevel* Next;
 
-    // Image bounding box
-    double Left;
-    double Bottom;
-    double Right;
-    double Top;
+        // Image bounding box
+        double Left;
+        double Bottom;
+        double Right;
+        double Top;
 
-    // Step-and-Repeat
-    int    CountX, CountY;
-    double StepX , StepY;
+        // Step-and-Repeat
+        int    CountX, CountY;
+        double StepX , StepY;
 
-    void SetName(const char* Name);
+        void SetName(const char* Name);
 
-    char* Name; // null for default level
-    bool  Negative;
-    bool  Relative;
-    bool  Incremental;
-    bool  Multiquadrant;
+        char* Name; // null for default level
+        bool  Negative;
+        bool  Relative;
+        bool  Incremental;
+        bool  Multiquadrant;
 
-    double X, Y, I, J;
+        double X, Y, I, J;
 
-    GERBER_UNIT          Units;
-    GERBER_EXPOSURE      Exposure;
-    GERBER_INTERPOLATION Interpolation;
+        GERBER_UNIT          Units;
+        GERBER_EXPOSURE      Exposure;
+        GERBER_INTERPOLATION Interpolation;
 
-    void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
+        void ApertureSelect(GerberAperture* Aperture, unsigned LineNumber);
 
-    void OutlineBegin(unsigned LineNumber);
-    void OutlineEnd  (unsigned LineNumber);
+        void OutlineBegin(unsigned LineNumber);
+        void OutlineEnd  (unsigned LineNumber);
 
-    void Do(unsigned LineNumber);
+        void Do(unsigned LineNumber);
 
-    // Linked list of render commands
-    // Memory freed automatically
-    GerberRender* Render();
+        // Linked list of render commands
+        // Memory freed automatically
+        GerberRender* Render();
 
-    // Forms a single area out of the various line and arc segments in the 
-    // layer, typically used to obtain a solid board from an outline.
-    void ConvertStrokesToFills();
+        // Forms a single area out of the various line and arc segments in the
+        // layer, typically used to obtain a solid board from an outline.
+        void ConvertStrokesToFills();
 };
 //------------------------------------------------------------------------------
 

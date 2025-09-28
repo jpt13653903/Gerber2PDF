@@ -26,26 +26,26 @@
 //------------------------------------------------------------------------------
 
 class pdfArray : public pdfObject{
-private:
-  struct Element{
-    pdfObject* Object;
-    Element  * Next;
-  };
-  Element* First;
-  Element* Last;
+    private:
+        struct Element{
+            pdfObject* Object;
+            Element  * Next;
+        };
+        Element* First;
+        Element* Last;
 
-  int Count;
+        int Count;
 
-public:
-  pdfArray();
- ~pdfArray();
+    public:
+        pdfArray();
+       ~pdfArray();
 
-  void Clear   ();
-  void Add     (pdfObject* Object);
-  int  GetCount();
+        void Clear   ();
+        void Add     (pdfObject* Object);
+        int  GetCount();
 
-  int GetLength();
-  int GetOutput(char* Buffer);
+        int GetLength();
+        int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

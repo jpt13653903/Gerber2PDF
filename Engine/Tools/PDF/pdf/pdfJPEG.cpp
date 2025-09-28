@@ -22,127 +22,127 @@
 //------------------------------------------------------------------------------
 
 pdfJPEG::pdfJPEG(const char* Name) : pdfImage(Name){
-  pdfJPEG::Filter.Set("DCTDecode");
+    pdfJPEG::Filter.Set("DCTDecode");
 
-  Update();
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfJPEG::Update(){
-  Dictionary.Clear();
-  Dictionary.AddEntry("Type"            , &Type);
-  Dictionary.AddEntry("Subtype"         , &Subtype);
-  Dictionary.AddEntry("Name"            , &Name);
-  Dictionary.AddEntry("Width"           , &Width);
-  Dictionary.AddEntry("Height"          , &Height);
-  Dictionary.AddEntry("ColorSpace"      , &ColourSpace);
-  Dictionary.AddEntry("BitsPerComponent", &BitsPerColour);
-  Dictionary.AddEntry("Interpolate"     , &Interpolate);
-  Dictionary.AddEntry("Length"          , &Length);
-  Dictionary.AddEntry("Filter"          , &Filter);
+    Dictionary.Clear();
+    Dictionary.AddEntry("Type"            , &Type);
+    Dictionary.AddEntry("Subtype"         , &Subtype);
+    Dictionary.AddEntry("Name"            , &Name);
+    Dictionary.AddEntry("Width"           , &Width);
+    Dictionary.AddEntry("Height"          , &Height);
+    Dictionary.AddEntry("ColorSpace"      , &ColourSpace);
+    Dictionary.AddEntry("BitsPerComponent", &BitsPerColour);
+    Dictionary.AddEntry("Interpolate"     , &Interpolate);
+    Dictionary.AddEntry("Length"          , &Length);
+    Dictionary.AddEntry("Filter"          , &Filter);
 }
 //------------------------------------------------------------------------------
 
 void pdfJPEG::GetSizes(const unsigned char* Buffer, unsigned Length){
-  int      SectionLength;
-  int      Marker;
-  int      Tasks = 0;
-  unsigned Index = 0;
+    int      SectionLength;
+    int      Marker;
+    int      Tasks = 0;
+    unsigned Index = 0;
 
-  int Units    = 0;
-  int XDensity = 0;
-  int YDensity = 0;
+    int Units    = 0;
+    int XDensity = 0;
+    int YDensity = 0;
 
-  int Precision = 0;
-  int Width     = 0;
-  int Height    = 0;
+    int Precision = 0;
+    int Width     = 0;
+    int Height    = 0;
 
-  while(Index < Length-4 && Tasks < 3){
-    if(Buffer[Index++] != 0xFF) return;
-    Marker = Buffer[Index++];
-    SectionLength = (Buffer[Index  ] << 8) +
-                     Buffer[Index+1];
-    switch(Marker){
-      case 0xD8: // Start of image
-        Tasks++;
-        break;
+    while(Index < Length-4 && Tasks < 3){
+        if(Buffer[Index++] != 0xFF) return;
+        Marker = Buffer[Index++];
+        SectionLength = (Buffer[Index  ] << 8) +
+                         Buffer[Index+1];
+        switch(Marker){
+            case 0xD8: // Start of image
+                Tasks++;
+                break;
 
-      case 0xE0: // Application Segment
-        if(Buffer[Index+2] == 'J' &&
-           Buffer[Index+3] == 'F' &&
-           Buffer[Index+4] == 'I' &&
-           Buffer[Index+5] == 'F' &&
-           Buffer[Index+6] == 0   ){
-          Units    =  Buffer[Index+ 9];
-          XDensity = (Buffer[Index+10] << 8) |
-                      Buffer[Index+11];
-          YDensity = (Buffer[Index+12] << 8) |
-                      Buffer[Index+13];
-          Tasks++;
+            case 0xE0: // Application Segment
+                if(Buffer[Index+2] == 'J' &&
+                      Buffer[Index+3] == 'F' &&
+                      Buffer[Index+4] == 'I' &&
+                      Buffer[Index+5] == 'F' &&
+                      Buffer[Index+6] == 0   ){
+                    Units    =  Buffer[Index+ 9];
+                    XDensity = (Buffer[Index+10] << 8) |
+                                Buffer[Index+11];
+                    YDensity = (Buffer[Index+12] << 8) |
+                                Buffer[Index+13];
+                    Tasks++;
+                }
+                Index += SectionLength;
+                break;
+
+            case 0xC0:
+            case 0xC1:
+            case 0xC2:
+            case 0xC3:
+            case 0xC9:
+            case 0xCA:
+            case 0xCB:
+                Precision =  Buffer[Index+2];
+                Height    = (Buffer[Index+3] << 8) |
+                             Buffer[Index+4];
+                Width     = (Buffer[Index+5] << 8) |
+                             Buffer[Index+6];
+                Index += SectionLength;
+                Tasks ++;
+                break;
+
+            default:
+                Index += SectionLength;
+                break;
         }
-        Index += SectionLength;
-        break;
-
-      case 0xC0:
-      case 0xC1:
-      case 0xC2:
-      case 0xC3:
-      case 0xC9:
-      case 0xCA:
-      case 0xCB:
-        Precision =  Buffer[Index+2];
-        Height    = (Buffer[Index+3] << 8) |
-                     Buffer[Index+4];
-        Width     = (Buffer[Index+5] << 8) |
-                     Buffer[Index+6];
-        Index += SectionLength;
-        Tasks ++;
-        break;
-
-      default:
-        Index += SectionLength;
-        break;
     }
-  }
 
-  switch(Units){
-    case 2: // cm
-      Width_mm  = (double)Width  / (double)XDensity * 10.0;
-      Height_mm = (double)Height / (double)YDensity * 10.0;
-      break;
-    case 0: // None
-    case 1: // Inches
-    default:
-      Width_mm  = (double)Width  / (double)XDensity * 25.4;
-      Height_mm = (double)Height / (double)YDensity * 25.4;
-      break;
-  }
+    switch(Units){
+        case 2: // cm
+            Width_mm  = (double)Width  / (double)XDensity * 10.0;
+            Height_mm = (double)Height / (double)YDensity * 10.0;
+            break;
+        case 0: // None
+        case 1: // Inches
+        default:
+            Width_mm  = (double)Width  / (double)XDensity * 25.4;
+            Height_mm = (double)Height / (double)YDensity * 25.4;
+            break;
+    }
 
-  BitsPerColour   = Precision;
-  pdfJPEG::Width  = Width;
-  pdfJPEG::Height = Height;
+    BitsPerColour   = Precision;
+    pdfJPEG::Width  = Width;
+    pdfJPEG::Height = Height;
 }
 //------------------------------------------------------------------------------
 
 bool pdfJPEG::LoadFromFile(const char* Filename){
-  int   Length;
-  char* Buffer;
-  FileWrapper File;
+    int   Length;
+    char* Buffer;
+    FileWrapper File;
 
-  if(File.open(Filename, FileWrapper::Access::Read)){
-    Length = File.getSize();
-    Buffer = new char[Length];
-    File.read(Buffer, Length);
-    AddBinary((unsigned char*)Buffer, Length);
-    GetSizes ((unsigned char*)Buffer, Length);
-    File.close();
-    delete[] Buffer;
-    return true;
+    if(File.open(Filename, FileWrapper::Access::Read)){
+        Length = File.getSize();
+        Buffer = new char[Length];
+        File.read(Buffer, Length);
+        AddBinary((unsigned char*)Buffer, Length);
+        GetSizes ((unsigned char*)Buffer, Length);
+        File.close();
+        delete[] Buffer;
+        return true;
 
-  }else{
-    error("%s", getErrorString(GetLastError()));
-  }
+    }else{
+        error("%s", getErrorString(GetLastError()));
+    }
 
-  return false;
+    return false;
 }
 //------------------------------------------------------------------------------`

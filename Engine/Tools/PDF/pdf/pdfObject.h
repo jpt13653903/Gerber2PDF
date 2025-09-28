@@ -26,12 +26,12 @@
 //------------------------------------------------------------------------------
 
 class pdfObject{
-public:
-           pdfObject();
-  virtual ~pdfObject();
+    public:
+                 pdfObject();
+        virtual ~pdfObject();
 
-  virtual int GetLength(); // Returns the minimum length of the buffer.
-  virtual int GetOutput(char*  Buffer); // Returns the string of it's contents.
+        virtual int GetLength(); // Returns the minimum length of the buffer.
+        virtual int GetOutput(char*  Buffer); // Returns the string of it's contents.
 };
 //------------------------------------------------------------------------------
 

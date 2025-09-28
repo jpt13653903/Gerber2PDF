@@ -61,75 +61,75 @@
 /// \todo Remember to implement the Composites section!
 
 class pdfType3Font : public pdfFont{
-private:
-  bool UseCMYK;
+    private:
+        bool UseCMYK;
 
-  pdfArray  FontBBox;
-  pdfNumber Left;
-  pdfNumber Bottom;
-  pdfNumber Right;
-  pdfNumber Top;
+        pdfArray  FontBBox;
+        pdfNumber Left;
+        pdfNumber Bottom;
+        pdfNumber Right;
+        pdfNumber Top;
 
-  pdfArray  FontMatrix;
-  pdfNumber Zero;
-  pdfNumber Thousandth;
+        pdfArray  FontMatrix;
+        pdfNumber Zero;
+        pdfNumber Thousandth;
 
-  pdfDictionary CharProcsDictionary;
+        pdfDictionary CharProcsDictionary;
 
-  pdfDictionary EncodingDictionary;
-  pdfName       EncodingType;
-  pdfArray      Differences;
-  pdfNumber*    DifferencesCode;
-  pdfName*      DifferencesName;
+        pdfDictionary EncodingDictionary;
+        pdfName       EncodingType;
+        pdfArray      Differences;
+        pdfNumber*    DifferencesCode;
+        pdfName*      DifferencesName;
 
-  pdfNumber  FirstChar;
-  pdfNumber  LastChar;
+        pdfNumber  FirstChar;
+        pdfNumber  LastChar;
 
-  pdfArray    WidthsArray;
-  pdfNumber*  TheWidths;
+        pdfArray    WidthsArray;
+        pdfNumber*  TheWidths;
 
-  afmParser Parser;
+        afmParser Parser;
 
-  int  Compare(const char* s1, const char* s2);
+        int  Compare(const char* s1, const char* s2);
 
-  pdfContents*  GetGlyph ();
-  pdfContents** GetGlyphs(unsigned* GlyphCount);
+        pdfContents*  GetGlyph ();
+        pdfContents** GetGlyphs(unsigned* GlyphCount);
 
-  pdfContents** GetFontGlyphs(unsigned* GlyphCount); // The root of the parser
+        pdfContents** GetFontGlyphs(unsigned* GlyphCount); // The root of the parser
 
-public:
-  pdfType3Font(const char* Name, bool UseCMYK = false);
- ~pdfType3Font();
+    public:
+        pdfType3Font(const char* Name, bool UseCMYK = false);
+       ~pdfType3Font();
 
-  // These are handled by JPDF::AddType3Font and should not be used directly
-  pdfIndirect Widths;
-  pdfIndirect Encoding;
-  pdfIndirect CharProcs;
-  void        SetWidths();
-  void        SetEncoding(); // Assumes SetWidths has been called
+        // These are handled by JPDF::AddType3Font and should not be used directly
+        pdfIndirect Widths;
+        pdfIndirect Encoding;
+        pdfIndirect CharProcs;
+        void        SetWidths();
+        void        SetEncoding(); // Assumes SetWidths has been called
 
-  // Call Update after changing Resources for the first time
-  pdfResources Resources;
-  void Update();
+        // Call Update after changing Resources for the first time
+        pdfResources Resources;
+        void Update();
 
-  // Returns a pointer to the contents structure of the new glyph.  The user is
-  // responsible for adding it to the pdf indirect list, drawing the glyph and
-  // deleting it after use.
-  pdfContents* NewGlyph(
-    const char* Name,
-    double      Left,
-    double      Bottom,
-    double      Right,
-    double      Top,
-    double      Advance
-  );
+        // Returns a pointer to the contents structure of the new glyph.  The user is
+        // responsible for adding it to the pdf indirect list, drawing the glyph and
+        // deleting it after use.
+        pdfContents* NewGlyph(
+            const char* Name,
+            double      Left,
+            double      Bottom,
+            double      Right,
+            double      Top,
+            double      Advance
+        );
 
-  // Loads a T3F file (Type3 Font).  It has the same specification as an Adobe
-  // AFM file, exept that it has a StartFontGlyphs...EndFontGlyphs section
-  // appended to the end of the file.  It is the user's responsibility to add
-  // the glyphs to the pdf Indirect list and delete the memory afterwards. All
-  // glyph streams are deflated.
-  pdfContents** LoadT3F(const char* FileName, unsigned* GlyphCount);
+        // Loads a T3F file (Type3 Font).  It has the same specification as an Adobe
+        // AFM file, exept that it has a StartFontGlyphs...EndFontGlyphs section
+        // appended to the end of the file.  It is the user's responsibility to add
+        // the glyphs to the pdf Indirect list and delete the memory afterwards. All
+        // glyph streams are deflated.
+        pdfContents** LoadT3F(const char* FileName, unsigned* GlyphCount);
 };
 //------------------------------------------------------------------------------
 

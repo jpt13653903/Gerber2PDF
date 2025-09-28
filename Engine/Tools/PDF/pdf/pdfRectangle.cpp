@@ -22,51 +22,51 @@
 //------------------------------------------------------------------------------
 
 pdfRectangle::pdfRectangle(){
-  Add(&Left);
-  Add(&Bottom);
-  Add(&Right);
-  Add(&Top);
+    Add(&Left);
+    Add(&Bottom);
+    Add(&Right);
+    Add(&Top);
 }
 //------------------------------------------------------------------------------
 
 void pdfRectangle::SetA4(){
-  Set_mm(0, 0, 210, 297);
+    Set_mm(0, 0, 210, 297);
 }
 //------------------------------------------------------------------------------
 
 void pdfRectangle::SetA4Landscape(){
-  Set_mm(0, 0, 297, 210);
+    Set_mm(0, 0, 297, 210);
 }
 //------------------------------------------------------------------------------
 
 void pdfRectangle::Set_mm(double Left, double Bottom, double Right, double Top){
-  Set(
-    Left  /25.4*72.0,
-    Bottom/25.4*72.0,
-    Right /25.4*72.0,
-    Top   /25.4*72.0
-  );
+    Set(
+        Left  /25.4*72.0,
+        Bottom/25.4*72.0,
+        Right /25.4*72.0,
+        Top   /25.4*72.0
+    );
 }
 //------------------------------------------------------------------------------
 
 void pdfRectangle::Set(
-  double Left,
-  double Bottom,
-  double Right,
-  double Top
+    double Left,
+    double Bottom,
+    double Right,
+    double Top
 ){
-  pdfRectangle::Left  .Value = Left;
-  pdfRectangle::Bottom.Value = Bottom;
-  pdfRectangle::Right .Value = Right;
-  pdfRectangle::Top   .Value = Top;
+    pdfRectangle::Left  .Value = Left;
+    pdfRectangle::Bottom.Value = Bottom;
+    pdfRectangle::Right .Value = Right;
+    pdfRectangle::Top   .Value = Top;
 }
 //------------------------------------------------------------------------------
 
 bool pdfRectangle::HasArea(){
-  if(fabs(Right.Value - Left  .Value) > 0.0 &&
-     fabs(Top  .Value - Bottom.Value) > 0.0 ){
-    return true;
-  }
-  return false;
+    if(fabs(Right.Value - Left  .Value) > 0.0 &&
+          fabs(Top  .Value - Bottom.Value) > 0.0 ){
+        return true;
+    }
+    return false;
 }
 //------------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------
 
 #ifdef NIX
-  #include <unistd.h>
+    #include <unistd.h>
 #endif
 //------------------------------------------------------------------------------
 
@@ -36,192 +36,192 @@
 //------------------------------------------------------------------------------
 
 struct ENGINE{
-  public: // Externally-controlled mode
-    enum PAGE_SIZE{
-      PS_Tight = 0,
-      PS_Extents,
-      PS_A3,
-      PS_A4,
-      PS_Letter
-    } PageSize, NextPageSize;
+    public: // Externally-controlled mode
+        enum PAGE_SIZE{
+            PS_Tight = 0,
+            PS_Extents,
+            PS_A3,
+            PS_A4,
+            PS_Letter
+        } PageSize, NextPageSize;
 
-    enum PAGE_ORIENTATION{
-      PO_Auto = 0,
-      PO_Portrait,
-      PO_Landscape
-    } Orientation, NextOrientation;
+        enum PAGE_ORIENTATION{
+            PO_Auto = 0,
+            PO_Portrait,
+            PO_Landscape
+        } Orientation, NextOrientation;
 
-    bool Mirror;
-    bool Combine;
-    bool NewPage;
+        bool Mirror;
+        bool Combine;
+        bool NewPage;
 
-    struct COLOUR{
-      bool UseCMYK;
-      union{
-        struct{ double R, G, B; };
-        struct{ double C, M, Y, K; };
-      };
-      double A;
-      COLOUR();
-      void operator=  (COLOUR& Colour);
-      bool operator== (COLOUR& Colour);
-    } Light, Dark;
+        struct COLOUR{
+            bool UseCMYK;
+            union{
+                struct{ double R, G, B; };
+                struct{ double C, M, Y, K; };
+            };
+            double A;
+            COLOUR();
+            void operator=  (COLOUR& Colour);
+            bool operator== (COLOUR& Colour);
+        } Light, Dark;
 
-    bool ConvertStrokesToFills;
-    bool ScaleToFit;
-    bool NextScaleToFit;
-    bool UseCMYK;
+        bool ConvertStrokesToFills;
+        bool ScaleToFit;
+        bool NextScaleToFit;
+        bool UseCMYK;
 //------------------------------------------------------------------------------
 
-  private: // Internal structures
-    int OpaqueCount;
-    struct OPAQUE_STACK{
-      pdfOpaque*    Opaque;
-      OPAQUE_STACK* Next;
+    private: // Internal structures
+        int OpaqueCount;
+        struct OPAQUE_STACK{
+            pdfOpaque*    Opaque;
+            OPAQUE_STACK* Next;
 
-      OPAQUE_STACK(double Value, int& OpaqueCount);
-     ~OPAQUE_STACK();
-    };
-    OPAQUE_STACK* OpaqueStack;
+            OPAQUE_STACK(double Value, int& OpaqueCount);
+           ~OPAQUE_STACK();
+        };
+        OPAQUE_STACK* OpaqueStack;
 
-    struct APERTURE{
-      pdfForm*  Aperture;
-      APERTURE* Next;
-    };
+        struct APERTURE{
+            pdfForm*  Aperture;
+            APERTURE* Next;
+        };
 
-    struct LEVEL_FORM{
-      pdfForm*    Level;
-      LEVEL_FORM* Next;
+        struct LEVEL_FORM{
+            pdfForm*    Level;
+            LEVEL_FORM* Next;
 
-      LEVEL_FORM();
-     ~LEVEL_FORM();
-    };
+            LEVEL_FORM();
+           ~LEVEL_FORM();
+        };
 
-    struct LAYER{
-      char*    Filename;
-      bool     ConvertStrokesToFills;
-      COLOUR   Light;
-      pdfForm* Form;
-      LAYER*   Next;
+        struct LAYER{
+            char*    Filename;
+            bool     ConvertStrokesToFills;
+            COLOUR   Light;
+            pdfForm* Form;
+            LAYER*   Next;
 
-      bool        Negative;
-      double      Left, Bottom, Right, Top;
-      std::string Title;
+            bool        Negative;
+            double      Left, Bottom, Right, Top;
+            std::string Title;
 
-      LAYER();
-     ~LAYER();
-    };
-    LAYER* Layers; // Stack of layer XObjects
+            LAYER();
+           ~LAYER();
+        };
+        LAYER* Layers; // Stack of layer XObjects
 
-    // These stacks keep track of objects to be deleted at the end
-    struct PAGE{
-      pdfPage*         Page;
-      pdfContents*     Contents;
-      PAGE_SIZE        PageSize    = PS_Tight;
-      PAGE_ORIENTATION Orientation = PO_Auto;
-      bool             ScaleToFit  = false;
-      PAGE*            Next;
+        // These stacks keep track of objects to be deleted at the end
+        struct PAGE{
+            pdfPage*         Page;
+            pdfContents*     Contents;
+            PAGE_SIZE        PageSize    = PS_Tight;
+            PAGE_ORIENTATION Orientation = PO_Auto;
+            bool             ScaleToFit  = false;
+            PAGE*            Next;
 
-      PAGE(PAGE* Next, bool UseCMYK);
-     ~PAGE();
-    };
-    PAGE* Page;
+            PAGE(PAGE* Next, bool UseCMYK);
+           ~PAGE();
+        };
+        PAGE* Page;
 
-    struct OUTLINE{
-      pdfOutlineItems* Item;
-      OUTLINE*         Next;
+        struct OUTLINE{
+            pdfOutlineItems* Item;
+            OUTLINE*         Next;
 
-      OUTLINE(OUTLINE* Next);
-     ~OUTLINE();
-    };
-    OUTLINE* Outline;
+            OUTLINE(OUTLINE* Next);
+           ~OUTLINE();
+        };
+        OUTLINE* Outline;
 //------------------------------------------------------------------------------
 
-  private: // Internal State
-    JPDF pdf;
+    private: // Internal State
+        JPDF pdf;
 
-    // Use an associative array because the Gerber apertures need not be contiguous
-    typedef std::map<int, pdfForm*> pdfFormArray;
+        // Use an associative array because the Gerber apertures need not be contiguous
+        typedef std::map<int, pdfForm*> pdfFormArray;
 
-    APERTURE*    ApertureStack;
-    int          ApertureCount;
-    pdfFormArray Apertures;
-    pdfForm*     CurrentAperture;
+        APERTURE*    ApertureStack;
+        int          ApertureCount;
+        pdfFormArray Apertures;
+        pdfForm*     CurrentAperture;
 
-    pdfOpaque* Opaque;
+        pdfOpaque* Opaque;
 
-    bool   Negative;
-    bool   SolidCircle;
-    bool   SolidRectangle;
-    bool   OutlinePath;
-    double LineWidth;
-    double RectW;
-    double RectH;
-    double RectX;
-    double RectY;
+        bool   Negative;
+        bool   SolidCircle;
+        bool   SolidRectangle;
+        bool   OutlinePath;
+        double LineWidth;
+        double RectW;
+        double RectH;
+        double RectX;
+        double RectY;
 
-    int     PageCount;
-    int     Result;
-    bool    ThePageUsed;
-    double  ThePageLeft;
-    double  ThePageBottom;
-    double  ThePageRight;
-    double  ThePageTop;
+        int     PageCount;
+        int     Result;
+        bool    ThePageUsed;
+        double  ThePageLeft;
+        double  ThePageBottom;
+        double  ThePageRight;
+        double  ThePageTop;
 
-    // PDF Variables and Structures
-    pdfPages    Pages;    // Single level page tree
-    pdfOutlines Outlines; // Single level outline tree
+        // PDF Variables and Structures
+        pdfPages    Pages;    // Single level page tree
+        pdfOutlines Outlines; // Single level outline tree
 
-    LEVEL_FORM* LevelStack;
-    int         LevelCount;
+        LEVEL_FORM* LevelStack;
+        int         LevelCount;
 
-    pdfPage*     ThePage;     // Page on which to combine outputs
-    pdfContents* TheContents; // Contents of ThePage
+        pdfPage*     ThePage;     // Page on which to combine outputs
+        pdfContents* TheContents; // Contents of ThePage
 //------------------------------------------------------------------------------
 
-  private: // Functions
-    void DrawAperture(
-      pdfContents*  Contents,
-      GerberRender* Render,
-      double Left,
-      double Bottom,
-      double Right,
-      double Top
-    );
-    void DrawRectLine(
-      pdfContents* Contents,
-      double x1, double y1, // Start
-      double x2, double y2, // End
-      double w , double h   // Rect Width; Height
-    );
-    int RenderLayer(
-      pdfForm*     Form,
-      pdfContents* Contents,
-      GerberLevel* Level
-    );
-    LAYER* NewLayer(
-      const char* Filename,
-      bool        ConvertStrokesToFills,
-      COLOUR&     Light
-    );
-    LAYER* FindLayer(
-      const char* Filename,
-      bool        ConvertStrokesToFills,
-      COLOUR&     Light
-    );
-    void SetMediaBox(
-      PAGE*  Page,
-      double Left,  double Bottom, double Right, double Top
-    );
+    private: // Functions
+        void DrawAperture(
+            pdfContents*  Contents,
+            GerberRender* Render,
+            double Left,
+            double Bottom,
+            double Right,
+            double Top
+        );
+        void DrawRectLine(
+            pdfContents* Contents,
+            double x1, double y1, // Start
+            double x2, double y2, // End
+            double w , double h   // Rect Width; Height
+        );
+        int RenderLayer(
+            pdfForm*     Form,
+            pdfContents* Contents,
+            GerberLevel* Level
+        );
+        LAYER* NewLayer(
+            const char* Filename,
+            bool        ConvertStrokesToFills,
+            COLOUR&     Light
+        );
+        LAYER* FindLayer(
+            const char* Filename,
+            bool        ConvertStrokesToFills,
+            COLOUR&     Light
+        );
+        void SetMediaBox(
+            PAGE*  Page,
+            double Left,  double Bottom, double Right, double Top
+        );
 //------------------------------------------------------------------------------
 
-  public: // Functions
-    ENGINE();
-   ~ENGINE();
+    public: // Functions
+        ENGINE();
+       ~ENGINE();
 
-    // Call Run for each Gerber file in the list, then call Finish once
-    int  Run   (const char* FileName, const char* Title);
-    void Finish(const char* OutputFileName);
+        // Call Run for each Gerber file in the list, then call Finish once
+        int  Run   (const char* FileName, const char* Title);
+        void Finish(const char* OutputFileName);
 };
 //------------------------------------------------------------------------------
 

@@ -22,78 +22,78 @@
 //------------------------------------------------------------------------------
 
 pdfArray::pdfArray(){
-  First = 0;
-  Last  = 0;
-  Count = 0;
+    First = 0;
+    Last  = 0;
+    Count = 0;
 }
 //------------------------------------------------------------------------------
 
 pdfArray::~pdfArray(){
-  Clear();
+    Clear();
 }
 //------------------------------------------------------------------------------
 
 void pdfArray::Clear(){
-  while(First){
-    Last  = First;
-    First = First->Next;
-    delete Last;
-  }
-  Last  = 0;
-  Count = 0;
+    while(First){
+        Last  = First;
+        First = First->Next;
+        delete Last;
+    }
+    Last  = 0;
+    Count = 0;
 }
 //------------------------------------------------------------------------------
 
 void pdfArray::Add(pdfObject* Object){
-  Element* Temp;
+    Element* Temp;
 
-  Temp = new Element;
-  Temp->Object = Object;
-  Temp->Next   = 0;
+    Temp = new Element;
+    Temp->Object = Object;
+    Temp->Next   = 0;
 
-  if(First){
-    Last->Next = Temp;
-  }else{
-    First = Temp;
-  }
-  Last = Temp;
+    if(First){
+        Last->Next = Temp;
+    }else{
+        First = Temp;
+    }
+    Last = Temp;
 
-  Count++;
+    Count++;
 }
 //------------------------------------------------------------------------------
 
 int pdfArray::GetCount(){
-  return Count;
+    return Count;
 }
 //------------------------------------------------------------------------------
 
 int pdfArray::GetLength(){
-  int r = 2;
-  Element* Temp = First;
+    int r = 2;
+    Element* Temp = First;
 
-  while(Temp){
-    if(r > 2) r++; // No space before the first element
-    r += Temp->Object->GetLength();
-    Temp = Temp->Next;
-  }
+    while(Temp){
+        if(r > 2) r++; // No space before the first element
+        r += Temp->Object->GetLength();
+        Temp = Temp->Next;
+    }
 
-  return r;
+    return r;
 }
 //------------------------------------------------------------------------------
 
 int pdfArray::GetOutput(char* Buffer){
-  int      i    = 0;
-  Element* Temp = First;
+    int      i    = 0;
+    Element* Temp = First;
 
-  Buffer[i++] = '[';
-  while(Temp){
-    if(i > 1) Buffer[i++] = ' ';
-    i   += Temp->Object->GetOutput(Buffer + i);
-    Temp = Temp->Next;
-  }
-  Buffer[i++] = ']';
+    Buffer[i++] = '[';
+    while(Temp){
+        if(i > 1) Buffer[i++] = ' ';
+        i   += Temp->Object->GetOutput(Buffer + i);
+        Temp = Temp->Next;
+    }
+    Buffer[i++] = ']';
 
-  return i;
+    return i;
 }
 //------------------------------------------------------------------------------
 

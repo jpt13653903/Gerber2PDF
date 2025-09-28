@@ -28,26 +28,26 @@
 
 // Image XObject
 class pdfImage : public pdfStream{
-public:
+    public:
 
-protected:
-  pdfName   Type;
-  pdfName   Subtype;
-  pdfName   ColourSpace;
-  pdfNumber BitsPerColour;
-  pdfBool   Interpolate;
+    protected:
+        pdfName   Type;
+        pdfName   Subtype;
+        pdfName   ColourSpace;
+        pdfNumber BitsPerColour;
+        pdfBool   Interpolate;
 
-protected:
-  virtual void Update();
+    protected:
+        virtual void Update();
 
-public:
-  pdfImage(const char* Name);
+    public:
+        pdfImage(const char* Name);
 
-  pdfNumber Width;     // Pixels
-  pdfNumber Height;    // Pixels
-  double    Width_mm;  // Millimetres
-  double    Height_mm; // Millimetres
-  pdfName   Name;
+        pdfNumber Width;     // Pixels
+        pdfNumber Height;    // Pixels
+        double    Width_mm;  // Millimetres
+        double    Height_mm; // Millimetres
+        pdfName   Name;
 };
 //------------------------------------------------------------------------------
 

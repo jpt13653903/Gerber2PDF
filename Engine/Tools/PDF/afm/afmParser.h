@@ -26,40 +26,40 @@
 //------------------------------------------------------------------------------
 
 class afmParser{
-private:
-  FileWrapper File;
-  char*       Buffer;
-  unsigned    Index;
-  unsigned    Length;
+    private:
+        FileWrapper File;
+        char*       Buffer;
+        unsigned    Index;
+        unsigned    Length;
 
-  bool FindEnd(char* Key);
+        bool FindEnd(char* Key);
 
-  int  Compare(const char* s1, const char* s2);
+        int  Compare(const char* s1, const char* s2);
 
-public:
-  afmParser();
- ~afmParser();
+    public:
+        afmParser();
+       ~afmParser();
 
-  bool Open (const char* FileName);
-  void Close();
+        bool Open (const char* FileName);
+        void Close();
 
-  bool  GetEndOfLine ();
-  void  GetWhiteSpace(); // space; newline; tab
-  char* GetLine      (); // Returns a string, caller must free it, excludes EOL
+        bool  GetEndOfLine ();
+        void  GetWhiteSpace(); // space; newline; tab
+        char* GetLine      (); // Returns a string, caller must free it, excludes EOL
 
-  bool GetKey       (char*     Key);
-  bool GetString    (char*     String); // Terminated by end-of-line
-  bool GetName      (char*     Name);   // Terminated by whitespace
-  bool GetNumber    (double*   Number);
-  bool GetHexInteger(unsigned* Integer);
-  bool GetInteger   (int*      Integer);
-  bool GetBoolean   (bool*     Boolean);
+        bool GetKey       (char*     Key);
+        bool GetString    (char*     String); // Terminated by end-of-line
+        bool GetName      (char*     Name);   // Terminated by whitespace
+        bool GetNumber    (double*   Number);
+        bool GetHexInteger(unsigned* Integer);
+        bool GetInteger   (int*      Integer);
+        bool GetBoolean   (bool*     Boolean);
 
-  // If Key starts with `Start', ignore the section, else ignore the line
-  bool Ignore(char* Key);
+        // If Key starts with `Start', ignore the section, else ignore the line
+        bool Ignore(char* Key);
 
-  // Ignores until newline or byte after a semicolon
-  bool IgnoreCharSection();
+        // Ignores until newline or byte after a semicolon
+        bool IgnoreCharSection();
 };
 //------------------------------------------------------------------------------
 

@@ -27,130 +27,130 @@
 //------------------------------------------------------------------------------
 
 class pdfFontMetrics{
-public:
-  struct BOX{
-    double Left;
-    double Right;
-    double Top;
-    double Bottom;
+    public:
+        struct BOX{
+            double Left;
+            double Right;
+            double Top;
+            double Bottom;
 
-    BOX();
-  };
+            BOX();
+        };
 
-private:
-  struct KERNING{
-    char*  Name;
-    double Offset;
+    private:
+        struct KERNING{
+            char*  Name;
+            double Offset;
 
-    bool     Red;
-    KERNING* Left;
-    KERNING* Right;
-    KERNING* Parent;
+            bool     Red;
+            KERNING* Left;
+            KERNING* Right;
+            KERNING* Parent;
 
-    KERNING();
-   ~KERNING();
-  };
-  struct METRIC;
-  void Restructure (METRIC* Container, KERNING* N);
-  void FixDoubleRed(METRIC* Container, KERNING* N);
-  bool Insert      (METRIC* Container, KERNING* Node);
+            KERNING();
+           ~KERNING();
+        };
+        struct METRIC;
+        void Restructure (METRIC* Container, KERNING* N);
+        void FixDoubleRed(METRIC* Container, KERNING* N);
+        bool Insert      (METRIC* Container, KERNING* Node);
 
-  struct METRIC{
-    int      Code;
-    char*    Name;
-    double   Advance; // The x-increment till the next character
-    BOX      Box;
-    KERNING* Kerning; // Red-Black tree (sorted by name)
+        struct METRIC{
+            int      Code;
+            char*    Name;
+            double   Advance; // The x-increment till the next character
+            BOX      Box;
+            KERNING* Kerning; // Red-Black tree (sorted by name)
 
-    bool    Red;
-    METRIC* Left;
-    METRIC* Right;
-    METRIC* Parent;
+            bool    Red;
+            METRIC* Left;
+            METRIC* Right;
+            METRIC* Parent;
 
-    METRIC();
-   ~METRIC();
-  };
-  void    Restructure (METRIC*     N);
-  void    FixDoubleRed(METRIC*     N);
-  bool    Insert      (METRIC*     Node);
-  METRIC* FindMetric  (const char* Name);
+            METRIC();
+           ~METRIC();
+        };
+        void    Restructure (METRIC*     N);
+        void    FixDoubleRed(METRIC*     N);
+        bool    Insert      (METRIC*     Node);
+        METRIC* FindMetric  (const char* Name);
 
-  METRIC*  Metrics;    // Red-Black tree (sorted by name)
-  METRIC** Characters; // Array; Index to the items in the tree
+        METRIC*  Metrics;    // Red-Black tree (sorted by name)
+        METRIC** Characters; // Array; Index to the items in the tree
 
-  afmParser  TheParser;
-  afmParser* Parser;
+        afmParser  TheParser;
+        afmParser* Parser;
 
-  int  Compare(const char* s1, const char* s2);
+        int  Compare(const char* s1, const char* s2);
 
-  bool GetFontMetrics(); // The root of the parser
+        bool GetFontMetrics(); // The root of the parser
 
-  bool GetCharMetrics();
+        bool GetCharMetrics();
 
-  bool GetKernData ();
-  bool GetKernPairs();
+        bool GetKernData ();
+        bool GetKernPairs();
 
-public:
-  pdfFontMetrics();
- ~pdfFontMetrics();
+    public:
+        pdfFontMetrics();
+       ~pdfFontMetrics();
 
-  // Used by pdfType3Font to load the metrics, do not use directly
-  bool LoadAFM(afmParser* Parser);
+        // Used by pdfType3Font to load the metrics, do not use directly
+        bool LoadAFM(afmParser* Parser);
 
-  // Loads the metrics from an AFM file
-  bool LoadAFM(const char* FileName);
+        // Loads the metrics from an AFM file
+        bool LoadAFM(const char* FileName);
 
-  // Changes the encoding to Windows ANSI
-  // Call after loading the metrics
-  void SetWinANSI();
+        // Changes the encoding to Windows ANSI
+        // Call after loading the metrics
+        void SetWinANSI();
 
-  char* FontName;
-  BOX   Box;
+        char* FontName;
+        BOX   Box;
 
-  void AddMetric(
-    const char* Name,
-    double      Left,
-    double      Bottom,
-    double      Right,
-    double      Top,
-    double      Advance
-  );
-  void AddKerning (const char* Name1, const char* Name2, double Offset);
-  void SetEncoding(int Code, const char* Name);
+        void AddMetric(
+            const char* Name,
+            double      Left,
+            double      Bottom,
+            double      Right,
+            double      Top,
+            double      Advance
+        );
+        void AddKerning (const char* Name1, const char* Name2, double Offset);
+        void SetEncoding(int Code, const char* Name);
 
-  bool     HasGlyph(char c);
-  unsigned GlyphCount();
+        bool     HasGlyph(char c);
+        unsigned GlyphCount();
 
-  // Returns the code of the named character
-  //  -1 => Glyph has no code
-  //  -2 => Name not found
-  int    Code(const   char* Name);
-  void   Name(char c, char* Name);
+        // Returns the code of the named character
+        //  -1 => Glyph has no code
+        //  -2 => Name not found
+        int    Code(const   char* Name);
+        void   Name(char c, char* Name);
 
-  double Left   (char c);
-  double Bottom (char c);
-  double Right  (char c);
-  double Top    (char c);
-  double Width  (char c);
-  double Height (char c);
-  double Advance(char c);
-  double Kerning(char c1, char c2);
+        double Left   (char c);
+        double Bottom (char c);
+        double Right  (char c);
+        double Top    (char c);
+        double Width  (char c);
+        double Height (char c);
+        double Advance(char c);
+        double Kerning(char c1, char c2);
 
-  void GetRect(
-    const char* String,
-    double*     Left,
-    double*     Bottom,
-    double*     Right,
-    double*     Top
-  );
-  void GetRect(
-    const char* String,
-    unsigned    Length,
-    double*     Left,
-    double*     Bottom,
-    double*     Right,
-    double*     Top
-  );
+        void GetRect(
+            const char* String,
+            double*     Left,
+            double*     Bottom,
+            double*     Right,
+            double*     Top
+        );
+        void GetRect(
+            const char* String,
+            unsigned    Length,
+            double*     Left,
+            double*     Bottom,
+            double*     Right,
+            double*     Top
+        );
 };
 //------------------------------------------------------------------------------
 

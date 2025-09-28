@@ -22,104 +22,104 @@
 //------------------------------------------------------------------------------
 
 pdfHyperlink::pdfHyperlink(){
-  Subtype.Set("Link");
+    Subtype.Set("Link");
 
-  Border.Add(&Zero);
-  Border.Add(&Zero);
-  Border.Add(&BorderWidth);
+    Border.Add(&Zero);
+    Border.Add(&Zero);
+    Border.Add(&BorderWidth);
 
-  Update();
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::Update(){
-  Clear();
+    Clear();
 
-                         AddEntry("Type"   , &Type   );
-                         AddEntry("Subtype", &Subtype);
-  if(Action.GetCount()){ AddEntry("A"      , &Action ); }
-                         AddEntry("Rect"   , &Rect   );
-  if(Dest  .GetCount()){ AddEntry("Dest"   , &Dest   ); }
-                         AddEntry("Border" , &Border );
+                           AddEntry("Type"   , &Type   );
+                           AddEntry("Subtype", &Subtype);
+    if(Action.GetCount()){ AddEntry("A"      , &Action ); }
+                           AddEntry("Rect"   , &Rect   );
+    if(Dest  .GetCount()){ AddEntry("Dest"   , &Dest   ); }
+                           AddEntry("Border" , &Border );
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestFit(pdfPage* Page){
-  Action.Clear();
-  Dest  .Fit  (Page);
-  Update();
+    Action.Clear();
+    Dest  .Fit  (Page);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestFitB(pdfPage* Page){
-  Action.Clear();
-  Dest  .FitB (Page);
-  Update();
+    Action.Clear();
+    Dest  .FitB (Page);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestFitH(pdfPage* Page, double Top){
-  Action.Clear();
-  Dest  .FitH (Page, Top);
-  Update();
+    Action.Clear();
+    Dest  .FitH (Page, Top);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestFitV(pdfPage* Page, double Left){
-  Action.Clear();
-  Dest  .FitV (Page, Left);
-  Update();
+    Action.Clear();
+    Dest  .FitV (Page, Left);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestFitBH(pdfPage* Page, double Top){
-  Action.Clear();
-  Dest  .FitBH(Page, Top);
-  Update();
+    Action.Clear();
+    Dest  .FitBH(Page, Top);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestFitBV(pdfPage* Page, double Left){
-  Action.Clear();
-  Dest  .FitBV(Page, Left);
-  Update();
+    Action.Clear();
+    Dest  .FitBV(Page, Left);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestXYZ(
-  pdfPage* Page,
-  double   Left,
-  double   Top,
-  double   Zoom
+    pdfPage* Page,
+    double   Left,
+    double   Top,
+    double   Zoom
 ){
-  Action.Clear();
-  Dest  .XYZ  (Page, Left, Top, Zoom);
-  Update();
+    Action.Clear();
+    Dest  .XYZ  (Page, Left, Top, Zoom);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestFitR(
-  pdfPage* Page,
-  double   Left,
-  double   Bottom,
-  double   Right,
-  double   Top
+    pdfPage* Page,
+    double   Left,
+    double   Bottom,
+    double   Right,
+    double   Top
 ){
-  Action.Clear();
-  Dest  .FitR (Page, Left, Bottom, Right, Top);
-  Update();
+    Action.Clear();
+    Dest  .FitR (Page, Left, Bottom, Right, Top);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfHyperlink::DestURI(const char* URI){
-  Dest.Clear();
+    Dest.Clear();
 
-  URISubtype       .Set("URI");
-  pdfHyperlink::URI.Set( URI );
+    URISubtype       .Set("URI");
+    pdfHyperlink::URI.Set( URI );
 
-  Action.AddEntry("S"  , & URISubtype);
-  Action.AddEntry("URI", &(pdfHyperlink::URI));
+    Action.AddEntry("S"  , & URISubtype);
+    Action.AddEntry("URI", &(pdfHyperlink::URI));
 
-  Update();
+    Update();
 }
 //------------------------------------------------------------------------------

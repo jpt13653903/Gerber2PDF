@@ -22,117 +22,117 @@
 //------------------------------------------------------------------------------
 
 pdfOutlineItems::pdfOutlineItems(){
-  ColourArray.Add(&Red);
-  ColourArray.Add(&Green);
-  ColourArray.Add(&Blue);
+    ColourArray.Add(&Red);
+    ColourArray.Add(&Green);
+    ColourArray.Add(&Blue);
 
-  Update();
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::Update(){
-  Dictionary.Clear();
+    Dictionary.Clear();
 
-  if(Title.Empty()) Title.Set("          ");
+    if(Title.Empty()) Title.Set("          ");
 
-  if(Red      .Value != 0.0 ||
-     Green    .Value != 0.0 ||
-     Blue     .Value != 0.0 ) Dictionary.AddEntry("C", &ColourArray);
-  if(FontFlags.Value != 0.0 ) Dictionary.AddEntry("F", &FontFlags);
+    if(Red      .Value != 0.0 ||
+       Green    .Value != 0.0 ||
+       Blue     .Value != 0.0 ) Dictionary.AddEntry("C", &ColourArray);
+    if(FontFlags.Value != 0.0 ) Dictionary.AddEntry("F", &FontFlags);
 
-  if(Dest .GetCount()){ Dictionary.AddEntry("Dest"  , &Dest  ); }
-  if(Prev            ){ Dictionary.AddEntry("Prev"  ,  Prev  ); }
-  if(Next            ){ Dictionary.AddEntry("Next"  ,  Next  ); }
-  if(Last            ){ Dictionary.AddEntry("Last"  ,  Last  ); }
-  if(First           ){ Dictionary.AddEntry("First" ,  First ); }
-                        Dictionary.AddEntry("Title" , &Title );
-  if(Count.Value != 0){ Dictionary.AddEntry("Count" , &Count ); }
-  if(Parent          ){ Dictionary.AddEntry("Parent",  Parent); }
+    if(Dest .GetCount()){ Dictionary.AddEntry("Dest"  , &Dest  ); }
+    if(Prev            ){ Dictionary.AddEntry("Prev"  ,  Prev  ); }
+    if(Next            ){ Dictionary.AddEntry("Next"  ,  Next  ); }
+    if(Last            ){ Dictionary.AddEntry("Last"  ,  Last  ); }
+    if(First           ){ Dictionary.AddEntry("First" ,  First ); }
+                                                Dictionary.AddEntry("Title" , &Title );
+    if(Count.Value != 0){ Dictionary.AddEntry("Count" , &Count ); }
+    if(Parent          ){ Dictionary.AddEntry("Parent",  Parent); }
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::Colour(double Red, double Green, double Blue){
-  pdfOutlineItems::Red   = Red;
-  pdfOutlineItems::Green = Green;
-  pdfOutlineItems::Blue  = Blue;
+    pdfOutlineItems::Red   = Red;
+    pdfOutlineItems::Green = Green;
+    pdfOutlineItems::Blue  = Blue;
 
-  Update();
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::Italic(){
-  int f     = FontFlags.Value;
-  f        |= 1;
-  FontFlags = f;
+    int f     = FontFlags.Value;
+    f        |= 1;
+    FontFlags = f;
 
-  Update();
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::Bold(){
-  int f     = FontFlags.Value;
-  f        |= 2;
-  FontFlags = f;
+    int f     = FontFlags.Value;
+    f        |= 2;
+    FontFlags = f;
 
-  Update();
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestFit(pdfPage* Page){
-  Dest.Fit(Page);
-  Update();
+    Dest.Fit(Page);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestFitB(pdfPage* Page){
-  Dest.FitB(Page);
-  Update();
+    Dest.FitB(Page);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestFitH(pdfPage* Page, double Top){
-  Dest.FitH(Page, Top);
-  Update();
+    Dest.FitH(Page, Top);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestFitV(pdfPage* Page, double Left){
-  Dest.FitV(Page, Left);
-  Update();
+    Dest.FitV(Page, Left);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestFitBH(pdfPage* Page, double Top){
-  Dest.FitBH(Page, Top);
-  Update();
+    Dest.FitBH(Page, Top);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestFitBV(pdfPage* Page, double Left){
-  Dest.FitBV(Page, Left);
-  Update();
+    Dest.FitBV(Page, Left);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestXYZ(
-  pdfPage* Page,
-  double   Left,
-  double   Top,
-  double   Zoom
+    pdfPage* Page,
+    double   Left,
+    double   Top,
+    double   Zoom
 ){
-  Dest.XYZ(Page, Left, Top, Zoom);
-  Update();
+    Dest.XYZ(Page, Left, Top, Zoom);
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfOutlineItems::DestFitR(
-  pdfPage* Page,
-  double   Left,
-  double   Bottom,
-  double   Right,
-  double   Top
+    pdfPage* Page,
+    double   Left,
+    double   Bottom,
+    double   Right,
+    double   Top
 ){
-  Dest.FitR(Page, Left, Bottom, Right, Top);
-  Update();
+    Dest.FitR(Page, Left, Bottom, Right, Top);
+    Update();
 }
 //------------------------------------------------------------------------------

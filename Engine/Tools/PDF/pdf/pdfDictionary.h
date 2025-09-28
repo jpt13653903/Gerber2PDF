@@ -27,32 +27,32 @@
 //------------------------------------------------------------------------------
 
 class pdfDictionary : public pdfObject{
-  private:
-    struct Element{
-      pdfName    Property;
-      pdfObject* Value;
-      Element  * Next;
-    };
-    Element* First;
-    Element* Last;
+    private:
+        struct Element{
+            pdfName    Property;
+            pdfObject* Value;
+            Element  * Next;
+        };
+        Element* First;
+        Element* Last;
 
-    int Count;
+        int Count;
 
-  public:
-    pdfDictionary();
-   ~pdfDictionary();
+    public:
+        pdfDictionary();
+       ~pdfDictionary();
 
-    bool OneLine;
-    int  Indent;
+        bool OneLine;
+        int  Indent;
 
-    void Clear();
+        void Clear();
 
-    // Upon duplicate, the entry is updated with the new value
-    void AddEntry(const char* Property, pdfObject* Value);
-    int  GetCount();
+        // Upon duplicate, the entry is updated with the new value
+        void AddEntry(const char* Property, pdfObject* Value);
+        int  GetCount();
 
-    int GetLength();
-    int GetOutput(char* Buffer);
+        int GetLength();
+        int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

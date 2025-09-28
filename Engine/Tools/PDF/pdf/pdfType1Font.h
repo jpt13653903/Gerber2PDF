@@ -27,27 +27,27 @@
 //------------------------------------------------------------------------------
 
 class pdfType1Font : public pdfFont{
-private:
-  pdfNumber FirstChar;
-  pdfNumber LastChar;
-  pdfArray  WidthsArray;
+    private:
+        pdfNumber FirstChar;
+        pdfNumber LastChar;
+        pdfArray  WidthsArray;
 
-  pdfNumber* TheWidths;
+        pdfNumber* TheWidths;
 
-  void SetWidths();
+        void SetWidths();
 
-public:
-  pdfType1Font(const char* Name);
- ~pdfType1Font();
+    public:
+        pdfType1Font(const char* Name);
+       ~pdfType1Font();
 
-  // These are handled by JPDF::AddType1Font and should not be used directly
-  pdfIndirect       Widths;
-  pdfFontDescriptor FontDescriptor;
+        // These are handled by JPDF::AddType1Font and should not be used directly
+        pdfIndirect       Widths;
+        pdfFontDescriptor FontDescriptor;
 
-  // - Loads a font program into the FontProgram stream, as well as loading the
-  //   font metrics into Metrics.  Automatically deflates the font file.
-  // - Do not add the file extension to the filename
-  void LoadFont(const char* FileName);
+        // - Loads a font program into the FontProgram stream, as well as loading the
+        //   font metrics into Metrics.  Automatically deflates the font file.
+        // - Do not add the file extension to the filename
+        void LoadFont(const char* FileName);
 };
 //------------------------------------------------------------------------------
 

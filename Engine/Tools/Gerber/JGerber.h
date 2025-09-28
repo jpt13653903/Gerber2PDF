@@ -36,142 +36,142 @@ extern bool GerberWarnings;
 //------------------------------------------------------------------------------
 
 class JGerber{
-private:
-  FileWrapper File;
+    private:
+        FileWrapper File;
 
-  char*    Buffer;
-  unsigned Length;
-  unsigned Index;
-  unsigned LineNumber;
+        char*    Buffer;
+        unsigned Length;
+        unsigned Index;
+        unsigned LineNumber;
 
-  GerberLevel* CurrentLevel;
-  GerberLevel* LastLevel;
-  int          LevelsSize; // Buffer size
+        GerberLevel* CurrentLevel;
+        GerberLevel* LastLevel;
+        int          LevelsSize; // Buffer size
 
-  void Add(GerberLevel* Level);
+        void Add(GerberLevel* Level);
 
-  // Tokens
-  void   WhiteSpace   ();
-  bool   GetInteger   (int*    Integer);
-  bool   GetFloat     (double* Number);
-  bool   GetCoordinate(double* Number, int Integer, int Decimal);
-  bool   GetString    (char*   String);
-  double Get_mm       (double  Number);
+        // Tokens
+        void   WhiteSpace   ();
+        bool   GetInteger   (int*    Integer);
+        bool   GetFloat     (double* Number);
+        bool   GetCoordinate(double* Number, int Integer, int Decimal);
+        bool   GetString    (char*   String);
+        double Get_mm       (double  Number);
 
-  // N Codes: Sequence numbers
-  bool NCode();
+        // N Codes: Sequence numbers
+        bool NCode();
 
-  // G Codes: General functions
-  bool GCode();
+        // G Codes: General functions
+        bool GCode();
 
-  // D Codes: Plot functions
-  bool DCode();
+        // D Codes: Plot functions
+        bool DCode();
 
-  // M Codes: Miscellaneous functions
-  bool MCode(bool* EndOfFile);
+        // M Codes: Miscellaneous functions
+        bool MCode(bool* EndOfFile);
 
-  // Parameters Variables and Structures:
-  struct FORMAT{
-    bool OmitTrailingZeroes;
-    int  XInteger;
-    int  XDecimal;
-    int  YInteger;
-    int  YDecimal;
-  };
-  FORMAT Format;
-  bool   Incremental;
-  double OffsetA, OffsetB;
-  double ScaleA , ScaleB;
+        // Parameters Variables and Structures:
+        struct FORMAT{
+            bool OmitTrailingZeroes;
+            int  XInteger;
+            int  XDecimal;
+            int  YInteger;
+            int  YDecimal;
+        };
+        FORMAT Format;
+        bool   Incremental;
+        double OffsetA, OffsetB;
+        double ScaleA , ScaleB;
 
-  GERBER_UNIT Units;
+        GERBER_UNIT Units;
 
-  std::map<int, GerberAperture*> Apertures;
+        std::map<int, GerberAperture*> Apertures;
 
-  // Macro structures
-  struct MACRO_ITEM{
-    GerberMacro* Macro;
-    MACRO_ITEM*  Next;
+        // Macro structures
+        struct MACRO_ITEM{
+            GerberMacro* Macro;
+            MACRO_ITEM*  Next;
 
-    MACRO_ITEM();
-   ~MACRO_ITEM();
-  };
-  MACRO_ITEM* Macros; //Macro Stack
+            MACRO_ITEM();
+           ~MACRO_ITEM();
+        };
+        MACRO_ITEM* Macros; //Macro Stack
 
-  void         Add      (GerberMacro* Macro);
-  GerberMacro* FindMacro(const char*  Name);
+        void         Add      (GerberMacro* Macro);
+        GerberMacro* FindMacro(const char*  Name);
 
-  bool StartOfLevel;
+        bool StartOfLevel;
 
-  // Directive Parameters
-  bool AxisSelect     ();
-  bool FormatStatement();
-  bool MirrorImage    ();
-  bool Mode           ();
-  bool Offset         ();
-  bool ScaleFactor    ();
+        // Directive Parameters
+        bool AxisSelect     ();
+        bool FormatStatement();
+        bool MirrorImage    ();
+        bool Mode           ();
+        bool Offset         ();
+        bool ScaleFactor    ();
 
-  // Unknown Parameters
-  bool IC();
+        // Unknown Parameters
+        bool IC();
 
-  // Image Parameters
-  bool ImageJustify ();
-  bool ImageName    ();
-  bool ImageOffset  ();
-  bool ImagePolarity();
-  bool ImageRotation();
-  bool PlotFilm     ();
+        // Image Parameters
+        bool ImageJustify ();
+        bool ImageName    ();
+        bool ImageOffset  ();
+        bool ImagePolarity();
+        bool ImageRotation();
+        bool PlotFilm     ();
 
-  // Aperture Parameters
-  bool Add(GerberAperture* Aperture);
+        // Aperture Parameters
+        bool Add(GerberAperture* Aperture);
 
-  bool ApertureCircle   (int Code);
-  bool ApertureRectangle(int Code);
-  bool ApertureObround  (int Code);
-  bool AperturePolygon  (int Code);
-  bool ApertureMacro    (int Code, const char* Name);
+        bool ApertureCircle   (int Code);
+        bool ApertureRectangle(int Code);
+        bool ApertureObround  (int Code);
+        bool AperturePolygon  (int Code);
+        bool ApertureMacro    (int Code, const char* Name);
 
-  bool ApertureDefinition();
-  bool ApertureMacro     ();
+        bool ApertureDefinition();
+        bool ApertureMacro     ();
 
-  // Level-Specific Parameters
-  bool Knockout     ();
-  bool LevelName    ();
-  bool LevelPolarity();
-  bool StepAndRepeat();
+        // Level-Specific Parameters
+        bool Knockout     ();
+        bool LevelName    ();
+        bool LevelPolarity();
+        bool StepAndRepeat();
 
-  // Miscellaneous Parameters
-  bool IncludeFile();
+        // Miscellaneous Parameters
+        bool IncludeFile();
 
-  // Attributes
-  bool Attribute();
+        // Attributes
+        bool Attribute();
 
-  bool Parameter(char Delimiter);
+        bool Parameter(char Delimiter);
 
-  // Root of the parser
-  void SetBBox();
+        // Root of the parser
+        void SetBBox();
 
-  bool GetGerber();
+        bool GetGerber();
 
-  void Initialise();
-  void Cleanup   ();
+        void Initialise();
+        void Cleanup   ();
 
-public:
-  JGerber();
- ~JGerber();
+    public:
+        JGerber();
+       ~JGerber();
 
-  bool  Negative; // Image Polarity
-  char* Name;     // Image Name
+        bool  Negative; // Image Polarity
+        char* Name;     // Image Name
 
-  GerberLevel* Levels; // Linked list; Read this to get the levels, do not modify
+        GerberLevel* Levels; // Linked list; Read this to get the levels, do not modify
 
-  // Image bounding box
-  double Left;
-  double Bottom;
-  double Right;
-  double Top;
+        // Image bounding box
+        double Left;
+        double Bottom;
+        double Right;
+        double Top;
 
-  void Clear();
-  bool LoadGerber(const char* FileName);
+        void Clear();
+        bool LoadGerber(const char* FileName);
 };
 //------------------------------------------------------------------------------
 

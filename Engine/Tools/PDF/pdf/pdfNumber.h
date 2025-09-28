@@ -30,18 +30,18 @@
 //------------------------------------------------------------------------------
 
 class pdfNumber : public pdfObject{
-private:
-  int IntegerPart;
+    private:
+        int IntegerPart;
 
-public:
-  pdfNumber();
+    public:
+        pdfNumber();
 
-  double operator= (double Number);
+        double operator= (double Number);
 
-  double Value;
+        double Value;
 
-  int GetLength();
-  int GetOutput(char* Buffer);
+        int GetLength();
+        int GetOutput(char* Buffer);
 };
 //------------------------------------------------------------------------------
 

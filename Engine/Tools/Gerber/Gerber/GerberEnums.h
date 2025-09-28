@@ -24,51 +24,51 @@
 //------------------------------------------------------------------------------
 
 enum GERBER_UNIT{
-  guInches,
-  guMillimeters
+    guInches,
+    guMillimeters
 };
 //------------------------------------------------------------------------------
 
 enum GERBER_INTERPOLATION{
-  giLinear,
-  giLinear10X,
-  giLinear0_1X,
-  giLinear0_01X,
-  giClockwiseCircular,
-  giCounterclockwiseCircular
+    giLinear,
+    giLinear10X,
+    giLinear0_1X,
+    giLinear0_01X,
+    giClockwiseCircular,
+    giCounterclockwiseCircular
 };
 //------------------------------------------------------------------------------
 
 enum GERBER_EXPOSURE{
-  geOn,
-  geOff,
-  geFlash
+    geOn,
+    geOff,
+    geFlash
 };
 //------------------------------------------------------------------------------
 
 enum GERBER_COMMAND{
-  // Begin Path
-  gcRectangle,
-  gcCircle,
-  gcBeginLine,
+    // Begin Path
+    gcRectangle,
+    gcCircle,
+    gcBeginLine,
 
-  // Continue Path
-  gcLine,
-  gcArc,
+    // Continue Path
+    gcLine,
+    gcArc,
 
-  // Close Path
-  gcClose,
+    // Close Path
+    gcClose,
 
-  // Render Path
-  gcStroke,
-  gcFill,
-  gcErase, // Used for "exposure off" aperture primitives
+    // Render Path
+    gcStroke,
+    gcFill,
+    gcErase, // Used for "exposure off" aperture primitives
 
-  // Other
-  gcBeginOutline, // The aperture does not matter
-  gcEndOutline,   // The aperture matters again
-  gcApertureSelect,
-  gcFlash
+    // Other
+    gcBeginOutline, // The aperture does not matter
+    gcEndOutline,   // The aperture matters again
+    gcApertureSelect,
+    gcFlash
 };
 //------------------------------------------------------------------------------
 

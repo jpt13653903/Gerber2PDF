@@ -27,27 +27,27 @@
 //------------------------------------------------------------------------------
 
 class pdfCustomFont : public pdfFont{
-private:
-  pdfNumber FirstChar;
-  pdfNumber LastChar;
-  pdfArray  WidthsArray;
+    private:
+        pdfNumber FirstChar;
+        pdfNumber LastChar;
+        pdfArray  WidthsArray;
 
-  pdfNumber* TheWidths;
+        pdfNumber* TheWidths;
 
-  void SetWidths();
+        void SetWidths();
 
-public:
-  pdfCustomFont(const char* Name);
- ~pdfCustomFont();
+    public:
+        pdfCustomFont(const char* Name);
+       ~pdfCustomFont();
 
-  // Use JPDF::AddCustomFont() to add the indirects
-  pdfIndirect       Widths;
-  pdfFontDescriptor FontDescriptor;
+        // Use JPDF::AddCustomFont() to add the indirects
+        pdfIndirect       Widths;
+        pdfFontDescriptor FontDescriptor;
 
-  // - Loads a font program into the FontProgram stream, as well as loading the
-  //   font metrics into Metrics.  Automatically deflates the font file.
-  // - Do not add the file extension to the filename
-  void LoadFont(const char* FileName);
+        // - Loads a font program into the FontProgram stream, as well as loading the
+        //   font metrics into Metrics.  Automatically deflates the font file.
+        // - Do not add the file extension to the filename
+        void LoadFont(const char* FileName);
 };
 //------------------------------------------------------------------------------
 

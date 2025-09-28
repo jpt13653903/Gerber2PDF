@@ -22,14 +22,14 @@
 //------------------------------------------------------------------------------
 
 pdfAnnotation::pdfAnnotation(){
-  Type.Set("Annot");
+    Type.Set("Annot");
 }
 //------------------------------------------------------------------------------
 
 void pdfAnnotation::Update(){
-  Clear();
-  AddEntry("Type"   , &Type);
-  AddEntry("Subtype", &Subtype);
-  AddEntry("Rect"   , &Rect);
+    Clear();
+    AddEntry("Type"   , &Type);
+    AddEntry("Subtype", &Subtype);
+    AddEntry("Rect"   , &Rect);
 }
 //------------------------------------------------------------------------------

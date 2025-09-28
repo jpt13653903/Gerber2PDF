@@ -24,15 +24,15 @@
 //------------------------------------------------------------------------------
 
 class JDeflate{
-  private:
+    private:
 
-  public:
-    JDeflate();
+    public:
+        JDeflate();
 
-    // Returns newly allocated memory with the resulting data.
-    // Length holds the length of the input and return buffers
-    unsigned char* Inflate(unsigned char* Buffer, unsigned* Length);
-    unsigned char* Deflate(unsigned char* Buffer, unsigned* Length);
+        // Returns newly allocated memory with the resulting data.
+        // Length holds the length of the input and return buffers
+        unsigned char* Inflate(unsigned char* Buffer, unsigned* Length);
+        unsigned char* Deflate(unsigned char* Buffer, unsigned* Length);
 };
 //------------------------------------------------------------------------------
 

@@ -29,25 +29,25 @@
 
 // Form XObject
 class pdfForm : public pdfContents{
-protected:
-  pdfName       Type;
-  pdfName       SubType;
-  pdfDictionary Group;
+    protected:
+        pdfName       Type;
+        pdfName       SubType;
+        pdfDictionary Group;
 
-  // Components of Group
-  pdfName GroupSubtype;
+        // Components of Group
+        pdfName GroupSubtype;
 
-public:
-  pdfForm(const char* Name, bool UseCMYK = false);
+    public:
+        pdfForm(const char* Name, bool UseCMYK = false);
 
-  // The "Name" field is deprecated, but still required as a member of this 
-  // class for resources loading purposes.
-  pdfName      Name;
-  pdfRectangle BBox;
+        // The "Name" field is deprecated, but still required as a member of this
+        // class for resources loading purposes.
+        pdfName      Name;
+        pdfRectangle BBox;
 
-  // Call Update after changing Resources for the first time
-  pdfResources Resources;
-  virtual void Update();
+        // Call Update after changing Resources for the first time
+        pdfResources Resources;
+        virtual void Update();
 };
 //------------------------------------------------------------------------------
 

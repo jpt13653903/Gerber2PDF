@@ -31,20 +31,20 @@
 
 class pdfForm;
 class pdfResources : public pdfDictionary{
-private:
-  pdfDictionary Fonts;
-  pdfDictionary XObjects;
-  pdfDictionary ExtGState;
+    private:
+        pdfDictionary Fonts;
+        pdfDictionary XObjects;
+        pdfDictionary ExtGState;
 
-  void Update();
+        void Update();
 
-public:
-  pdfResources();
+    public:
+        pdfResources();
 
-  void AddFont  (pdfFont*   Font);
-  void AddForm  (pdfForm*   Form);
-  void AddImage (pdfImage*  Image);
-  void AddOpaque(pdfOpaque* Opaque);
+        void AddFont  (pdfFont*   Font);
+        void AddForm  (pdfForm*   Form);
+        void AddImage (pdfImage*  Image);
+        void AddOpaque(pdfOpaque* Opaque);
 };
 //------------------------------------------------------------------------------
 

@@ -22,213 +22,213 @@
 //------------------------------------------------------------------------------
 
 pdfStream::pdfStream(){
-  Object     = &Dictionary;
-  Length     = 0;
-  Buffer     = new unsigned char[1];
-  BufferSize = 1;
-  Update();
+    Object     = &Dictionary;
+    Length     = 0;
+    Buffer     = new unsigned char[1];
+    BufferSize = 1;
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfStream::Update(){
-  Dictionary.Clear();
-  Dictionary.AddEntry("Length", &Length);
+    Dictionary.Clear();
+    Dictionary.AddEntry("Length", &Length);
 
-  if(!Filter.Empty())  Dictionary.AddEntry("Filter", &Filter);
+    if(!Filter.Empty())  Dictionary.AddEntry("Filter", &Filter);
 }
 //------------------------------------------------------------------------------
 
 void pdfStream::Deflate(){
-  unsigned char* Temp = Buffer;
-  unsigned       L    = Length.Value;
+    unsigned char* Temp = Buffer;
+    unsigned       L    = Length.Value;
 
-  if(!Filter.Empty()) return;
+    if(!Filter.Empty()) return;
 
-  Buffer = ZLib.Deflate(Temp, &L);
+    Buffer = ZLib.Deflate(Temp, &L);
 
-  delete[] Temp;
-  BufferSize = L;
-  Length     = L;
+    delete[] Temp;
+    BufferSize = L;
+    Length     = L;
 
-  Filter.Set("FlateDecode");
-  Update();
+    Filter.Set("FlateDecode");
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfStream::Inflate(){
-  unsigned char* Temp = Buffer;
-  unsigned       L    = Length.Value;
+    unsigned char* Temp = Buffer;
+    unsigned       L    = Length.Value;
 
-  if(Filter.Empty()) return;
+    if(Filter.Empty()) return;
 
-  Buffer = ZLib.Inflate(Temp, &L);
-  delete[] Temp;
-  BufferSize = L;
-  Length     = L;
+    Buffer = ZLib.Inflate(Temp, &L);
+    delete[] Temp;
+    BufferSize = L;
+    Length     = L;
 
-  Filter.Set("");
-  Update();
+    Filter.Set("");
+    Update();
 }
 //------------------------------------------------------------------------------
 
 void pdfStream::AddBinary(const unsigned char* Buffer, unsigned Length){
-  unsigned       j, l;
-  unsigned char* Temp;
+    unsigned       j, l;
+    unsigned char* Temp;
 
-  l = pdfStream::Length.Value;
+    l = pdfStream::Length.Value;
 
-  if(l + Length > BufferSize){
-    while(l + Length > BufferSize) BufferSize <<= 1;
-    Temp = new unsigned char[BufferSize];
-    for(j = 0; j < l; j++){
-      Temp[j] = pdfStream::Buffer[j];
+    if(l + Length > BufferSize){
+        while(l + Length > BufferSize) BufferSize <<= 1;
+        Temp = new unsigned char[BufferSize];
+        for(j = 0; j < l; j++){
+            Temp[j] = pdfStream::Buffer[j];
+        }
+        delete[] pdfStream::Buffer;
+        pdfStream::Buffer = Temp;
     }
-    delete[] pdfStream::Buffer;
-    pdfStream::Buffer = Temp;
-  }
 
-  for(j = 0; j < Length; j++){
-    pdfStream::Buffer[l+j] = Buffer[j];
-  }
+    for(j = 0; j < Length; j++){
+        pdfStream::Buffer[l+j] = Buffer[j];
+    }
 
-  pdfStream::Length.Value += Length;
+    pdfStream::Length.Value += Length;
 }
 //------------------------------------------------------------------------------
 
 void pdfStream::AddLine(const char* Line){
-  int j, l;
-  unsigned char* Temp;
+    int j, l;
+    unsigned char* Temp;
 
-  for(l = 0; Line[l]; l++);
-  l += 1; // Linefeed
+    for(l = 0; Line[l]; l++);
+    l += 1; // Linefeed
 
-  if(Length.Value + l > BufferSize){
-    while(Length.Value + l > BufferSize) BufferSize <<= 1;
-    Temp = new unsigned char[BufferSize];
-    for(j = 0; j < Length.Value; j++){
-      Temp[j] = Buffer[j];
+    if(Length.Value + l > BufferSize){
+        while(Length.Value + l > BufferSize) BufferSize <<= 1;
+        Temp = new unsigned char[BufferSize];
+        for(j = 0; j < Length.Value; j++){
+            Temp[j] = Buffer[j];
+        }
+        delete[] Buffer;
+        Buffer = Temp;
     }
-    delete[] Buffer;
-    Buffer = Temp;
-  }
 
-  l -= 1;
-  for(j = 0; j < l; j++){
-    Buffer[(int)Length.Value+j] = Line[j];
-  }
-  Buffer[(int)Length.Value+j] = '\n';
+    l -= 1;
+    for(j = 0; j < l; j++){
+        Buffer[(int)Length.Value+j] = Line[j];
+    }
+    Buffer[(int)Length.Value+j] = '\n';
 
-  Length.Value += l+1;
+    Length.Value += l+1;
 }
 //------------------------------------------------------------------------------
 
 void pdfStream::AddLineFront(const char* Line){
-  int j, l;
-  unsigned char* Temp;
+    int j, l;
+    unsigned char* Temp;
 
-  for(l = 0; Line[l]; l++);
-  l += 1; // Linefeed
+    for(l = 0; Line[l]; l++);
+    l += 1; // Linefeed
 
-  if(Length.Value + l > BufferSize){
-    while(Length.Value + l > BufferSize) BufferSize <<= 1;
-    Temp = new unsigned char[BufferSize];
-    for(j = 0; j < Length.Value; j++){
-      Temp[j] = Buffer[j];
+    if(Length.Value + l > BufferSize){
+        while(Length.Value + l > BufferSize) BufferSize <<= 1;
+        Temp = new unsigned char[BufferSize];
+        for(j = 0; j < Length.Value; j++){
+            Temp[j] = Buffer[j];
+        }
+        delete[] Buffer;
+        Buffer = Temp;
     }
-    delete[] Buffer;
-    Buffer = Temp;
-  }
 
-  for(j = Length.Value-1; j >= 0; j--){
-    Buffer[j+l] = Buffer[j];
-  }
-  l -= 1;
-  for(j = 0; j < l; j++){
-    Buffer[j] = Line[j];
-  }
-  Buffer[j] = '\n';
+    for(j = Length.Value-1; j >= 0; j--){
+        Buffer[j+l] = Buffer[j];
+    }
+    l -= 1;
+    for(j = 0; j < l; j++){
+        Buffer[j] = Line[j];
+    }
+    Buffer[j] = '\n';
 
-  Length.Value += l+1;
+    Length.Value += l+1;
 }
 //------------------------------------------------------------------------------
 
 int pdfStream::GetBodyLength(){
-  int r = 0;
+    int r = 0;
 
-  pdfNumber n;
-  n = Reference;
-  r += n.GetLength();
+    pdfNumber n;
+    n = Reference;
+    r += n.GetLength();
 
-  r += 7; // " 0 obj\n"
-  r += Dictionary.GetLength();
-  r += 8; // "\nstream\n"
-  r += Length.Value;
-  if(Buffer[(int)Length.Value-1] != '\n') r += 1;
-  r += 9; // "endstream"
-  r += 8; // "\nendobj\n"
+    r += 7; // " 0 obj\n"
+    r += Dictionary.GetLength();
+    r += 8; // "\nstream\n"
+    r += Length.Value;
+    if(Buffer[(int)Length.Value-1] != '\n') r += 1;
+    r += 9; // "endstream"
+    r += 8; // "\nendobj\n"
 
-  return r;
+    return r;
 }
 //------------------------------------------------------------------------------
 
 int pdfStream::GetBody(char* Buffer){
-  int j;
-  int i = 0;
+    int j;
+    int i = 0;
 
-  pdfNumber n;
-  n = Reference;
-  i += n.GetOutput(Buffer);
+    pdfNumber n;
+    n = Reference;
+    i += n.GetOutput(Buffer);
 
-  Buffer[i++] = ' ';
-  Buffer[i++] = '0';
-  Buffer[i++] = ' ';
-  Buffer[i++] = 'o';
-  Buffer[i++] = 'b';
-  Buffer[i++] = 'j';
-  Buffer[i++] = ' ';
+    Buffer[i++] = ' ';
+    Buffer[i++] = '0';
+    Buffer[i++] = ' ';
+    Buffer[i++] = 'o';
+    Buffer[i++] = 'b';
+    Buffer[i++] = 'j';
+    Buffer[i++] = ' ';
 
-  i += Dictionary.GetOutput(Buffer + i);
+    i += Dictionary.GetOutput(Buffer + i);
 
-  Buffer[i++] = '\n';
-  Buffer[i++] = 's';
-  Buffer[i++] = 't';
-  Buffer[i++] = 'r';
-  Buffer[i++] = 'e';
-  Buffer[i++] = 'a';
-  Buffer[i++] = 'm';
-  Buffer[i++] = '\n';
-
-  for(j = 0; j < Length.Value; j++){
-    Buffer[i++] = pdfStream::Buffer[j];
-  }
-  if(pdfStream::Buffer[j-1] != '\n'){
     Buffer[i++] = '\n';
-  }
+    Buffer[i++] = 's';
+    Buffer[i++] = 't';
+    Buffer[i++] = 'r';
+    Buffer[i++] = 'e';
+    Buffer[i++] = 'a';
+    Buffer[i++] = 'm';
+    Buffer[i++] = '\n';
 
-  Buffer[i++] = 'e';
-  Buffer[i++] = 'n';
-  Buffer[i++] = 'd';
-  Buffer[i++] = 's';
-  Buffer[i++] = 't';
-  Buffer[i++] = 'r';
-  Buffer[i++] = 'e';
-  Buffer[i++] = 'a';
-  Buffer[i++] = 'm';
+    for(j = 0; j < Length.Value; j++){
+        Buffer[i++] = pdfStream::Buffer[j];
+    }
+    if(pdfStream::Buffer[j-1] != '\n'){
+        Buffer[i++] = '\n';
+    }
 
-  Buffer[i++] = '\n';
-  Buffer[i++] = 'e';
-  Buffer[i++] = 'n';
-  Buffer[i++] = 'd';
-  Buffer[i++] = 'o';
-  Buffer[i++] = 'b';
-  Buffer[i++] = 'j';
-  Buffer[i++] = '\n';
+    Buffer[i++] = 'e';
+    Buffer[i++] = 'n';
+    Buffer[i++] = 'd';
+    Buffer[i++] = 's';
+    Buffer[i++] = 't';
+    Buffer[i++] = 'r';
+    Buffer[i++] = 'e';
+    Buffer[i++] = 'a';
+    Buffer[i++] = 'm';
 
-  return i;
+    Buffer[i++] = '\n';
+    Buffer[i++] = 'e';
+    Buffer[i++] = 'n';
+    Buffer[i++] = 'd';
+    Buffer[i++] = 'o';
+    Buffer[i++] = 'b';
+    Buffer[i++] = 'j';
+    Buffer[i++] = '\n';
+
+    return i;
 }
 //------------------------------------------------------------------------------
 
 int pdfStream::GetSize(){
-  return Length.Value;
+    return Length.Value;
 }
 //------------------------------------------------------------------------------
