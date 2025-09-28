@@ -43,38 +43,43 @@ struct ENGINE{
             PS_A3,
             PS_A4,
             PS_Letter
-        } PageSize, NextPageSize;
+        };
+        PAGE_SIZE PageSize     = PS_Tight;
+        PAGE_SIZE NextPageSize = PS_Tight;
 
         enum PAGE_ORIENTATION{
             PO_Auto = 0,
             PO_Portrait,
             PO_Landscape
-        } Orientation, NextOrientation;
+        };
+        PAGE_ORIENTATION Orientation     = PO_Auto;
+        PAGE_ORIENTATION NextOrientation = PO_Auto;
 
-        bool Mirror;
-        bool Combine;
-        bool NewPage;
+        bool Mirror  = false;
+        bool Combine = false;
+        bool NewPage = true;
 
         struct COLOUR{
-            bool UseCMYK;
+            bool UseCMYK = false;
             union{
                 struct{ double R, G, B; };
                 struct{ double C, M, Y, K; };
             };
-            double A;
+            double A = 0;
             COLOUR();
             void operator=  (COLOUR& Colour);
             bool operator== (COLOUR& Colour);
         } Light, Dark;
 
-        bool ConvertStrokesToFills;
-        bool ScaleToFit;
-        bool NextScaleToFit;
-        bool UseCMYK;
-//------------------------------------------------------------------------------
+        bool ConvertStrokesToFills = false;
+        bool ScaleToFit            = false;
+        bool NextScaleToFit        = false;
+        bool UseCMYK               = false;
+        bool NameIsFilename        = false;
+    //--------------------------------------------------------------------------
 
     private: // Internal structures
-        int OpaqueCount;
+        int OpaqueCount = 0;
         struct OPAQUE_STACK{
             pdfOpaque*    Opaque;
             OPAQUE_STACK* Next;
@@ -82,7 +87,7 @@ struct ENGINE{
             OPAQUE_STACK(double Value, int& OpaqueCount);
            ~OPAQUE_STACK();
         };
-        OPAQUE_STACK* OpaqueStack;
+        OPAQUE_STACK* OpaqueStack = 0;
 
         struct APERTURE{
             pdfForm*  Aperture;
@@ -90,19 +95,19 @@ struct ENGINE{
         };
 
         struct LEVEL_FORM{
-            pdfForm*    Level;
-            LEVEL_FORM* Next;
+            pdfForm*    Level = 0;
+            LEVEL_FORM* Next  = 0;
 
             LEVEL_FORM();
            ~LEVEL_FORM();
         };
 
         struct LAYER{
-            char*    Filename;
-            bool     ConvertStrokesToFills;
+            char*    Filename = 0;
+            bool     ConvertStrokesToFills = false;
             COLOUR   Light;
-            pdfForm* Form;
-            LAYER*   Next;
+            pdfForm* Form = 0;
+            LAYER*   Next = 0;
 
             bool        Negative;
             double      Left, Bottom, Right, Top;
@@ -111,7 +116,7 @@ struct ENGINE{
             LAYER();
            ~LAYER();
         };
-        LAYER* Layers; // Stack of layer XObjects
+        LAYER* Layers = 0; // Stack of layer XObjects
 
         // These stacks keep track of objects to be deleted at the end
         struct PAGE{
@@ -125,7 +130,7 @@ struct ENGINE{
             PAGE(PAGE* Next, bool UseCMYK);
            ~PAGE();
         };
-        PAGE* Page;
+        PAGE* Page = 0;
 
         struct OUTLINE{
             pdfOutlineItems* Item;
@@ -134,8 +139,8 @@ struct ENGINE{
             OUTLINE(OUTLINE* Next);
            ~OUTLINE();
         };
-        OUTLINE* Outline;
-//------------------------------------------------------------------------------
+        OUTLINE* Outline = 0;
+    //--------------------------------------------------------------------------
 
     private: // Internal State
         JPDF pdf;
@@ -143,41 +148,40 @@ struct ENGINE{
         // Use an associative array because the Gerber apertures need not be contiguous
         typedef std::map<int, pdfForm*> pdfFormArray;
 
-        APERTURE*    ApertureStack;
-        int          ApertureCount;
+        APERTURE*    ApertureStack   = 0;
+        int          ApertureCount   = 0;
         pdfFormArray Apertures;
-        pdfForm*     CurrentAperture;
+        pdfForm*     CurrentAperture = 0;
 
         pdfOpaque* Opaque;
 
-        bool   Negative;
-        bool   SolidCircle;
-        bool   SolidRectangle;
-        bool   OutlinePath;
-        double LineWidth;
-        double RectW;
-        double RectH;
-        double RectX;
-        double RectY;
+        bool   Negative       = false;
+        bool   SolidCircle    = false;
+        bool   SolidRectangle = false;
+        bool   OutlinePath    = false;
+        double LineWidth      = 0.0;
+        double RectW          = 0.0;
+        double RectH          = 0.0;
+        double RectX          = 0.0;
+        double RectY          = 0.0;
 
-        int     PageCount;
-        int     Result;
-        bool    ThePageUsed;
-        double  ThePageLeft;
-        double  ThePageBottom;
-        double  ThePageRight;
-        double  ThePageTop;
+        int     PageCount     = 0;
+        bool    ThePageUsed   = false;
+        double  ThePageLeft   =  1e100;
+        double  ThePageBottom =  1e100;
+        double  ThePageRight  = -1e100;
+        double  ThePageTop    = -1e100;
 
         // PDF Variables and Structures
         pdfPages    Pages;    // Single level page tree
         pdfOutlines Outlines; // Single level outline tree
 
-        LEVEL_FORM* LevelStack;
-        int         LevelCount;
+        LEVEL_FORM* LevelStack = 0;
+        int         LevelCount = 0;
 
-        pdfPage*     ThePage;     // Page on which to combine outputs
-        pdfContents* TheContents; // Contents of ThePage
-//------------------------------------------------------------------------------
+        pdfPage*     ThePage     = 0; // Page on which to combine outputs
+        pdfContents* TheContents = 0; // Contents of ThePage
+    //--------------------------------------------------------------------------
 
     private: // Functions
         void DrawAperture(
@@ -213,7 +217,7 @@ struct ENGINE{
             PAGE*  Page,
             double Left,  double Bottom, double Right, double Top
         );
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     public: // Functions
         ENGINE();

@@ -25,8 +25,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 ENGINE::COLOUR::COLOUR(){
-    UseCMYK = false;
-    R = G = B = A = 0;
+    R = G = B = 0;
     C = M = Y = K = 0;
 }
 //------------------------------------------------------------------------------
@@ -74,8 +73,6 @@ ENGINE::OPAQUE_STACK::~OPAQUE_STACK(){
 //------------------------------------------------------------------------------
 
 ENGINE::LEVEL_FORM::LEVEL_FORM(){
-    Level = 0;
-    Next  = 0;
 }
 //------------------------------------------------------------------------------
 
@@ -86,10 +83,6 @@ ENGINE::LEVEL_FORM::~LEVEL_FORM(){
 //------------------------------------------------------------------------------
 
 ENGINE::LAYER::LAYER(){
-    Filename              = 0;
-    ConvertStrokesToFills = false;
-    Form                  = 0;
-    Next                  = 0;
 }
 //------------------------------------------------------------------------------
 
@@ -127,62 +120,10 @@ ENGINE::OUTLINE::~OUTLINE(){
 //------------------------------------------------------------------------------
 
 ENGINE::ENGINE(){
-    ConvertStrokesToFills = false;
-    ScaleToFit            = false;
-    NextScaleToFit        = false;
-    UseCMYK               = false;
-
-    PageSize    = PS_Tight;
-    Orientation = PO_Auto;
-
-    NextPageSize    = PS_Tight;
-    NextOrientation = PO_Auto;
-
-    OpaqueCount = 0;
-    OpaqueStack = 0;
-
-    Layers = 0;
-
-    Mirror   = false;
-    Negative = false;
-
     Light.R = 1.0; Light.G = 1.0; Light.B = 1.0; Light.A = 0.0;
     Dark .R = 0.0; Dark .G = 0.0; Dark .B = 0.0; Dark .A = 1.0;
 
-    ApertureStack = 0;
-
-    ApertureCount   = 0;
-    CurrentAperture = 0;
-
-    SolidCircle    = false;
-    SolidRectangle = false;
-    OutlinePath    = false;
-    LineWidth      = 0.0;
-    RectW          = 0.0;
-    RectH          = 0.0;
-    RectX          = 0.0;
-    RectY          = 0.0;
-
     Opaque = new pdfOpaque("Opaque");
-
-    PageCount     = 0;
-    Combine       = false;
-    NewPage       = true;
-    ThePageUsed   = false;
-    ThePageLeft   =  1e100;
-    ThePageBottom =  1e100;
-    ThePageRight  = -1e100;
-    ThePageTop    = -1e100;
-
-    LevelStack = 0;
-    LevelCount = 0;
-
-    ThePage     = 0;
-    TheContents = 0;
-
-    Page     = 0;
-    Outline  = 0;
-
     Opaque->Opacity(1.0);
     pdf.AddIndirect(Opaque);
 }
@@ -787,7 +728,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
             ConvertStrokesToFills = false;
             return 0;
         }
-        if(Gerber.Name){
+        if(!NameIsFilename && Gerber.Name){
             Layer->Title.assign(Gerber.Name);
         }else{
             for(
@@ -949,7 +890,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
                 LevelStack->Level->Resources.AddOpaque(Opaque);
                 Apertures.clear();
-                Result = RenderLayer(LevelStack->Level, LevelStack->Level, Level);
+                int Result = RenderLayer(LevelStack->Level, LevelStack->Level, Level);
                 if(Result) return Result;
 
                 Layer->Form->Push();
@@ -975,7 +916,7 @@ int ENGINE::Run(const char* FileName, const char* Title){
 
             }else{
                 Layer->Form->Resources.AddOpaque(Opaque);
-                Result = RenderLayer(Layer->Form, Layer->Form, Level);
+                int Result = RenderLayer(Layer->Form, Layer->Form, Level);
                 if(Result) return Result;
             }
 

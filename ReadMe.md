@@ -53,6 +53,11 @@ Git sort it out for you.
 
 ## Changes:
 
+#### 2025-09-28
+
+- Version-bump to 1.13
+- Added the "-name_is_filename" command-line option
+
 #### 2025-02-01
 
 - Version-bump to 1.12

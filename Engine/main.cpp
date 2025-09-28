@@ -87,7 +87,8 @@ static bool StringStart(const char* String, const char* Start){
     int main(int argc, const char** argv){
 #endif
 
-    setupTerminal();
+    // No longer required on newer Windows terminals
+    // setupTerminal();
 
     ENGINE Engine;
 
@@ -123,7 +124,8 @@ static bool StringStart(const char* String, const char* Start){
             "Usage: Gerber2pdf [-silentexit] [-nowarnings] [-CMYK] ...\n"
             "       [-output=output_file_name] ...\n"
             "       [-background=R,G,B[,A]] [-backgroundCMYK=C,M,Y,K[,A]] ...\n"
-            "       [-strokes2fills] [-page_size=extents|A3|A4|letter] ...\n"
+            "       [-strokes2fills] [-name_is_filename] ...\n"
+            "       [-page_size=extents|A3|A4|letter] ...\n"
             "       [-orientation=portrait|landscape] [-scale_to_fit] ...\n"
             "       [-next_page_size=extents|A3|A4|letter] ...\n"
             "       [-next_orientation=portrait|landscape] [-next_scale_to_fit] ...\n"
@@ -165,6 +167,9 @@ static bool StringStart(const char* String, const char* Start){
             "The -strokes2fills option converts all strokes to fills for the next\n"
             "file, thereby converting outlines to areas.  It resets to default\n"
             "after that file.\n"
+            "\n"
+            "The -name_is_filename option forces the PDF bookmarks to use\n"
+            "the filename instead of the IN or LN commands.\n"
             "\n"
             "The -page_size option takes global effect and can have one of 4 values:\n"
             "  \"extents\", \"A3\", \"A4\" or \"letter\"\n"
@@ -337,6 +342,9 @@ static bool StringStart(const char* String, const char* Start){
 
             }else if(!strcmp(argv[arg]+1, "strokes2fills")){
                 Engine.ConvertStrokesToFills = true;
+
+            }else if(!strcmp(argv[arg]+1, "name_is_filename")){
+                Engine.NameIsFilename = true;
 
             }else if(StringStart(argv[arg]+1, "page_size=")){
                 if     (!strcmp(argv[arg]+11, "extents")) Engine.PageSize = ENGINE::PS_Extents;
